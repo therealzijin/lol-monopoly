@@ -16,7 +16,7 @@ const TILES={
     {t:'wheel'},P('拉姆斯高鐵站','ラムス新幹線駅',320,'藍'),{t:'chance'},P('巴德摩天輪','バード観覧車',350,'紫'),P('阿妮維亞機場','アニビア空港',380,'紫'),{t:'tax',a:200},P('索爾太空港','オレリオン宇宙港',400,'紫'),{t:'chance'}
   ]
 };
-const CFG={quick:{start:1200,dice:1,maxRounds:15,side:5},classic:{start:2000,dice:2,maxRounds:40,side:8}};
+const CFG={quick:{start:1200,dice:1,maxRounds:15,side:5},classic:{start:1200,dice:2,maxRounds:40,side:8}};
 const C=(zh,ja,fx)=>({txt:{zh,ja},fx});
 const CARDS=[
   // 情侶日常
