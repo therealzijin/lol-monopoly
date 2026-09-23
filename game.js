@@ -66,6 +66,7 @@ const CARDS=[
 ];
 const WHEEL=[C('大獎','大当たり',{money:300}),C('小獎','当たり',{money:150}),C('安慰獎','残念賞',{money:50}),C('銘謝惠顧','ハズレ',{money:0}),C('轉到破洞','穴に落ちた',{money:-100}),C('對方賠你','相手が払う',{give:100})];
 const LVMULT=[1,2,3.5,5];
+const RULE={freeProps:5, upkeepPct:.05, propTaxFree:3, propTax:50, underdogRent:.5, npcCap:6};
 
 
 /* ---------- 語言 ---------- */
@@ -84,7 +85,7 @@ zh:{
  buyQ:'「<b>{t}</b>」沒人買，要用 ${p} 買下嗎？',buy:'買下',noBuy:'不買',upQ:'「<b>{t}</b>」可以升級（${c}），租金會從 ${a} 漲到 ${b}。',up:'升級',noUp:'先不要',end:'結束回合',waitTurn:'輪到 <b>{n}</b>，稍等一下。',
  draw:'平手！',wins:'{n} 贏了！',drawSub:'兩人資產一樣多，改天再分勝負。',winSub:'輸的人負責今晚的家事（規則自訂）。',rankSub:'名次：{r}',npcWin:'被電腦贏走了！兩個人一起負責家事。',again:'再來一局',hostAgain:'等房主開下一局…',home:'回首頁',
  tile:{go:'起點',chance:'機會',tax:'稅務局',rest:'咖啡休息',jail:'罰站區',wheel:'幸運轉盤',twitch:'圖奇偷家'},
- log:{start:'遊戲開始！後手多拿 $100 補償。',again:'新的一局開始！後手多拿 $100 補償。',roll:'{n} 擲出 {s}',boost:'{n} 希維爾加速中！移動距離加倍，走 {s} 格',passGo:'{n} 經過起點，領 ${a}',npcBuy:'{n} 買下了「{t}」',npcPass:'{n} 看了看「{t}」，決定不買',robin:'{n} 是首富，付給其他每人 ${a}',steal:'{n} 拿走了 {o} 的「{t}」',crash:'房市崩跌！下一輪所有租金減半',lastAid:'{n} 排名最後，領補助 ${a}',out:'{n} 出局了',newRound:'第 {r} 回合開始，這回合由 {n} 先手',twitch:'{n} 被圖奇偷家！「{t}」被偷走，重新變成空地',twitchCash:'{n} 被圖奇偷家！沒有地可偷，現金被摸走 ${a}',twitchNone:'{n} 被圖奇偷家，但家裡空空的，什麼都沒被偷',taxPct:'{n} 被稅務局收走 ${a}（依現金 8%）',
+ log:{start:'遊戲開始！後手多拿 $100 補償。',again:'新的一局開始！後手多拿 $100 補償。',roll:'{n} 擲出 {s}',boost:'{n} 希維爾加速中！移動距離加倍，走 {s} 格',passGo:'{n} 經過起點，領 ${a}',npcBuy:'{n} 買下了「{t}」',npcPass:'{n} 看了看「{t}」，決定不買',robin:'{n} 是首富，付給其他每人 ${a}',steal:'{n} 拿走了 {o} 的「{t}」',crash:'房市崩跌！下一輪所有租金減半',lastAid:'{n} 排名最後，領補助 ${a}',out:'{n} 出局了',newRound:'第 {r} 回合開始，這回合由 {n} 先手',upkeep:'{n} 持有 {c} 塊地，超額部分繳維護費 ${a}',taxProp:'{n} 被稅務局收走 ${a}（含地產稅 ${b}）',rentHalf:'{n} 排名最後，踩到 {o} 的「{t}」租金減半，付 ${r}',twitch:'{n} 被圖奇偷家！「{t}」被偷走，重新變成空地',twitchCash:'{n} 被圖奇偷家！沒有地可偷，現金被摸走 ${a}',twitchNone:'{n} 被圖奇偷家，但家裡空空的，什麼都沒被偷',taxPct:'{n} 被稅務局收走 ${a}（依現金 8%）',
   canBuy:'{n} 來到「{t}」，可以用 ${p} 買下',poor:'{n} 來到「{t}」，但錢不夠買',rent:'{n} 踩到 {o} 的「{t}」，付租金 ${r}',canUp:'{n} 回到自己的「{t}」，可以花 ${c} 升級',back:'{n} 回到自己的「{t}」',
   chance:'{n} 抽到機會：{c}',tax:'{n} 被稅務局收走 ${a}',jail:'{n} 被罰站，下一回合暫停',wheel:'{n} 轉到「{w}」',rest:'{n} 在咖啡店休息一下',go:'{n} 停在起點',
   sell:'{n} 錢不夠，賣掉「{t}」換回 ${v}',bankrupt:'{n} 破產了！',skip:'{n} 這回合罰站，跳過',bought:'{n} 買下了「{t}」',upgraded:'{n} 把「{t}」升到 {l} 級',settle:'{m} 回合結束！結算資產：{r}'}
@@ -103,7 +104,7 @@ ja:{
  buyQ:'「<b>{t}</b>」は空き地。${p} で買いますか？',buy:'買う',noBuy:'買わない',upQ:'「<b>{t}</b>」を ${c} でアップグレードできます。家賃が ${a} → ${b} に。',up:'アップグレード',noUp:'やめておく',end:'ターン終了',waitTurn:'<b>{n}</b> の番です。少しお待ちください。',
  draw:'引き分け！',wins:'{n} の勝ち！',drawSub:'資産が同じ。勝負はまた今度。',winSub:'負けた人が今夜の家事担当（ルールはご自由に）。',rankSub:'順位：{r}',npcWin:'コンピュータの勝ち！ふたりで家事担当。',again:'もう一局',hostAgain:'ホストが次のゲームを始めるのを待っています…',home:'トップへ戻る',
  tile:{go:'スタート',chance:'チャンス',tax:'税務署',rest:'カフェ休憩',jail:'おしおき',wheel:'ルーレット',twitch:'トゥイッチ襲来'},
- log:{start:'ゲーム開始！後手は補償として $100 多くもらえます。',again:'次のゲーム開始！後手は補償として $100 多くもらえます。',roll:'{n} が {s} を出した',boost:'{n} はシヴィアの加速中！移動距離2倍で {s} マス進む',passGo:'{n} がスタートを通過、${a} 受け取り',npcBuy:'{n} が「{t}」を購入',npcPass:'{n} は「{t}」を見て買わなかった',robin:'{n} は資産トップ。他の全員に ${a} 支払い',steal:'{n} が {o} の「{t}」を奪った',crash:'バブル崩壊！次のラウンドは全員の家賃が半額',lastAid:'{n} は最下位。補助 ${a} 受け取り',out:'{n} が脱落',newRound:'ラウンド {r} 開始。このラウンドは {n} から',twitch:'{n} の家にトゥイッチが侵入！「{t}」が奪われて空き地に戻った',twitchCash:'{n} の家にトゥイッチが侵入！土地がないので現金 ${a} を盗まれた',twitchNone:'{n} の家にトゥイッチが侵入したが、何もなくて手ぶらで帰った',taxPct:'{n} が税務署に ${a} 取られた（所持金の8%）',
+ log:{start:'ゲーム開始！後手は補償として $100 多くもらえます。',again:'次のゲーム開始！後手は補償として $100 多くもらえます。',roll:'{n} が {s} を出した',boost:'{n} はシヴィアの加速中！移動距離2倍で {s} マス進む',passGo:'{n} がスタートを通過、${a} 受け取り',npcBuy:'{n} が「{t}」を購入',npcPass:'{n} は「{t}」を見て買わなかった',robin:'{n} は資産トップ。他の全員に ${a} 支払い',steal:'{n} が {o} の「{t}」を奪った',crash:'バブル崩壊！次のラウンドは全員の家賃が半額',lastAid:'{n} は最下位。補助 ${a} 受け取り',out:'{n} が脱落',newRound:'ラウンド {r} 開始。このラウンドは {n} から',upkeep:'{n} は物件 {c} 件。超過分の維持費 ${a} を支払い',taxProp:'{n} が税務署に ${a} 取られた（物件税 ${b} 込み）',rentHalf:'{n} は最下位。{o} の「{t}」の家賃は半額、${r} 支払い',twitch:'{n} の家にトゥイッチが侵入！「{t}」が奪われて空き地に戻った',twitchCash:'{n} の家にトゥイッチが侵入！土地がないので現金 ${a} を盗まれた',twitchNone:'{n} の家にトゥイッチが侵入したが、何もなくて手ぶらで帰った',taxPct:'{n} が税務署に ${a} 取られた（所持金の8%）',
   canBuy:'{n} が「{t}」に到着。${p} で買える',poor:'{n} が「{t}」に到着したが、お金が足りない',rent:'{n} が {o} の「{t}」に止まり、家賃 ${r} を支払い',canUp:'{n} が自分の「{t}」に戻った。${c} でアップグレード可能',back:'{n} が自分の「{t}」に戻った',
   chance:'{n} がチャンスカード：{c}',tax:'{n} が税務署に ${a} 取られた',jail:'{n} がおしおき。次のターンは休み',wheel:'{n} のルーレット：「{w}」',rest:'{n} はカフェでひと休み',go:'{n} がスタートに止まった',
   sell:'{n} はお金が足りず、「{t}」を売って ${v} 回収',bankrupt:'{n} が破産！',skip:'{n} はおしおき中、このターンは休み',bought:'{n} が「{t}」を購入',upgraded:'{n} が「{t}」をレベル {l} に',settle:'{m} ラウンド終了！資産結果：{r}'}
@@ -192,6 +193,14 @@ function ranking(){return alive().sort((a,b)=>worth(b)-worth(a))}
 function rankOf(pi){return ranking().indexOf(pi)}
 function richest(){return ranking()[0]}
 function goBonus(pi){return 200+50*Math.max(0,rankOf(pi))}
+function upkeepOf(pi){
+  const mine=Object.keys(st.owners).filter(i=>st.owners[i].owner===pi).map(i=>tiles()[i].p).sort((a,b)=>b-a);
+  const extra=mine.slice(0,Math.max(0,mine.length-RULE.freeProps));
+  return Math.round(extra.reduce((a,p)=>a+p*RULE.upkeepPct,0)/10)*10;
+}
+function chargeUpkeep(){
+  alive().forEach(pi=>{ const a=upkeepOf(pi); if(a>0){ log('upkeep',{n:st.players[pi].name,c:propCount(pi),a}); pay(pi,a,null); } });
+}
 function rentAt(i,owner,level){const t=tiles()[i];let base=Math.round(t.p*0.5/10)*10;if(ownsGroup(owner,t.g))base*=2;return Math.round(base*LVMULT[level]/10)*10}
 function rentOf(i){const o=st.owners[i];let r=rentAt(i,o.owner,o.level);if(st.crash>0)r=Math.round(r/2/10)*10;return r}
 function upCost(i){return tiles()[i].p/2}
@@ -234,7 +243,7 @@ function land(pi,depth){
   if(t.t==='prop'){
     const o=st.owners[i];
     if(!o){ if(p.money>=t.p){ st.pending={type:'buy',tile:i}; log('canBuy',{n:p.name,ti:i,p:t.p}); } else log('poor',{n:p.name,ti:i}); }
-    else if(o.owner!==pi){ const r=rentOf(i); log('rent',{n:p.name,o:st.players[o.owner].name,ti:i,r}); pay(pi,r,o.owner); sfx('pay'); }
+    else if(o.owner!==pi){ let r=rentOf(i); const last=alive().length>1&&rankOf(pi)===alive().length-1; if(last) r=Math.round(r*RULE.underdogRent/10)*10; log(last?'rentHalf':'rent',{n:p.name,o:st.players[o.owner].name,ti:i,r}); pay(pi,r,o.owner); sfx('pay'); }
     else { if(ownsGroup(pi,t.g)&&o.level<3&&p.money>=upCost(i)){ st.pending={type:'up',tile:i}; log('canUp',{n:p.name,ti:i,c:upCost(i)}); } else log('back',{n:p.name,ti:i}); }
   } else if(t.t==='chance'){
     const ci=rnd(CARDS.length),c=CARDS[ci]; log('chance',{n:p.name,ci}); sfx('card');
@@ -242,7 +251,7 @@ function land(pi,depth){
     if(st.phase==='over') return;
     if(r.mv&&depth<1){ p.pos=(p.pos+r.mv+tiles().length)%tiles().length; land(pi,depth+1); return; }
     if(r.re&&depth<1){ if(tiles()[p.pos].t!=='chance') land(pi,depth+1); return; }
-  } else if(t.t==='tax'){ const pct=Math.round(p.money*.08/10)*10; const a=Math.max(t.a,pct); log(a>t.a?'taxPct':'tax',{n:p.name,a}); pay(pi,a,null); sfx('pay'); }
+  } else if(t.t==='tax'){ const pct=Math.round(p.money*.08/10)*10; const b=RULE.propTax*Math.max(0,propCount(pi)-RULE.propTaxFree); const a=Math.max(t.a,pct)+b; log(b>0?'taxProp':(a>t.a?'taxPct':'tax'),{n:p.name,a,b}); pay(pi,a,null); sfx('pay'); }
   else if(t.t==='jail'){ p.skip=1; log('jail',{n:p.name}); sfx('jail'); }
   else if(t.t==='twitch'){
     const mine=Object.keys(st.owners).filter(j=>st.owners[j].owner===pi);
@@ -261,7 +270,7 @@ function endTurn(){
   const n=st.players.length; if(st.first==null) st.first=0;
   do{
     const nxt=(st.turn+1)%n;
-    if(nxt===st.first){ st.round++; if(st.crash>0) st.crash--; st.first=(st.first+1)%n; st.turn=st.first; if(!(cfg().maxRounds&&st.round>cfg().maxRounds)) log('newRound',{r:st.round,n:st.players[st.turn].name}); }
+    if(nxt===st.first){ st.round++; if(st.crash>0) st.crash--; st.first=(st.first+1)%n; st.turn=st.first; if(!(cfg().maxRounds&&st.round>cfg().maxRounds)){ log('newRound',{r:st.round,n:st.players[st.turn].name}); chargeUpkeep(); if(st.phase==='over') return; } }
     else st.turn=nxt;
     if(cfg().maxRounds&&st.round>cfg().maxRounds){ st.phase='over'; const rk=ranking(); st.winner=rk.length>1&&worth(rk[0])===worth(rk[1])?null:rk[0]; log('settle',{m:cfg().maxRounds,r:rk.map(i=>st.players[i].name+' $'+worth(i)).join('、')}); return; }
     const p=st.players[st.turn];
@@ -397,6 +406,7 @@ function npcDecideBuy(pi,i){
   const mine=groupTiles(t.g).filter(j=>st.owners[j]&&st.owners[j].owner===pi).length;
   const left=p.money-t.p, reserve=st.mode==='classic'?250:150;
   if(mine>0) return left>=0;                 // 湊套組一定買
+  if((rankOf(pi)===0&&propCount(pi)>=3)||propCount(pi)>=RULE.npcCap) return false;   // 領先且地已不少、或達上限：只湊套組，不再擴張
   if(propCount(pi)<=1) return left>=reserve*.5;
   return left>=reserve && Math.random()<.75;
 }
