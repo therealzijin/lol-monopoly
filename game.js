@@ -359,7 +359,9 @@ function render(){
   const c=cfg();
   $('g-mode').textContent=T('m_'+st.mode)+'・'+(net.online?T('room')+' '+net.code:T('onePhone'));
   $('g-round').textContent=T('round',{r:Math.min(st.round,c.maxRounds),m:c.maxRounds});
+  const prevM=render._m||[]; render._m=st.players.map(p=>p.money);
   $('g-players').innerHTML=st.players.map((p,i)=>`<div class="pl ${st.turn===i&&st.phase==='play'?'turn':''} ${p.out?'out':''}"><span class="dot p${i}">${AVATAR[i]}</span><div style="min-width:0"><div class="nm">${esc(p.name)}${net.online&&net.me===i?T('you'):''}${p.npc?`<span class="npc">NPC</span>`:''}</div><div class="money">$${p.money}</div><div class="worth">${T('worth')} $${worth(i)}${p.skip?'・'+T('skipping'):''}${p.boost?'・'+T('boosted'):''}</div></div><div class="cnt"><b>${propCount(i)}</b><small>${T('props')}</small></div></div>`).join('');
+  document.querySelectorAll('#g-players .money').forEach((el,i)=>{ const a=prevM[i]; if(a!=null&&a!==st.players[i].money){ el.classList.add(st.players[i].money>a?'flash-up':'flash-down'); } });
   renderBoard();
   renderPanel();
   $('log').innerHTML=st.log.map(l=>`<div>${logText(l)}</div>`).join('');
@@ -457,9 +459,9 @@ async function roll(){
   if(busy) return; busy=true;
   const c=cfg(), p=st.players[st.turn], TT=tiles();
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const d=Array.from({length:c.dice},()=>1+rnd(6)); st.dice=d; st.step='moving'; render();
+  const d=Array.from({length:c.dice},()=>1+rnd(6)); st.dice=d; st.rollId=(st.rollId||0)+1; st.step='moving'; render();
+  const v=currentView();
   if(!reduce){
-    const v=currentView();
     if(v.rollDice){ await v.rollDice(d); }          // 3D：立體骰子滾動
     else { // 2D：骰子亂跳一下
       for(let k=0;k<5;k++){ st.dice=d.map(()=>1+rnd(6)); sfx('dice'); renderBoard(); await sleep(90); }
@@ -468,7 +470,9 @@ async function roll(){
   }
   let steps=d.reduce((a,b)=>a+b,0);
   if(p.boost){ p.boost=0; steps*=2; log('boost',{n:p.name,s:steps}); } else log('roll',{n:p.name,s:steps});
-  for(let k=0;k<steps;k++){ p.pos=(p.pos+1)%TT.length; if(p.pos===0){ const a=goBonus(st.turn); p.money+=a; p.laps=(p.laps||0)+1; log('passGo',{n:p.name,a}); sfx('coin'); } else sfx('step'); if(!reduce){ renderBoard(); await sleep(140); } }
+  if(!reduce&&v.walkPlan) v.walkPlan(st.turn,steps);
+  for(let k=0;k<steps;k++){ p.pos=(p.pos+1)%TT.length; if(p.pos===0){ const a=goBonus(st.turn); p.money+=a; p.laps=(p.laps||0)+1; log('passGo',{n:p.name,a}); sfx('coin'); } else sfx('step'); if(!reduce){ renderBoard(); await sleep(v.stepMs||140); } }
+  if(!reduce&&v.settle) await v.settle();          // 3D：等棋子真的走到再結算
   busy=false;
   land(st.turn,0);
   if(st.phase==='over'){ render(); push(); return; }

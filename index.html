@@ -77,6 +77,17 @@ h1{font-size:34px;line-height:1.1;font-weight:800;letter-spacing:-.01em;margin:8
 .v3pop{position:absolute;transform:translate(-50%,-100%);background:var(--paper);color:var(--ink);border-radius:10px;padding:8px 10px;font-size:12px;line-height:1.35;box-shadow:0 4px 14px rgba(0,0,0,.35);pointer-events:auto;min-width:130px;max-width:200px;z-index:5}
 .v3pop:after{content:'';position:absolute;left:50%;bottom:-6px;width:12px;height:12px;background:var(--paper);transform:translateX(-50%) rotate(45deg)}
 .v3pop b{display:block;font-size:13px;margin-bottom:3px} .v3pop .row{display:flex;justify-content:space-between;gap:10px;color:var(--ink-soft)} .v3pop .row span:last-child{color:var(--ink);font-weight:700}
+.fx-float{position:absolute;transform:translate(-50%,-50%);font-weight:900;font-size:16px;pointer-events:none;white-space:nowrap;letter-spacing:.02em;-webkit-text-stroke:3px #2B2420;paint-order:stroke fill;z-index:4}
+.fx-float.up{color:#FFE27A} .fx-float.down{color:#FF8C7A} .fx-float.info{color:#FFF4DE;font-size:13px}
+.fx-count{position:absolute;transform:translate(-50%,-100%);font-size:24px;font-weight:900;color:#fff;-webkit-text-stroke:4px #2B2420;paint-order:stroke fill;pointer-events:none;z-index:4;transition:transform .12s}
+.fx-count.tick{transform:translate(-50%,-100%) scale(1.35)}
+.fx-total{position:absolute;transform:translate(-50%,-50%);font-size:40px;font-weight:900;color:#F2C14E;-webkit-text-stroke:5px #2B2420;paint-order:stroke fill;pointer-events:none;z-index:4}
+.mid3.bump{animation:bump .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes bump{0%{transform:translate(-50%,-50%) scale(.6);opacity:0}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
+.pl .money.flash-up{animation:flashUp .9s ease-out} .pl .money.flash-down{animation:flashDown .9s ease-out}
+@keyframes flashUp{0%{color:#FFE27A;transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes flashDown{0%{color:#FF8C7A;transform:translateX(-3px)}20%{transform:translateX(3px)}40%{transform:translateX(-2px)}60%{transform:translateX(1px)}100%{transform:none}}
+.pl .money{display:inline-block;transform-origin:left center}
 .v3pop .gb{display:inline-block;width:10px;height:10px;border-radius:3px;vertical-align:-1px;margin-right:4px}
 .tile{position:relative;background:var(--paper);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;align-items:center;color:var(--ink);min-width:0;padding-bottom:18px}
 .board.snake.quick .tile{min-height:74px} .board.snake.classic .tile{min-height:60px}
