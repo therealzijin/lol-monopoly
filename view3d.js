@@ -143,6 +143,7 @@ const view3d=(()=>{
   const CH_YAW=0, CH_H=.62, CH_MAX=1, HEAD_WORLD=.24, HEAD_TARGET=.4, HEAD_MAX=3.4, BASIS='https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/basis/';
   // Q 版手辦（黏土人）比例：[沿骨頭方向的長度倍數, 粗細倍數]。四肢短而粗、軀幹短沒腰身、手腳略大、脖子幾乎看不到
   const Q_PELVIS=[.75,1], Q_TORSO=[.55,1.02], Q_NECK=[.25,1.15], Q_LEG=[.48,1.15], Q_ARM=[.58,1.1], Q_FOOT=1.05, Q_HAND=1.08, Q_TAIL=.75, Q_HAIR_LEN=.5, HAIR_HANG=.6, HEAD_CAP=.6;
+  const FACE={e1:.3,e2:.58,eyeK:1.18,lowK:.78,eyeW:1.08,chin:.25};   // 童顏參數（以頭高為 1，0 = 頭部關節）
   let gltfLoader=null; const champCache={};
   function champLoader(){
     if(!gltfLoader){ const k=new THREE.KTX2Loader().setTranscoderPath(BASIS).detectSupport(renderer); gltfLoader=new THREE.GLTFLoader().setKTX2Loader(k).setMeshoptDecoder(THREE.MeshoptDecoder); }
@@ -274,14 +275,26 @@ const view3d=(()=>{
     function bindSkull(){ if(!head||!invOf.get(head)) return 0; let top=-1e9; const v=new THREE.Vector3(); headVerts((o,i)=>{ top=Math.max(top,bindV(o,i,v).y); });
       return top<-1e8?0:top-new THREE.Vector3().setFromMatrixPosition(invOf.get(head).clone().invert()).y; }
     // 直接綁在頭上的長髮：下巴以下的部分往上收，放大頭之後不會拖到地上
-    function squashHair(k){ if(!head||!invOf.get(head)) return; const hy=new THREE.Vector3().setFromMatrixPosition(invOf.get(head).clone().invert()).y, sk=bindSkull(), c0=sk*.3, kk=Math.min(1,HAIR_HANG/k), v=new THREE.Vector3();
+    // 童顏：下半臉縮短、眼睛那一帶放大（眼睛畫在貼圖上，那塊臉變大眼睛就變大）、下巴收圓。只動臉的正面
+    function faceWarp(v,hj,sk,ax,amt){ const d=v.clone().sub(hj), x=d.dot(ax.rt), h=d.dot(ax.up)/sk, z=d.dot(ax.fw)/sk;
+      const ff=Math.max(0,Math.min(1,(z+.05)/.3))*amt; if(ff<=0||h<-.75) return v;
+      const E1=FACE.e1, E2=FACE.e2, B=-.35;
+      const map=t=>{ if(t>=E2) return t; if(t>=E1) return E2-(E2-t)*FACE.eyeK; const e=E2-(E2-E1)*FACE.eyeK; if(t>=B) return e-(E1-t)*FACE.lowK;
+        const bB=e-(E1-B)*FACE.lowK, shift=bB-B; return t+shift*Math.max(0,1-(B-t)/.35); };
+      const h2=h+(map(h)-h)*ff, band=Math.max(0,1-Math.abs(h-(E1+E2)/2)/((E2-E1)*.9));
+      const x2=x*(1+(FACE.eyeW-1)*band*ff), z2=z-(h<.1?Math.min(.3,.1-h)*FACE.chin*ff:0);
+      return hj.clone().addScaledVector(ax.rt,x2).addScaledVector(ax.up,h2*sk).addScaledVector(ax.fw,z2*sk); }
+    function squashHair(k){ if(!head||!invOf.get(head)) return; const hj=new THREE.Vector3().setFromMatrixPosition(invOf.get(head).clone().invert()), hy=hj.y, sk=bindSkull(), c0=sk*.3, kk=Math.min(1,HAIR_HANG/k), v=new THREE.Vector3();
+      const amt=humanoid&&str>0?str:0;
       model.traverse(o=>{ if(!o.isSkinnedMesh) return; const hi=o.skeleton.bones.indexOf(head); if(hi<0) return;
-        const Pp=o.geometry.attributes.position, SI=o.geometry.attributes.skinIndex, SW=o.geometry.attributes.skinWeight, inv=o.bindMatrix.clone().invert(); let touched=false;   // 注意：attached 模式的 bindMatrixInverse 跟著 matrixWorld，不能用
+        const Pp=o.geometry.attributes.position, SI=o.geometry.attributes.skinIndex, SW=o.geometry.attributes.skinWeight, inv=o.bindMatrix.clone().invert(); let touched=false;
+        const m3=new THREE.Matrix3().setFromMatrix4(o.matrixWorld).invert(), up=new THREE.Vector3(0,1,0).applyMatrix3(m3).normalize(), fw=new THREE.Vector3(0,0,1).applyMatrix3(m3).normalize(), ax={up,fw,rt:new THREE.Vector3().crossVectors(up,fw).normalize()};   // 注意：attached 模式的 bindMatrixInverse 跟著 matrixWorld，不能用
         for(let i=0;i<Pp.count;i++){ let w=0; for(let c=0;c<4;c++) if(SI.getComponent(i,c)===hi) w+=SW.getComponent(i,c); if(w<.3) continue;
-          bindV(o,i,v); const d=hy-v.y; if(d<=c0&&!o.userData.pos0) continue;
+          bindV(o,i,v); const d=hy-v.y; if(d<=c0&&!o.userData.pos0&&!(amt>0)) continue;
           if(!o.userData.pos0){ o.geometry=o.geometry.clone(); const src=o.geometry.attributes.position, f=new Float32Array(src.count*3);   // 共用的幾何先複製一份再改；壓縮過的整數座標轉成浮點
             for(let j=0;j<src.count;j++){ f[j*3]=src.getX(j); f[j*3+1]=src.getY(j); f[j*3+2]=src.getZ(j); }
             o.geometry.setAttribute('position',new THREE.BufferAttribute(f,3)); o.userData.pos0=f.slice(); return squashHair(k); }
+          if(amt>0&&sk>0) v.lerp(faceWarp(v,hj,sk,ax,amt),Math.min(1,w*1.4));
           if(d>c0) v.y+=(d-(c0+(d-c0)*kk))*Math.min(1,w*1.4); v.applyMatrix4(inv); o.geometry.attributes.position.setXYZ(i,v.x,v.y,v.z); touched=true; }
         if(touched) o.geometry.attributes.position.needsUpdate=true; }); }
     function bindRatio(){ if(!head||!invOf.get(head)) return 0; let top=-1e9, minY=1e9; const v=new THREE.Vector3();

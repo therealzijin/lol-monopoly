@@ -241,19 +241,22 @@ function sfx(k){
   playSfx(k);
 }
 function playSfx(k){ if(muted) return; try{ if(k.startsWith('v:')){ const [,cid,i]=k.split(':'); playVoice(cid,+i); } else SFX[k]&&SFX[k](); }catch(e){} }
-// ---- 英雄語音（移動台詞）：voice/{英雄}/{n}.m4a，來自 LoL Wiki 的官方配音，轉成 iPhone 能播的 AAC ----
-let voiceIdx=null, voiceSrc=null; const voiceBuf={}, voiceLast={};
-const voiceIndex=()=>voiceIdx||(voiceIdx=fetch('voice/index.json').then(r=>r.json()).catch(()=>({})));
-function loadVoice(cid,i){ const k=cid+'/'+i; if(!voiceBuf[k]) voiceBuf[k]=fetch(`voice/${k}.m4a`).then(r=>{ if(!r.ok) throw 0; return r.arrayBuffer(); }).then(b=>{ const a=ac(); return a?new Promise((ok,no)=>a.decodeAudioData(b,ok,no)):null; }).catch(()=>{ delete voiceBuf[k]; return null; }); return voiceBuf[k]; }
-async function playVoice(cid,i){ const buf=await loadVoice(cid,i), B=out(); if(!buf||!B||muted) return;
+// ---- 英雄語音（口頭禪）：中文介面播英文原音（LoL Wiki 的移動台詞）、日文介面播日配（選角＋禁用台詞）----
+// 檔案：voice/{en|ja}/{英雄}/{n}.m4a（轉成 iPhone 能播的 AAC）
+let voiceIdx={}, voiceSrc=null; const voiceBuf={}, voiceLast={};
+const vlang=()=>lang==='ja'?'ja':'en';
+const voiceIndex=(L=vlang())=>voiceIdx[L]||(voiceIdx[L]=fetch(`voice/${L}/index.json`).then(r=>r.json()).catch(()=>({})));
+function loadVoice(cid,i,L=vlang()){ const k=`${L}/${cid}/${i}`; if(!voiceBuf[k]) voiceBuf[k]=fetch(`voice/${k}.m4a`).then(r=>{ if(!r.ok) throw 0; return r.arrayBuffer(); }).then(b=>{ const a=ac(); return a?new Promise((ok,no)=>a.decodeAudioData(b,ok,no)):null; }).catch(()=>{ delete voiceBuf[k]; return null; }); return voiceBuf[k]; }
+// r：送出端抽的亂數，每支手機用自己語言的台詞數取餘數 → 兩邊同時開口，各聽各的語言
+async function playVoice(cid,r){ const n=(await voiceIndex())[cid]; if(!n) return; const buf=await loadVoice(cid,r%n), B=out(); if(!buf||!B||muted) return;
   try{ voiceSrc&&voiceSrc.stop(); }catch(e){}
   const src=B.a.createBufferSource(), g=B.a.createGain(); src.buffer=buf; g.gain.value=1.1; src.connect(g); g.connect(B.dry); const s2=B.a.createGain(); s2.gain.value=.12; g.connect(s2).connect(B.send); src.start(); voiceSrc=src; }
-// 輪到誰走：挑一句（不跟上一句重複），用 sfx 送出，兩支手機播同一句
+// 輪到誰走：抽一句（盡量不跟上一句重複），用 sfx 送出
 async function sayMove(p){ const cid=p&&p.skin&&p.skin.cid; if(!cid) return; const n=(await voiceIndex())[cid]; if(!n) return;
-  let i=Math.floor(Math.random()*n); if(n>1&&i===voiceLast[cid]) i=(i+1)%n; voiceLast[cid]=i; sfx(`v:${cid}:${i}`); }
+  let r=Math.floor(Math.random()*12); if(n>1&&r%n===voiceLast[cid]) r++; voiceLast[cid]=r%n; sfx(`v:${cid}:${r}`); }
 // 開局時先把場上英雄的台詞下載好（每句約 10 KB）
 let voicePre='';
-async function prefetchVoices(){ if(!st||!st.players) return; const ids=st.players.map(p=>p.skin&&p.skin.cid).filter(Boolean), sig=ids.join(); if(sig===voicePre) return; voicePre=sig;
+async function prefetchVoices(){ if(!st||!st.players) return; const ids=st.players.map(p=>p.skin&&p.skin.cid).filter(Boolean), sig=vlang()+ids.join(); if(sig===voicePre) return; voicePre=sig;
   const idx=await voiceIndex(); ids.forEach(c=>{ for(let i=0;i<(idx[c]||0);i++) loadVoice(c,i); }); }
 function hearRemote(){
   if(!st) return; if(heardSq>(st.sq||0)) heardSq=0;  // 新的一局重新計數
