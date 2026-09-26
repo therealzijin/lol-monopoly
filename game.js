@@ -240,24 +240,44 @@ function sfx(k){
   if(net&&net.online&&st&&st.phase==='play'&&!SFX_LOCAL[k]){ st.sq=(st.sq||0)+1; st.sfx=(st.sfx||[]).concat([[st.sq,k]]).slice(-12); heardSq=st.sq; }
   playSfx(k);
 }
-function playSfx(k){ if(muted) return; try{ if(k.startsWith('v:')){ const [,cid,i]=k.split(':'); playVoice(cid,+i); } else SFX[k]&&SFX[k](); }catch(e){} }
-// ---- 英雄語音（口頭禪）：中文介面播英文原音（LoL Wiki 的移動台詞）、日文介面播日配（選角＋禁用台詞）----
-// 檔案：voice/{en|ja}/{英雄}/{n}.m4a（轉成 iPhone 能播的 AAC）
-let voiceIdx={}, voiceSrc=null; const voiceBuf={}, voiceLast={};
+function playSfx(k){ if(muted) return; try{ if(k.startsWith('v:')){ const [,cid,cat,r]=k.split(':'); playVoice(cid,cat,+r); } else SFX[k]&&SFX[k](); }catch(e){} }
+// ---- 英雄語音：依情境播放遊戲裡的官方配音（中文介面＝英文原音、日文介面＝日配）----
+// 檔案：voice/{en|ja}/{英雄}/{類別}{n}.m4a，index.json = {英雄:{類別:句數}}（從遊戲檔抽出的基本造型語音）
+// 類別：move 移動｜first 第一次移動｜buy 買地（攻擊台詞）｜ult 升級（大招）｜pay 付錢／坐牢（陣亡）｜earn 收租（擊殺）
+//       go 經過起點（回城）｜joke 機會｜laugh 轉盤、撿到錢｜taunt 獲勝｜meet 同格相遇（meet_英雄＝專屬台詞）｜respawn
+const VO_FALLBACK={first:['move'],buy:['ult','taunt','move'],ult:['buy','taunt','move'],pay:['respawn','move'],earn:['laugh','taunt','buy'],
+  go:['respawn','move'],joke:['laugh','taunt','move'],laugh:['joke','taunt','earn'],taunt:['laugh','earn','joke'],meet:['first','taunt','move'],respawn:['move'],move:[]};
+let voiceIdx={}, voiceBusy=0; const voiceRaw={}, voiceLast={};
 const vlang=()=>lang==='ja'?'ja':'en';
 const voiceIndex=(L=vlang())=>voiceIdx[L]||(voiceIdx[L]=fetch(`voice/${L}/index.json`).then(r=>r.json()).catch(()=>({})));
-function loadVoice(cid,i,L=vlang()){ const k=`${L}/${cid}/${i}`; if(!voiceBuf[k]) voiceBuf[k]=fetch(`voice/${k}.m4a`).then(r=>{ if(!r.ok) throw 0; return r.arrayBuffer(); }).then(b=>{ const a=ac(); return a?new Promise((ok,no)=>a.decodeAudioData(b,ok,no)):null; }).catch(()=>{ delete voiceBuf[k]; return null; }); return voiceBuf[k]; }
-// r：送出端抽的亂數，每支手機用自己語言的台詞數取餘數 → 兩邊同時開口，各聽各的語言
-async function playVoice(cid,r){ const n=(await voiceIndex())[cid]; if(!n) return; const buf=await loadVoice(cid,r%n), B=out(); if(!buf||!B||muted) return;
-  try{ voiceSrc&&voiceSrc.stop(); }catch(e){}
-  const src=B.a.createBufferSource(), g=B.a.createGain(); src.buffer=buf; g.gain.value=1.1; src.connect(g); g.connect(B.dry); const s2=B.a.createGain(); s2.gain.value=.12; g.connect(s2).connect(B.send); src.start(); voiceSrc=src; }
-// 輪到誰走：抽一句（盡量不跟上一句重複），用 sfx 送出
-async function sayMove(p){ const cid=p&&p.skin&&p.skin.cid; if(!cid) return; const n=(await voiceIndex())[cid]; if(!n) return;
-  let r=Math.floor(Math.random()*12); if(n>1&&r%n===voiceLast[cid]) r++; voiceLast[cid]=r%n; sfx(`v:${cid}:${r}`); }
-// 開局時先把場上英雄的台詞下載好（每句約 10 KB）
+function voiceCat(ent,cat){ if(!ent) return null; if(ent[cat]) return cat; if(cat.startsWith('meet_')) return voiceCat(ent,'meet'); for(const c of VO_FALLBACK[cat]||[]) if(ent[c]) return c; return null; }
+// 原始檔先下載（很小），播放時才解碼（解碼後的音訊很占記憶體）
+function fetchVoice(path){ if(!voiceRaw[path]) voiceRaw[path]=fetch(`voice/${path}.m4a`).then(r=>{ if(!r.ok) throw 0; return r.arrayBuffer(); }).catch(()=>{ delete voiceRaw[path]; return null; }); return voiceRaw[path]; }
+async function playVoice(cid,cat,r){
+  const ent=(await voiceIndex())[cid], c=voiceCat(ent,cat); if(!c) return;
+  const raw=await fetchVoice(`${vlang()}/${cid}/${c}${r%ent[c]}`), B=out(); if(!raw||!B||muted) return;
+  const buf=await new Promise((ok,no)=>B.a.decodeAudioData(raw.slice(0),ok,no)).catch(()=>null); if(!buf) return;
+  // 一次只講一句：前一句還沒講完就排在後面，等太久（>2.5 秒）就不講了
+  const now=B.a.currentTime, at=Math.max(now,voiceBusy); if(at-now>2.5) return; voiceBusy=at+buf.duration+.12;
+  const src=B.a.createBufferSource(), g=B.a.createGain(); src.buffer=buf; g.gain.value=1.1; src.connect(g); g.connect(B.dry); const s2=B.a.createGain(); s2.gain.value=.12; g.connect(s2).connect(B.send); src.start(at); }
+// 讓某位玩家說某類台詞：抽一個亂數（盡量不跟上一句重複），用 sfx 送出 → 兩支手機同時開口，各自用自己的語言
+function say(p,cat,delay){ const cid=p&&p.skin&&p.skin.cid; if(!cid) return; const key=cid+cat;
+  let r=Math.floor(Math.random()*12); if(r===voiceLast[key]) r=(r+1)%12; voiceLast[key]=r;
+  const go=()=>sfx(`v:${cid}:${cat}:${r}`); if(delay) setTimeout(()=>{ go(); push(); },delay); else go(); }
+function sayMove(p){ say(p,(p.laps||0)===0&&p.pos===0&&!p.moved?'first':'move'); p.moved=1; }
+const byName=n=>st&&st.players.find(q=>q.name===n);
+// 遊戲事件（log）→ 台詞
+const VO_ON={passGo:'go',go:'go',bought:'buy',npcBuy:'buy',upgraded:'ult',chance:'joke',wheel:'laugh',jail:'pay',twitch:'pay',twitchCash:'pay',
+  taxPct:'pay',taxProp:'pay',bankrupt:'pay',out:'pay',robin:'laugh',lastAid:'laugh'};
+function voiceOnLog(k,p){ if(!st||st.phase!=='play'||!p) return;
+  if(k==='rent'||k==='rentHalf'){ say(byName(p.n),'pay'); say(byName(p.o),'earn',1400); return; }
+  if(k==='steal'){ say(byName(p.n),'laugh'); say(byName(p.o),'pay',1400); return; }
+  if(k==='auctionWin'){ say(byName(p.b),'earn'); return; }
+  if(VO_ON[k]) say(byName(p.n),VO_ON[k]); }
+// 開局時先把場上英雄的台詞下載好（每位約 25 句、每句約 8 KB）
 let voicePre='';
-async function prefetchVoices(){ if(!st||!st.players) return; const ids=st.players.map(p=>p.skin&&p.skin.cid).filter(Boolean), sig=vlang()+ids.join(); if(sig===voicePre) return; voicePre=sig;
-  const idx=await voiceIndex(); ids.forEach(c=>{ for(let i=0;i<(idx[c]||0);i++) loadVoice(c,i); }); }
+async function prefetchVoices(){ if(!st||!st.players) return; const ids=st.players.map(p=>p.skin&&p.skin.cid).filter(Boolean), L=vlang(), sig=L+ids.join(); if(sig===voicePre) return; voicePre=sig;
+  const idx=await voiceIndex(); ids.forEach(c=>{ const e=idx[c]||{}; Object.keys(e).forEach(cat=>{ if(cat.startsWith('meet_')&&!ids.includes(cat.slice(5))) return; for(let i=0;i<e[cat];i++) fetchVoice(`${L}/${c}/${cat}${i}`); }); }); }
 function hearRemote(){
   if(!st) return; if(heardSq>(st.sq||0)) heardSq=0;  // 新的一局重新計數
   if(!st.sfx) return; const q=st.sfx.filter(e=>e[0]>heardSq);
@@ -291,7 +311,7 @@ function newState(mode,names,skins){
 }
 function tiles(){return TILES[st.mode]}
 function cfg(){return CFG[st.mode]}
-function log(k,p){st.log.unshift({k,p}); if(st.log.length>30) st.log.length=30;}
+function log(k,p){st.log.unshift({k,p}); if(st.log.length>30) st.log.length=30; try{ voiceOnLog(k,p); }catch(e){} }
 function groupTiles(g){return tiles().map((t,i)=>t.g===g?i:-1).filter(i=>i>=0)}
 function ownsGroup(pi,g){return groupTiles(g).every(i=>st.owners[i]&&st.owners[i].owner===pi)}
 function propCount(pi){return Object.values(st.owners).filter(o=>o.owner===pi).length}
@@ -488,7 +508,7 @@ function renderPanel(){
   over.innerHTML='';
   if(st.phase==='over'){
     $('panel').style.display='none';
-    if(!renderPanel.overSeq||renderPanel.overSeq!==st.seq+':'+st.round){ renderPanel.overSeq=st.seq+':'+st.round; const w=st.winner; sfx(w==null?'win':(!net.online||w===net.me)?'win':'lose'); }
+    if(!renderPanel.overSeq||renderPanel.overSeq!==st.seq+':'+st.round){ renderPanel.overSeq=st.seq+':'+st.round; const w=st.winner; sfx(w==null?'win':(!net.online||w===net.me)?'win':'lose'); const wp=w!=null&&st.players[w]; if(wp&&wp.skin) setTimeout(()=>playVoice(wp.skin.cid,'taunt',st.round),1300); }
     const w=st.winner;
     const rk=ranking().map((i,k)=>`${k+1}. ${st.players[i].name} $${worth(i)}`).join('　');
     over.innerHTML=`<div class="over"><h2>${w==null?T('draw'):T('wins',{n:st.players[w].name})}</h2><p>${w==null?T('drawSub'):(st.players[w].npc?T('npcWin'):T('winSub'))}</p><p class="sub" style="font-size:12px;color:var(--ink-soft)">${T('rankSub',{r:rk})}</p>${(st.awards&&st.awards.length)?`<p class="sub" style="font-size:12px;color:var(--ink-soft)">${T('awardsTitle')}：${st.awards.map(a=>`${T('aw_'+a.k)} ${esc(st.players[a.pi].name)} +$${a.a}`).join('　')}</p>`:''}
@@ -667,6 +687,8 @@ async function roll(){
   if(!reduce&&v.settle) await v.settle();          // 3D：等棋子真的走到再結算
   busy=false;
   land(st.turn,0);
+  // 停在有其他英雄的格子：一半機率打招呼（有專屬台詞就用專屬的，例如阿璃遇到犽宿）
+  { const mates=st.players.filter((q,j)=>j!==st.turn&&!q.out&&q.pos===p.pos&&q.skin); if(mates.length&&st.phase==='play'&&Math.random()<.5){ const q=mates[Math.floor(Math.random()*mates.length)]; say(p,'meet_'+q.skin.cid,900); } }
   if(st.phase==='over'){ render(); push(); return; }
   st.step=st.pending?'decide':'end';
   render(); push();
