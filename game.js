@@ -77,7 +77,7 @@ zh:{
  title:'兩人大富翁',sub:'給你們兩個玩的小桌遊。各拿一支手機，開一間房就能開始。',
  myname:'你的名字',myname_ph:'例如：周',name2:'對方的名字',name2_ph:'例如：小美',
  how:'怎麼玩',online:'兩支手機',online_s:'各看自己的畫面',local:'同一支手機',local_s:'輪流傳給對方',
- npc:'電腦玩家',npc0:'不要',npc1:'1 位',npc2:'2 位',props:'地產',bonus:'落後補助',char0:'你的角色',char1:'對方的角色',rules:'玩法說明',rules_title:'玩法說明',close:'知道了',riot:'本遊戲為依據 Riot Games「Legal Jibber Jabber」政策製作的非商業粉絲作品，使用了 Riot Games 擁有的素材。Riot Games 並未背書或贊助本作。英雄 3D 模型來自 modelviewer.lol，英雄資料來自 Riot Data Dragon。',i_owner:'持有者',i_none:'無人',i_price:'價格',i_rent:'租金',i_lv:'等級',i_next:'升級後租金',i_tax:'稅金（或現金 8%）',i_full:'（整組加倍）',layout:'棋盤排列',ring:'環形',ring_s:'繞一圈，方向清楚',snake:'蛇形',snake_s:'格子最大，來回走',mode:'模式',quick:'快速',quick_s:'20 格・15 回合・約 10 分',classic:'經典',classic_s:'32 格・最多 40 回合',
+ npc:'電腦玩家',npc0:'不要',npc1:'1 位',npc2:'2 位',props:'地產',bonus:'落後補助',char0:'你的角色',char1:'對方的角色',sellBtn:'拍賣／出售地產',sellTitle:'出售地產',sellHint:'拍賣：其他人各出一次價（互相看不到），價高者得，底價是地價的一半。賣給銀行：立刻拿回一半的錢。',auction:'拍賣',bankBtn:'賣銀行 ${v}',auctionOn:'<b>{s}</b> 拍賣「<b>{t}</b>」，價值 ${v}，底價 ${m}',yourBid:'你的出價',bid:'出價',passBid:'不要',bidDone:'已出價',thinking:'考慮中',bidFor:'把手機交給 <b>{n}</b> 出價',secLeft:'剩 {s} 秒',noProps:'你目前沒有地產。',closeBtn:'關閉',rules:'玩法說明',rules_title:'玩法說明',close:'知道了',riot:'本遊戲為依據 Riot Games「Legal Jibber Jabber」政策製作的非商業粉絲作品，使用了 Riot Games 擁有的素材。Riot Games 並未背書或贊助本作。英雄 3D 模型來自 modelviewer.lol，英雄資料來自 Riot Data Dragon。',i_owner:'持有者',i_none:'無人',i_price:'價格',i_rent:'租金',i_lv:'等級',i_next:'升級後租金',i_tax:'稅金（或現金 8%）',i_full:'（整組加倍）',layout:'棋盤排列',ring:'環形',ring_s:'繞一圈，方向清楚',snake:'蛇形',snake_s:'格子最大，來回走',mode:'模式',quick:'快速',quick_s:'20 格・15 回合・約 10 分',classic:'經典',classic_s:'32 格・最多 40 回合',
  create:'開新房間',startLocal:'開始遊戲',code_ph:'輸入 4 位房號',join:'加入',
  note:'兩支手機模式：把連結傳給對方，房主選模式開房，對方輸入房號加入。兩支手機最好連同一個 Wi-Fi。語言可以各自選。',
  e_storage:'這個環境沒有連線功能，請改用「同一支手機」模式。',e_disc:'連線中斷了。兩支手機請連同一個 Wi-Fi，然後重新開房。',connecting:'連線中…',e_name:'先填你的名字。',e_create:'建立房間失敗，請再試一次。',e_code:'房號是 4 位數字。',e_notfound:'找不到這個房號，確認一下對方有沒有開房。',e_started:'這間房已經開始了。',
@@ -87,7 +87,7 @@ zh:{
  buyQ:'「<b>{t}</b>」沒人買，要用 ${p} 買下嗎？',buy:'買下',noBuy:'不買',upQ:'「<b>{t}</b>」可以升級（${c}），租金會從 ${a} 漲到 ${b}。',up:'升級',noUp:'先不要',end:'結束回合',waitTurn:'輪到 <b>{n}</b>，稍等一下。',
  draw:'平手！',wins:'{n} 贏了！',drawSub:'兩人資產一樣多，改天再分勝負。',winSub:'輸的人負責今晚的家事（規則自訂）。',rankSub:'名次：{r}',awardsTitle:'終局獎項',aw_rent:'苦主獎',aw_chance:'冒險獎',aw_laps:'旅行獎',npcWin:'被電腦贏走了！兩個人一起負責家事。',again:'再來一局',hostAgain:'等房主開下一局…',home:'回首頁',
  tile:{go:'起點',chance:'機會',tax:'稅務局',rest:'咖啡休息',jail:'罰站區',wheel:'幸運轉盤',twitch:'圖奇偷家'},
- log:{start:'遊戲開始！後手多拿 $100 補償。',again:'新的一局開始！後手多拿 $100 補償。',roll:'{n} 擲出 {s}',boost:'{n} 希維爾加速中！移動距離加倍，走 {s} 格',passGo:'{n} 經過起點，領 ${a}',npcBuy:'{n} 買下了「{t}」',npcPass:'{n} 看了看「{t}」，決定不買',robin:'{n} 是首富，付給其他每人 ${a}',steal:'{n} 拿走了 {o} 的「{t}」',crash:'房市崩跌！下一輪所有租金減半',lastAid:'{n} 排名最後，領補助 ${a}',out:'{n} 出局了',newRound:'第 {r} 回合開始，這回合由 {n} 先手',dealt:'{n} 起手抽到「{t}」，付 ${p}',final:'最後 {k} 回合！排名最後的 {n} 領衝刺補助 ${a}',award_rent:'苦主獎：{n} 這局共付租金 ${v}，獲得 ${a}',award_chance:'冒險獎：{n} 抽了 {v} 張機會卡，獲得 ${a}',award_laps:'旅行獎：{n} 經過起點 {v} 次，獲得 ${a}',upkeep:'{n} 持有 {c} 塊地，超額部分繳維護費 ${a}',taxProp:'{n} 被稅務局收走 ${a}（含地產稅 ${b}）',rentHalf:'{n} 排名最後，踩到 {o} 的「{t}」租金減半，付 ${r}',twitch:'{n} 被圖奇偷家！「{t}」被偷走，重新變成空地',twitchCash:'{n} 被圖奇偷家！沒有地可偷，現金被摸走 ${a}',twitchNone:'{n} 被圖奇偷家，但家裡空空的，什麼都沒被偷',taxPct:'{n} 被稅務局收走 ${a}（依現金 8%）',
+ log:{start:'遊戲開始！後手多拿 $100 補償。',again:'新的一局開始！後手多拿 $100 補償。',roll:'{n} 擲出 {s}',boost:'{n} 希維爾加速中！移動距離加倍，走 {s} 格',passGo:'{n} 經過起點，領 ${a}',npcBuy:'{n} 買下了「{t}」',npcPass:'{n} 看了看「{t}」，決定不買',robin:'{n} 是首富，付給其他每人 ${a}',steal:'{n} 拿走了 {o} 的「{t}」',crash:'房市崩跌！下一輪所有租金減半',lastAid:'{n} 排名最後，領補助 ${a}',out:'{n} 出局了',newRound:'第 {r} 回合開始，這回合由 {n} 先手',auctionStart:'{n} 拍賣「{t}」，底價 ${m}',auctionWin:'{b} 以 ${p} 標下 {n} 的「{t}」',auctionNone:'「{t}」沒人出價，流標',bankSell:'{n} 把「{t}」賣給銀行，拿回 ${v}',dealt:'{n} 起手抽到「{t}」，付 ${p}',final:'最後 {k} 回合！排名最後的 {n} 領衝刺補助 ${a}',award_rent:'苦主獎：{n} 這局共付租金 ${v}，獲得 ${a}',award_chance:'冒險獎：{n} 抽了 {v} 張機會卡，獲得 ${a}',award_laps:'旅行獎：{n} 經過起點 {v} 次，獲得 ${a}',upkeep:'{n} 持有 {c} 塊地，超額部分繳維護費 ${a}',taxProp:'{n} 被稅務局收走 ${a}（含地產稅 ${b}）',rentHalf:'{n} 排名最後，踩到 {o} 的「{t}」租金減半，付 ${r}',twitch:'{n} 被圖奇偷家！「{t}」被偷走，重新變成空地',twitchCash:'{n} 被圖奇偷家！沒有地可偷，現金被摸走 ${a}',twitchNone:'{n} 被圖奇偷家，但家裡空空的，什麼都沒被偷',taxPct:'{n} 被稅務局收走 ${a}（依現金 8%）',
   canBuy:'{n} 來到「{t}」，可以用 ${p} 買下',poor:'{n} 來到「{t}」，但錢不夠買',rent:'{n} 踩到 {o} 的「{t}」，付租金 ${r}',canUp:'{n} 回到自己的「{t}」，可以花 ${c} 升級',back:'{n} 回到自己的「{t}」',
   chance:'{n} 抽到機會：{c}',tax:'{n} 被稅務局收走 ${a}',jail:'{n} 被罰站，下一回合暫停',wheel:'{n} 轉到「{w}」',rest:'{n} 在咖啡店休息一下',go:'{n} 停在起點',
   sell:'{n} 錢不夠，賣掉「{t}」換回 ${v}',bankrupt:'{n} 破產了！',skip:'{n} 這回合罰站，跳過',bought:'{n} 買下了「{t}」',upgraded:'{n} 把「{t}」升到 {l} 級',settle:'{m} 回合結束！結算資產：{r}'}
@@ -96,7 +96,7 @@ ja:{
  title:'ふたりの大富豪すごろく',sub:'ふたり専用のミニボードゲーム。それぞれスマホを持って、部屋を作ればすぐ始められます。',
  myname:'あなたの名前',myname_ph:'例：なつ',name2:'相手の名前',name2_ph:'例：しゅう',
  how:'遊び方',online:'スマホ2台',online_s:'それぞれの画面で',local:'スマホ1台',local_s:'交代で回す',
- npc:'コンピュータ',npc0:'なし',npc1:'1人',npc2:'2人',props:'物件',bonus:'補助',char0:'あなたのキャラ',char1:'相手のキャラ',rules:'遊び方',rules_title:'遊び方',close:'わかった',riot:'本作は Riot Games の「Legal Jibber Jabber」ポリシーに基づき、Riot Games 所有の素材を使用して作られた非営利のファン作品です。Riot Games は本作を推奨・後援していません。チャンピオンの 3D モデルは modelviewer.lol、データは Riot Data Dragon を利用しています。',i_owner:'所有者',i_none:'なし',i_price:'価格',i_rent:'家賃',i_lv:'レベル',i_next:'改築後の家賃',i_tax:'税金（または所持金の8%）',i_full:'（そろって2倍）',layout:'盤面の並び',ring:'ぐるり一周',ring_s:'方向がわかりやすい',snake:'ジグザグ',snake_s:'マスが一番大きい',mode:'モード',quick:'クイック',quick_s:'20マス・15ラウンド・約10分',classic:'クラシック',classic_s:'32マス・最大40ラウンド',
+ npc:'コンピュータ',npc0:'なし',npc1:'1人',npc2:'2人',props:'物件',bonus:'補助',char0:'あなたのキャラ',char1:'相手のキャラ',sellBtn:'物件を競売／売却',sellTitle:'物件を手放す',sellHint:'競売：ほかの人が1回ずつ入札（お互い見えない）。最高額の人が落札。最低価格は物件価格の半分。銀行に売る：すぐに半額を受け取る。',auction:'競売',bankBtn:'銀行に売る ${v}',auctionOn:'<b>{s}</b> が「<b>{t}</b>」を競売中。価値 ${v}、最低 ${m}',yourBid:'あなたの入札',bid:'入札',passBid:'見送る',bidDone:'入札済み',thinking:'検討中',bidFor:'スマホを <b>{n}</b> に渡して入札',secLeft:'残り {s} 秒',noProps:'まだ物件を持っていません。',closeBtn:'閉じる',rules:'遊び方',rules_title:'遊び方',close:'わかった',riot:'本作は Riot Games の「Legal Jibber Jabber」ポリシーに基づき、Riot Games 所有の素材を使用して作られた非営利のファン作品です。Riot Games は本作を推奨・後援していません。チャンピオンの 3D モデルは modelviewer.lol、データは Riot Data Dragon を利用しています。',i_owner:'所有者',i_none:'なし',i_price:'価格',i_rent:'家賃',i_lv:'レベル',i_next:'改築後の家賃',i_tax:'税金（または所持金の8%）',i_full:'（そろって2倍）',layout:'盤面の並び',ring:'ぐるり一周',ring_s:'方向がわかりやすい',snake:'ジグザグ',snake_s:'マスが一番大きい',mode:'モード',quick:'クイック',quick_s:'20マス・15ラウンド・約10分',classic:'クラシック',classic_s:'32マス・最大40ラウンド',
  create:'部屋を作る',startLocal:'ゲーム開始',code_ph:'4桁の部屋番号',join:'参加',
  note:'スマホ2台モード：リンクを相手に送り、ホストがモードを選んで部屋を作り、相手は部屋番号を入力して参加します。ふたりとも同じWi-Fiにつなぐのがおすすめ。言語はそれぞれ選べます。',
  e_storage:'この環境ではオンライン接続が使えません。「スマホ1台」モードをお使いください。',e_disc:'接続が切れました。ふたりとも同じWi-Fiにつないで、部屋を作り直してください。',connecting:'接続中…',e_name:'先に名前を入力してください。',e_create:'部屋を作れませんでした。もう一度お試しください。',e_code:'部屋番号は4桁の数字です。',e_notfound:'その部屋番号が見つかりません。相手が部屋を作ったか確認してください。',e_started:'この部屋はすでに始まっています。',
@@ -106,7 +106,7 @@ ja:{
  buyQ:'「<b>{t}</b>」は空き地。${p} で買いますか？',buy:'買う',noBuy:'買わない',upQ:'「<b>{t}</b>」を ${c} でアップグレードできます。家賃が ${a} → ${b} に。',up:'アップグレード',noUp:'やめておく',end:'ターン終了',waitTurn:'<b>{n}</b> の番です。少しお待ちください。',
  draw:'引き分け！',wins:'{n} の勝ち！',drawSub:'資産が同じ。勝負はまた今度。',winSub:'負けた人が今夜の家事担当（ルールはご自由に）。',rankSub:'順位：{r}',awardsTitle:'ボーナス賞',aw_rent:'苦労賞',aw_chance:'冒険賞',aw_laps:'旅行賞',npcWin:'コンピュータの勝ち！ふたりで家事担当。',again:'もう一局',hostAgain:'ホストが次のゲームを始めるのを待っています…',home:'トップへ戻る',
  tile:{go:'スタート',chance:'チャンス',tax:'税務署',rest:'カフェ休憩',jail:'おしおき',wheel:'ルーレット',twitch:'トゥイッチ襲来'},
- log:{start:'ゲーム開始！後手は補償として $100 多くもらえます。',again:'次のゲーム開始！後手は補償として $100 多くもらえます。',roll:'{n} が {s} を出した',boost:'{n} はシヴィアの加速中！移動距離2倍で {s} マス進む',passGo:'{n} がスタートを通過、${a} 受け取り',npcBuy:'{n} が「{t}」を購入',npcPass:'{n} は「{t}」を見て買わなかった',robin:'{n} は資産トップ。他の全員に ${a} 支払い',steal:'{n} が {o} の「{t}」を奪った',crash:'バブル崩壊！次のラウンドは全員の家賃が半額',lastAid:'{n} は最下位。補助 ${a} 受け取り',out:'{n} が脱落',newRound:'ラウンド {r} 開始。このラウンドは {n} から',dealt:'{n} の初期物件は「{t}」、${p} 支払い',final:'ラスト {k} ラウンド！最下位の {n} に追い上げボーナス ${a}',award_rent:'苦労賞：{n} は家賃を合計 ${v} 支払った。${a} 獲得',award_chance:'冒険賞：{n} はチャンスカードを {v} 枚引いた。${a} 獲得',award_laps:'旅行賞：{n} はスタートを {v} 回通過。${a} 獲得',upkeep:'{n} は物件 {c} 件。超過分の維持費 ${a} を支払い',taxProp:'{n} が税務署に ${a} 取られた（物件税 ${b} 込み）',rentHalf:'{n} は最下位。{o} の「{t}」の家賃は半額、${r} 支払い',twitch:'{n} の家にトゥイッチが侵入！「{t}」が奪われて空き地に戻った',twitchCash:'{n} の家にトゥイッチが侵入！土地がないので現金 ${a} を盗まれた',twitchNone:'{n} の家にトゥイッチが侵入したが、何もなくて手ぶらで帰った',taxPct:'{n} が税務署に ${a} 取られた（所持金の8%）',
+ log:{start:'ゲーム開始！後手は補償として $100 多くもらえます。',again:'次のゲーム開始！後手は補償として $100 多くもらえます。',roll:'{n} が {s} を出した',boost:'{n} はシヴィアの加速中！移動距離2倍で {s} マス進む',passGo:'{n} がスタートを通過、${a} 受け取り',npcBuy:'{n} が「{t}」を購入',npcPass:'{n} は「{t}」を見て買わなかった',robin:'{n} は資産トップ。他の全員に ${a} 支払い',steal:'{n} が {o} の「{t}」を奪った',crash:'バブル崩壊！次のラウンドは全員の家賃が半額',lastAid:'{n} は最下位。補助 ${a} 受け取り',out:'{n} が脱落',newRound:'ラウンド {r} 開始。このラウンドは {n} から',auctionStart:'{n} が「{t}」を競売に。最低 ${m}',auctionWin:'{b} が {n} の「{t}」を ${p} で落札',auctionNone:'「{t}」は入札なしで不成立',bankSell:'{n} が「{t}」を銀行に売って ${v} 受け取り',dealt:'{n} の初期物件は「{t}」、${p} 支払い',final:'ラスト {k} ラウンド！最下位の {n} に追い上げボーナス ${a}',award_rent:'苦労賞：{n} は家賃を合計 ${v} 支払った。${a} 獲得',award_chance:'冒険賞：{n} はチャンスカードを {v} 枚引いた。${a} 獲得',award_laps:'旅行賞：{n} はスタートを {v} 回通過。${a} 獲得',upkeep:'{n} は物件 {c} 件。超過分の維持費 ${a} を支払い',taxProp:'{n} が税務署に ${a} 取られた（物件税 ${b} 込み）',rentHalf:'{n} は最下位。{o} の「{t}」の家賃は半額、${r} 支払い',twitch:'{n} の家にトゥイッチが侵入！「{t}」が奪われて空き地に戻った',twitchCash:'{n} の家にトゥイッチが侵入！土地がないので現金 ${a} を盗まれた',twitchNone:'{n} の家にトゥイッチが侵入したが、何もなくて手ぶらで帰った',taxPct:'{n} が税務署に ${a} 取られた（所持金の8%）',
   canBuy:'{n} が「{t}」に到着。${p} で買える',poor:'{n} が「{t}」に到着したが、お金が足りない',rent:'{n} が {o} の「{t}」に止まり、家賃 ${r} を支払い',canUp:'{n} が自分の「{t}」に戻った。${c} でアップグレード可能',back:'{n} が自分の「{t}」に戻った',
   chance:'{n} がチャンスカード：{c}',tax:'{n} が税務署に ${a} 取られた',jail:'{n} がおしおき。次のターンは休み',wheel:'{n} のルーレット：「{w}」',rest:'{n} はカフェでひと休み',go:'{n} がスタートに止まった',
   sell:'{n} はお金が足りず、「{t}」を売って ${v} 回収',bankrupt:'{n} が破産！',skip:'{n} はおしおき中、このターンは休み',bought:'{n} が「{t}」を購入',upgraded:'{n} が「{t}」をレベル {l} に',settle:'{m} ラウンド終了！資産結果：{r}'}
@@ -156,7 +156,10 @@ function applyLang(){
 /* ---------- 音效（Web Audio 合成，無外部檔案） ---------- */
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}}, lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
 let muted=lsGet('mp-muted')==='1', actx=null;
-function ac(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(actx&&actx.state==='suspended') actx.resume(); return actx; }
+let acIdle=null;
+// 省電：20 秒沒有聲音或頁面切到背景就讓音訊晶片休眠；任何觸控或下一個音效再喚醒
+function ac(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(actx&&actx.state==='suspended') actx.resume();
+  if(actx){ clearTimeout(acIdle); acIdle=setTimeout(()=>{ try{ actx.suspend(); }catch(e){} },20000); } return actx; }
 function tone(f,t0,dur,type='sine',vol=.18,f2){
   const a=ac(); if(!a) return; const o=a.createOscillator(), g=a.createGain();
   o.type=type; o.frequency.setValueAtTime(f,a.currentTime+t0); if(f2) o.frequency.exponentialRampToValueAtTime(f2,a.currentTime+t0+dur);
@@ -185,7 +188,8 @@ const SFX={
 };
 function sfx(k){ if(muted) return; try{ SFX[k]&&SFX[k](); }catch(e){} }
 function setMuted(m){ muted=m; lsSet('mp-muted',m?'1':'0'); document.querySelectorAll('.b-mute').forEach(b=>b.textContent=m?'🔇':'🔊'); }
-document.addEventListener('pointerdown',()=>ac(),{once:true});
+document.addEventListener('pointerdown',()=>ac());
+document.addEventListener('visibilitychange',()=>{ if(document.hidden&&actx){ try{ actx.suspend(); }catch(e){} } });
 document.addEventListener('click',e=>{ if(e.target.closest('button')) sfx('click'); },true);
 
 /* ---------- 狀態 ---------- */
@@ -338,6 +342,7 @@ function startPolling(){ if(timer) clearInterval(timer); timer=null; if(hasStora
 function stopPolling(){ if(timer) clearInterval(timer); timer=null; if(conn){ try{conn.close()}catch(e){} conn=null; } if(peer){ try{peer.destroy()}catch(e){} peer=null; } }
 function onData(d){
   let m; try{ m=typeof d==='string'?JSON.parse(d):d; }catch(e){ return; }
+  if(m.type==='act'){ if(net.online&&net.me===0&&st) doAct(Object.assign({},m,{pi:1})); return; }
   if(m.type==='join'){ if(!st||st.phase!=='lobby') return; st.players[1].name=m.name; st.players[1].skin=m.skin||null; st.guestJoined=true; render(); push(); return; }
   if(m.seq!=null && (!st||m.seq>st.seq)){ st=m; if(busy) return; render(); }
 }
@@ -417,12 +422,13 @@ function renderPanel(){
   }
   $('panel').style.display='';
   const p=st.players[st.turn];
+  if(st.auction){ renderAuction(say,act); return; }
   if(p.npc||!myTurn()){ say.innerHTML=T('waitTurn',{n:p.name}); act.innerHTML=''; return; }
   if(st.step==='moving'){ say.innerHTML=T('moving'); act.innerHTML=''; return; }
   if(st.step==='roll'){
     say.innerHTML=net.online?T('yourTurn',{n:p.name}):T('passPhone',{n:p.name});
-    act.innerHTML=`<button class="primary wide" id="b-roll">${T('roll')}</button>`;
-    $('b-roll').onclick=roll;
+    act.innerHTML=`<button class="primary wide" id="b-roll">${T('roll')}</button>${myProps(st.turn).length?`<button class="ghost-ink wide" id="b-sell">${T('sellBtn')}</button>`:''}`;
+    $('b-roll').onclick=roll; if($('b-sell')) $('b-sell').onclick=()=>openSell(st.turn);
   } else if(st.pending&&st.pending.type==='buy'){
     const t=tiles()[st.pending.tile];
     say.innerHTML=T('buyQ',{t:tileName(st.pending.tile),p:t.p});
@@ -437,10 +443,93 @@ function renderPanel(){
     $('b-no').onclick=()=>{ st.pending=null; finish(); };
   } else {
     say.innerHTML=st.log[0]?logText(st.log[0]):'';
-    act.innerHTML=`<button class="primary wide" id="b-end">${T('end')}</button>`;
+    act.innerHTML=`<button class="primary wide" id="b-end">${T('end')}</button>${myProps(st.turn).length?`<button class="ghost-ink wide" id="b-sell">${T('sellBtn')}</button>`:''}`;
+    if($('b-sell')) $('b-sell').onclick=()=>openSell(st.turn);
     $('b-end').onclick=()=>{ endTurn(); render(); push(); };
   }
 }
+/* ---------- 拍賣與出售（連線時由房主統一處理） ---------- */
+const AUCTION_MS=20000;
+let auctionTimer=null;
+function propValue(i){ const o=st.owners[i]; return tiles()[i].p+(o?o.level*upCost(i):0); }
+function myProps(pi){ return Object.keys(st.owners).filter(i=>st.owners[i].owner===pi).map(Number).sort((a,b)=>propValue(a)-propValue(b)); }
+function canTrade(pi){ return st.phase==='play'&&!st.auction&&!busy&&st.turn===pi&&(st.step==='roll'||st.step==='end'); }
+function npcBid(pi,a){
+  const p=st.players[pi], t=tiles()[a.tile], mine=groupTiles(t.g).filter(j=>st.owners[j]&&st.owners[j].owner===pi).length, need=groupTiles(t.g).length;
+  if((rankOf(pi)===0&&propCount(pi)>=3)||propCount(pi)>=RULE.npcCap) return 0;
+  let want=a.value*(.72+(mine===need-1?.4:mine>0?.2:0))*(.9+Math.random()*.2);
+  const bid=Math.floor(Math.min(want,p.money-150)/10)*10;
+  return bid>=a.min?bid:0;
+}
+function startAuction(pi,i){
+  if(!canTrade(pi)||!st.owners[i]||st.owners[i].owner!==pi) return false;
+  const value=propValue(i), min=Math.round(value/2/10)*10;
+  const bidders=alive().filter(j=>j!==pi);
+  const a=st.auction={seller:pi,tile:i,value,min,bids:{},bidders,deadline:Date.now()+AUCTION_MS};
+  bidders.forEach(j=>{ const q=st.players[j]; if(q.npc) a.bids[j]=npcBid(j,a); else if(q.money<min) a.bids[j]=0; });
+  log('auctionStart',{n:st.players[pi].name,ti:i,m:min}); sfx('card');
+  armAuction(); render(); push(); return true;
+}
+function submitBid(pi,amt){
+  const a=st.auction; if(!a||!a.bidders.includes(pi)||a.bids[pi]!=null) return;
+  amt=Math.floor(+amt||0); if(amt&&(amt<a.min||amt>st.players[pi].money)) return;
+  a.bids[pi]=amt; if(a.bidders.every(j=>a.bids[j]!=null)) resolveAuction(); else { render(); push(); }
+}
+function resolveAuction(){
+  const a=st.auction; if(!a) return; clearInterval(auctionTimer); auctionTimer=null;
+  let best=-1, bv=0; a.bidders.forEach(j=>{ const v=a.bids[j]||0; if(v>bv||(v===bv&&v>0&&Math.random()<.5)){ bv=v; best=j; } });
+  const s=st.players[a.seller];
+  if(best>=0&&bv>=a.min&&st.owners[a.tile]&&st.owners[a.tile].owner===a.seller){ st.owners[a.tile].owner=best; pay(best,bv,a.seller); log('auctionWin',{b:st.players[best].name,p:bv,n:s.name,ti:a.tile}); sfx('buy'); }
+  else log('auctionNone',{ti:a.tile});
+  st.auction=null; render(); push();
+}
+// 房主：時間到自動結算（每 0.5 秒檢查一次）
+function armAuction(){ clearInterval(auctionTimer); auctionTimer=setInterval(()=>{ if(!st||!st.auction){ clearInterval(auctionTimer); auctionTimer=null; return; } if(Date.now()>=st.auction.deadline) resolveAuction(); },500); }
+function bankSell(pi,i){
+  if(!canTrade(pi)||!st.owners[i]||st.owners[i].owner!==pi) return;
+  const v=Math.round(propValue(i)/2); delete st.owners[i]; st.players[pi].money+=v; log('bankSell',{n:st.players[pi].name,ti:i,v}); sfx('coin'); render(); push();
+}
+// 來賓的操作送給房主處理
+function act(a,extra){
+  const me=net.online?net.me:st.turn;
+  if(net.online&&net.me!==0){ if(conn&&conn.open) conn.send(JSON.stringify(Object.assign({type:'act',a,pi:net.me},extra))); return; }
+  doAct(Object.assign({a,pi:extra&&extra.pi!=null?extra.pi:me},extra));
+}
+function doAct(m){
+  if(m.a==='auction') startAuction(m.pi,+m.tile);
+  else if(m.a==='bank') bankSell(m.pi,+m.tile);
+  else if(m.a==='bid') submitBid(m.pi,m.amt);
+}
+function openSell(pi){
+  const list=myProps(pi); $('m-sell-t').textContent=T('sellTitle'); $('m-sell-x').textContent=T('closeBtn');
+  $('m-sell-b').innerHTML=`<p class="sub" style="color:var(--ink-soft);font-size:12.5px;margin-bottom:8px">${T('sellHint')}</p>`+(list.length?list.map(i=>{ const o=st.owners[i], v=propValue(i);
+    return `<div class="sellrow"><div><b>${esc(tileName(i))}</b> ${'▲'.repeat(o.level)}<small>$${v}</small></div><button class="primary" data-au="${i}">${T('auction')}</button><button data-bk="${i}">${T('bankBtn',{v:Math.round(v/2)})}</button></div>`; }).join(''):`<p>${T('noProps')}</p>`);
+  $('m-sell-b').querySelectorAll('[data-au]').forEach(b=>b.onclick=()=>{ $('m-sell').classList.remove('on'); act('auction',{tile:+b.dataset.au,pi}); });
+  $('m-sell-b').querySelectorAll('[data-bk]').forEach(b=>b.onclick=()=>{ $('m-sell').classList.remove('on'); act('bank',{tile:+b.dataset.bk,pi}); });
+  $('m-sell').classList.add('on');
+}
+// 拍賣進行中的面板
+let bidAmt=0, bidKey='';
+function renderAuction(say,actEl){
+  const a=st.auction, left=Math.max(0,Math.ceil((a.deadline-Date.now())/1000));
+  say.innerHTML=T('auctionOn',{s:st.players[a.seller].name,t:tileName(a.tile),v:a.value,m:a.min})+` <span class="cd-left" id="au-left">${T('secLeft',{s:left})}</span>`;
+  // 這支手機要替誰出價：連線＝自己；同一支手機＝下一個還沒出價的人類
+  const who=net.online?(a.bidders.includes(net.me)&&a.bids[net.me]==null?net.me:-1):(a.bidders.find(j=>!st.players[j].npc&&a.bids[j]==null)??-1);
+  const status=a.bidders.map(j=>`<span class="bidst">${esc(st.players[j].name)}：${a.bids[j]!=null?T('bidDone'):T('thinking')}</span>`).join('');
+  if(who<0){ actEl.innerHTML=`<div class="bidstats">${status}</div>`; return; }
+  const key=a.tile+':'+a.deadline+':'+who; if(bidKey!==key){ bidKey=key; bidAmt=a.min; }
+  const max=st.players[who].money;
+  actEl.innerHTML=`${net.online?'':`<p class="sub" style="width:100%;margin:0 0 4px">${T('bidFor',{n:st.players[who].name})}</p>`}
+    <div class="bidrow"><button id="bd-m">−50</button><div class="bidamt"><small>${T('yourBid')}</small>$<span id="bd-v">${bidAmt}</span></div><button id="bd-p">+50</button></div>
+    <button class="primary" id="bd-ok">${T('bid')}</button><button id="bd-no">${T('passBid')}</button><div class="bidstats">${status}</div>`;
+  const upd=()=>{ $('bd-v').textContent=bidAmt; };
+  $('bd-m').onclick=()=>{ bidAmt=Math.max(a.min,bidAmt-50); upd(); };
+  $('bd-p').onclick=()=>{ bidAmt=Math.min(max,bidAmt+50); upd(); };
+  $('bd-ok').onclick=()=>act('bid',{amt:Math.min(bidAmt,max),pi:who});
+  $('bd-no').onclick=()=>act('bid',{amt:0,pi:who});
+}
+setInterval(()=>{ const e=$('au-left'); if(e&&st&&st.auction) e.textContent=T('secLeft',{s:Math.max(0,Math.ceil((st.auction.deadline-Date.now())/1000))}); },500);
+
 /* ---------- NPC ---------- */
 let npcTimer=null;
 function npcDecideBuy(pi,i){
@@ -454,7 +543,7 @@ function npcDecideBuy(pi,i){
 }
 function scheduleNpc(){
   if(npcTimer){ clearTimeout(npcTimer); npcTimer=null; }
-  if(!st||st.phase!=='play'||!isHost()||busy) return;
+  if(!st||st.phase!=='play'||!isHost()||busy||st.auction) return;
   const p=st.players[st.turn]; if(!p.npc) return;
   npcTimer=setTimeout(npcAct, st.step==='roll'?900:1100);
 }
@@ -462,6 +551,7 @@ async function npcAct(){
   npcTimer=null;
   if(!st||st.phase!=='play'||busy) return;
   const pi=st.turn, p=st.players[pi]; if(!p.npc) return;
+  if(st.step==='roll'&&st.npcSold!==st.round+':'+pi&&(propCount(pi)>RULE.freeProps+1||p.money<100)){ st.npcSold=st.round+':'+pi; const cheap=myProps(pi).find(i=>!ownsGroup(pi,tiles()[i].g)); if(cheap!=null&&startAuction(pi,cheap)) return; }
   if(st.step==='roll'){ await roll(); return; }               // roll 結束會 render → 再排下一步
   if(st.step==='decide'&&st.pending){
     const i=st.pending.tile, t=tiles()[i];
@@ -483,6 +573,7 @@ async function roll(){
   const c=cfg(), p=st.players[st.turn], TT=tiles();
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   const d=Array.from({length:c.dice},()=>1+rnd(6)); st.dice=d; st.rollId=(st.rollId||0)+1; st.step='moving'; render();
+  push();                                            // 連線：擲出的瞬間就同步，對方的骰子動畫同時開始
   const v=currentView();
   if(!reduce){
     if(v.rollDice){ await v.rollDice(d); }          // 3D：立體骰子滾動
@@ -494,7 +585,7 @@ async function roll(){
   let steps=d.reduce((a,b)=>a+b,0);
   if(p.boost){ p.boost=0; steps*=2; log('boost',{n:p.name,s:steps}); } else log('roll',{n:p.name,s:steps});
   if(!reduce&&v.walkPlan) v.walkPlan(st.turn,steps);
-  for(let k=0;k<steps;k++){ p.pos=(p.pos+1)%TT.length; if(p.pos===0){ const a=goBonus(st.turn); p.money+=a; p.laps=(p.laps||0)+1; log('passGo',{n:p.name,a}); sfx('coin'); } else sfx('step'); if(!reduce){ renderBoard(); await sleep(v.stepMs||140); } }
+  for(let k=0;k<steps;k++){ p.pos=(p.pos+1)%TT.length; if(p.pos===0){ const a=goBonus(st.turn); p.money+=a; p.laps=(p.laps||0)+1; log('passGo',{n:p.name,a}); sfx('coin'); } else sfx('step'); push(); if(!reduce){ renderBoard(); await sleep(v.stepMs||140); } }   // 每走一格同步一次
   if(!reduce&&v.settle) await v.settle();          // 3D：等棋子真的走到再結算
   busy=false;
   land(st.turn,0);
@@ -561,6 +652,7 @@ $('b-join').onclick=async()=>{
 };
 $('b-start').onclick=async()=>{ startGame('start'); render(); await push(); };
 $('b-leave').onclick=goHome;
+$('m-sell-x').onclick=()=>$('m-sell').classList.remove('on'); $('m-sell').onclick=e=>{ if(e.target===$('m-sell')) $('m-sell').classList.remove('on'); };
 $('b-rules').onclick=openRules; $('m-rules-x').onclick=()=>$('m-rules').classList.remove('on'); $('m-rules').onclick=e=>{ if(e.target===$('m-rules')) $('m-rules').classList.remove('on'); };
 
 function renderLobby(){

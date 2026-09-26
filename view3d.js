@@ -21,7 +21,7 @@ const view3d=(()=>{
   let renderer=null,scene,camera,controls,root,fxRoot,wrap,labelsEl,midEl;
   let tilesM=[],labels=[],tokens=[],props=[],builtKey='',raf=0,W=0,H=0,frame=0,lastT=0;
   let webgl=null, homeTarget=null, homeOffset=null, dice=[], diceShadows=[], diceAnim=null, popEl=null, popTile=-1, camLerp=null, downAt=null;
-  let dbgCam=null, restoreDist=false, parts=[], floats=[], tileFx=[], settleWaiters=[], seenRollId=0, camIntro=null, celebrate=null, lastPhase='', baseMoney=null, midKey='';
+  let lastRender=0, touchT=0, camSig=null, dbgCam=null, restoreDist=false, parts=[], floats=[], tileFx=[], settleWaiters=[], seenRollId=0, camIntro=null, celebrate=null, lastPhase='', baseMoney=null, midKey='';
   const UP=HAS?new THREE.Vector3(0,1,0):null;
   // BoxGeometry の面順: +x,-x,+y,-y,+z,-z → 目 1,6,2,5,3,4（向かい合う面の和が 7）
   const FACE_VAL=[1,6,2,5,3,4];
@@ -275,7 +275,9 @@ const view3d=(()=>{
     controls.minPolarAngle=.12; controls.maxPolarAngle=1.05; controls.minAzimuthAngle=-1.2; controls.maxAzimuthAngle=1.2;
     renderer.domElement.style.touchAction='pan-y';
     const el=renderer.domElement;
-    el.addEventListener('pointerdown',e=>{ downAt={x:e.clientX,y:e.clientY,t:performance.now()}; camIntro=null; });
+    el.addEventListener('pointerdown',e=>{ downAt={x:e.clientX,y:e.clientY,t:performance.now()}; camIntro=null; touchT=performance.now(); });
+    el.addEventListener('pointermove',e=>{ if(e.buttons||e.pointerType==='touch') touchT=performance.now(); });
+    el.addEventListener('wheel',()=>{ touchT=performance.now(); },{passive:true});
     el.addEventListener('pointerup',e=>{
       if(!downAt) return; const dx=e.clientX-downAt.x, dy=e.clientY-downAt.y, dt=performance.now()-downAt.t; downAt=null;
       if(dx*dx+dy*dy>64||dt>500) return;
@@ -340,7 +342,7 @@ const view3d=(()=>{
     camera.position.copy(homeTarget).add(homeOffset);
     controls.minDistance=dist*.45; controls.maxDistance=dist*1.35; controls.update(); camLerp=null;
     if(!RM()){ const from=homeOffset.clone().multiplyScalar(1.55).applyAxisAngle(UP,-.9); from.y*=1.25; camIntro={t0:performance.now(),dur:1800,from,to:homeOffset.clone()}; }
-    builtKey=buildKey(); seenRollId=st.rollId||0; baseMoney=null; lastPhase=st.phase; celebrate=null;
+    camSig=null; builtKey=buildKey(); seenRollId=st.rollId||0; baseMoney=null; lastPhase=st.phase; celebrate=null;
   }
 
   /* ---------- 點擊資訊 ---------- */
@@ -473,7 +475,7 @@ const view3d=(()=>{
     // 別台手機擲的骰子：也播一次動畫，棋子等骰子停了再走
     if((st.rollId||0)!==seenRollId){
       seenRollId=st.rollId||0;
-      if(st.dice.length&&!RM()){ startDice(st.dice,null); tokens.forEach(tk=>tk.holdUntil=now+DICE_MS); }
+      if(st.dice.length&&!RM()){ startDice(st.dice,null); tokens.forEach(tk=>tk.holdUntil=now+DICE_MS); const ct=tokens[st.turn]; if(ct){ const n=st.dice.reduce((a,b)=>a+b,0)*(st.players[st.turn].boost?2:1); if(n>1) ct.count=n; } }
     }
     // 棋子目標
     TT.forEach((t,i)=>{
@@ -726,15 +728,23 @@ const view3d=(()=>{
     if(!st) return;
     stepDice(now);
     tokens.forEach(tk=>stepToken(tk,now,dt));
-    stepFx(now,dt);
-    stepCamera(now,dt);
-    controls.update();
-    renderer.render(scene,camera);
-    tilesM.forEach((m,i)=>place(labels[i],new THREE.Vector3(m.g.position.x-m.o.x*.06,.16,m.g.position.z+.3)));
-    if(midEl) place(midEl,new THREE.Vector3(0,.02,ring().rows*.1));
-    if(popEl&&popTile>=0){ const m=tilesM[popTile]; place(popEl,new THREE.Vector3(m.g.position.x,.3,m.g.position.z)); }
     // 走完 → 通知 game.js
     if(settleWaiters.length){ const done=tokens.every(idle)&&!diceAnim; settleWaiters=settleWaiters.filter(w=>{ if(done||now-w.t0>8000){ w.res(); return false; } return true; }); }
+    stepFx(now,dt);
+    stepCamera(now,dt);
+    const camMoved=controls.update();
+    // 省電：有東西在動就全速；全部靜止時只畫每秒約 12 張（呼吸、眨眼仍看得到）
+    const active=camMoved||!!diceAnim||parts.length>0||floats.length>0||tileFx.length>0||!!camIntro||restoreDist||settleWaiters.length>0||now-touchT<700
+      ||(celebrate&&now-celebrate.t0<8000)||tokens.some(tk=>tk.hop||tk.queue.length||(tk.emo&&tk.emo.type!=='win')||(tk.out&&now-tk.dieT<2200)||tk.count>0);
+    if(!active&&now-lastRender<80) return;
+    lastRender=now;
+    renderer.render(scene,camera);
+    // 地名標籤只在鏡頭真的動了才重新定位（每幀改 32 個 DOM 位置很耗電）
+    const e=camera.matrixWorld.elements, sig=e.map(v=>Math.round(v*1000)).join(',')+':'+W+'x'+H;
+    if(sig!==camSig){ camSig=sig;
+      tilesM.forEach((m,i)=>place(labels[i],new THREE.Vector3(m.g.position.x-m.o.x*.06,.16,m.g.position.z+.3)));
+      if(midEl) place(midEl,new THREE.Vector3(0,.02,ring().rows*.1)); }
+    if(popEl&&popTile>=0){ const m=tilesM[popTile]; place(popEl,new THREE.Vector3(m.g.position.x,.3,m.g.position.z)); }
   }
 
   function stop(){
