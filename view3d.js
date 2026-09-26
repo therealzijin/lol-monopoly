@@ -736,7 +736,7 @@ const view3d=(()=>{
     // 省電：有東西在動就全速；全部靜止時只畫每秒約 12 張（呼吸、眨眼仍看得到）
     const active=camMoved||!!diceAnim||parts.length>0||floats.length>0||tileFx.length>0||!!camIntro||restoreDist||settleWaiters.length>0||now-touchT<700
       ||(celebrate&&now-celebrate.t0<8000)||tokens.some(tk=>tk.hop||tk.queue.length||(tk.emo&&tk.emo.type!=='win')||(tk.out&&now-tk.dieT<2200)||tk.count>0);
-    if(!active&&now-lastRender<80) return;
+    if(now-lastRender<(active?1000/61:80)) return;                // 動的時候最多每秒 60 張，靜止時約 12 張
     lastRender=now;
     renderer.render(scene,camera);
     // 地名標籤只在鏡頭真的動了才重新定位（每幀改 32 個 DOM 位置很耗電）

@@ -260,7 +260,7 @@ h1{font-size:34px;line-height:1.1;font-weight:800;letter-spacing:-.01em;margin:8
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module">
 // 先載入 Three.js（模組版），掛到 window.THREE 後再依序載入遊戲腳本；載入失敗就只用 2D
-const SCRIPTS=["game.js?v=20260926172521","champs.js?v=20260926172521","view2d.js?v=20260926172521","view3d.js?v=20260926172521"];
+const SCRIPTS=["game.js?v=20260926173618","champs.js?v=20260926173618","view2d.js?v=20260926173618","view3d.js?v=20260926173618"];
 const load=src=>new Promise((ok,no)=>{ const e=document.createElement('script'); e.src=src; e.onload=ok; e.onerror=no; document.body.appendChild(e); });
 try{
   const T=await import('three');
