@@ -77,7 +77,7 @@ zh:{
  title:'兩人大富翁',sub:'給你們兩個玩的小桌遊。各拿一支手機，開一間房就能開始。',
  myname:'你的名字',myname_ph:'例如：周',name2:'對方的名字',name2_ph:'例如：小美',
  how:'怎麼玩',online:'兩支手機',online_s:'各看自己的畫面',local:'同一支手機',local_s:'輪流傳給對方',
- npc:'電腦玩家',npc0:'不要',npc1:'1 位',npc2:'2 位',props:'地產',bonus:'落後補助',i_owner:'持有者',i_none:'無人',i_price:'價格',i_rent:'租金',i_lv:'等級',i_next:'升級後租金',i_tax:'稅金（或現金 8%）',i_full:'（整組加倍）',layout:'棋盤排列',ring:'環形',ring_s:'繞一圈，方向清楚',snake:'蛇形',snake_s:'格子最大，來回走',mode:'模式',quick:'快速',quick_s:'20 格・15 回合・約 10 分',classic:'經典',classic_s:'32 格・最多 40 回合',
+ npc:'電腦玩家',npc0:'不要',npc1:'1 位',npc2:'2 位',props:'地產',bonus:'落後補助',char0:'你的角色',char1:'對方的角色',rules:'玩法說明',rules_title:'玩法說明',close:'知道了',riot:'本遊戲為依據 Riot Games「Legal Jibber Jabber」政策製作的非商業粉絲作品，使用了 Riot Games 擁有的素材。Riot Games 並未背書或贊助本作。英雄 3D 模型來自 modelviewer.lol，英雄資料來自 Riot Data Dragon。',i_owner:'持有者',i_none:'無人',i_price:'價格',i_rent:'租金',i_lv:'等級',i_next:'升級後租金',i_tax:'稅金（或現金 8%）',i_full:'（整組加倍）',layout:'棋盤排列',ring:'環形',ring_s:'繞一圈，方向清楚',snake:'蛇形',snake_s:'格子最大，來回走',mode:'模式',quick:'快速',quick_s:'20 格・15 回合・約 10 分',classic:'經典',classic_s:'32 格・最多 40 回合',
  create:'開新房間',startLocal:'開始遊戲',code_ph:'輸入 4 位房號',join:'加入',
  note:'兩支手機模式：把連結傳給對方，房主選模式開房，對方輸入房號加入。兩支手機最好連同一個 Wi-Fi。語言可以各自選。',
  e_storage:'這個環境沒有連線功能，請改用「同一支手機」模式。',e_disc:'連線中斷了。兩支手機請連同一個 Wi-Fi，然後重新開房。',connecting:'連線中…',e_name:'先填你的名字。',e_create:'建立房間失敗，請再試一次。',e_code:'房號是 4 位數字。',e_notfound:'找不到這個房號，確認一下對方有沒有開房。',e_started:'這間房已經開始了。',
@@ -96,7 +96,7 @@ ja:{
  title:'ふたりの大富豪すごろく',sub:'ふたり専用のミニボードゲーム。それぞれスマホを持って、部屋を作ればすぐ始められます。',
  myname:'あなたの名前',myname_ph:'例：なつ',name2:'相手の名前',name2_ph:'例：しゅう',
  how:'遊び方',online:'スマホ2台',online_s:'それぞれの画面で',local:'スマホ1台',local_s:'交代で回す',
- npc:'コンピュータ',npc0:'なし',npc1:'1人',npc2:'2人',props:'物件',bonus:'補助',i_owner:'所有者',i_none:'なし',i_price:'価格',i_rent:'家賃',i_lv:'レベル',i_next:'改築後の家賃',i_tax:'税金（または所持金の8%）',i_full:'（そろって2倍）',layout:'盤面の並び',ring:'ぐるり一周',ring_s:'方向がわかりやすい',snake:'ジグザグ',snake_s:'マスが一番大きい',mode:'モード',quick:'クイック',quick_s:'20マス・15ラウンド・約10分',classic:'クラシック',classic_s:'32マス・最大40ラウンド',
+ npc:'コンピュータ',npc0:'なし',npc1:'1人',npc2:'2人',props:'物件',bonus:'補助',char0:'あなたのキャラ',char1:'相手のキャラ',rules:'遊び方',rules_title:'遊び方',close:'わかった',riot:'本作は Riot Games の「Legal Jibber Jabber」ポリシーに基づき、Riot Games 所有の素材を使用して作られた非営利のファン作品です。Riot Games は本作を推奨・後援していません。チャンピオンの 3D モデルは modelviewer.lol、データは Riot Data Dragon を利用しています。',i_owner:'所有者',i_none:'なし',i_price:'価格',i_rent:'家賃',i_lv:'レベル',i_next:'改築後の家賃',i_tax:'税金（または所持金の8%）',i_full:'（そろって2倍）',layout:'盤面の並び',ring:'ぐるり一周',ring_s:'方向がわかりやすい',snake:'ジグザグ',snake_s:'マスが一番大きい',mode:'モード',quick:'クイック',quick_s:'20マス・15ラウンド・約10分',classic:'クラシック',classic_s:'32マス・最大40ラウンド',
  create:'部屋を作る',startLocal:'ゲーム開始',code_ph:'4桁の部屋番号',join:'参加',
  note:'スマホ2台モード：リンクを相手に送り、ホストがモードを選んで部屋を作り、相手は部屋番号を入力して参加します。ふたりとも同じWi-Fiにつなぐのがおすすめ。言語はそれぞれ選べます。',
  e_storage:'この環境ではオンライン接続が使えません。「スマホ1台」モードをお使いください。',e_disc:'接続が切れました。ふたりとも同じWi-Fiにつないで、部屋を作り直してください。',connecting:'接続中…',e_name:'先に名前を入力してください。',e_create:'部屋を作れませんでした。もう一度お試しください。',e_code:'部屋番号は4桁の数字です。',e_notfound:'その部屋番号が見つかりません。相手が部屋を作ったか確認してください。',e_started:'この部屋はすでに始まっています。',
@@ -118,6 +118,27 @@ function fmt(tpl,p){return tpl.replace(/\{(\w+)\}/g,(m,k)=>p&&p[k]!=null?esc(p[k
 function T(k,p){return fmt(S()[k],p)}
 function tileName(i){const t=tiles()[i];return t.n?t.n[lang]:S().tile[t.t]}
 function logText(e){const p=Object.assign({},e.p||{});if(p.ti!=null)p.t=tileName(p.ti);if(p.ci!=null)p.c=CARDS[p.ci].txt[lang];if(p.wi!=null)p.w=WHEEL[p.wi].txt[lang];return fmt(S().log[e.k],p)}
+/* ---------- 玩法說明（數字直接讀規則常數） ---------- */
+function rulesHTML(){
+  const q=CFG.quick, c=CFG.classic, R=RULE, pct=x=>Math.round(x*100)+'%', lv=LVMULT.slice(1).map(x=>'×'+x).join(' / ');
+  const tw=TILES.quick.length, cw=TILES.classic.length, ja=lang==='ja';
+  const sec=(h,items)=>`<h3>${h}</h3><ul>${items.map(x=>`<li>${x}</li>`).join('')}</ul>`;
+  if(ja) return sec('勝ち方',[`ゲーム終了時に<b>総資産</b>（所持金＋物件価格＋改築費）がいちばん多い人の勝ち。`,`ほかの全員が破産した場合も、その時点で勝ち。`])
+   +sec('モード',[`クイック：${tw}マス・サイコロ${q.dice}個・${q.maxRounds}ラウンド・初期資金 $${q.start}`,`クラシック：${cw}マス・サイコロ${c.dice}個・${c.maxRounds}ラウンド・初期資金 $${c.start}`,`後手は $100 多くもらえる。先手はラウンドごとに1人ずつずれる。`,`開始時、全員に $${R.starterMax} 以下の物件が1つランダムに配られる（代金は支払う）。`])
+   +sec('物件と家賃',[`空き地に止まったら価格どおりに買える。買わなければそのまま。`,`他人の物件に止まると家賃を払う（物件価格の${pct(.5)}）。同じ色をすべて持っていると家賃2倍。`,`色をそろえた物件に戻ると改築できる（費用は物件価格の半分）。レベル1〜3で家賃 ${lv}。`,`お金が足りないと物件を半額で自動売却。売り切っても足りなければ脱落。`])
+   +sec('特別なマス',[`スタート：通過で $200。順位が1つ下がるごとに +$50。`,`チャンス：カードを1枚引く。ルーレット：お金が増えたり減ったり。`,`税務署：決まった額か所持金の8%の高いほう。さらに物件${R.propTaxFree}件を超える分は1件 $${R.propTax}。`,`おしおき：次のターンは休み。カフェ休憩：何も起きない。`,`トゥイッチ襲来：物件を1つ盗まれて空き地に戻る。物件がなければ現金 $100。`])
+   +sec('逆転のしくみ',[`毎ラウンド開始時、物件が${R.freeProps}件を超える分は1件につき価格の${pct(R.upkeepPct)}の維持費。`,`最下位の人は家賃が半額。`,`ラスト${R.finalRounds}ラウンドに入ると最下位に $${R.homestretch}。`,`終了時のボーナス賞：苦労賞（家賃を一番払った）+$${R.awards.rent}、冒険賞（チャンス最多）+$${R.awards.chance}、旅行賞（スタート通過最多）+$${R.awards.laps}。`])
+   +sec('そのほか',[`コンピュータ（キツネ・クマ）は自動で動く。`,`マスをタップすると持ち主・家賃が見られる。`]);
+  return sec('怎麼贏',[`遊戲結束時<b>總資產</b>（現金＋地價＋升級投入）最高的人獲勝。`,`其他人全部破產時，剩下的人直接獲勝。`])
+   +sec('模式',[`快速：${tw} 格・${q.dice} 顆骰子・${q.maxRounds} 回合・起始資金 $${q.start}`,`經典：${cw} 格・${c.dice} 顆骰子・${c.maxRounds} 回合・起始資金 $${c.start}`,`後手多拿 $100。每回合先手輪換一位。`,`開局每人隨機分到一塊 $${R.starterMax} 以下的地（要付錢）。`])
+   +sec('地產與租金',[`停在空地可以照地價買下，不買就留著。`,`停在別人的地要付租金（地價的 ${pct(.5)}）。同色整組都是同一人的，租金加倍。`,`整組到手後回到自己的地可以升級（費用為地價一半），1～3 級租金 ${lv}。`,`錢不夠時自動半價賣地，賣光還不夠就出局。`])
+   +sec('特殊格',[`起點：經過領 $200，排名每落後一名多 $50。`,`機會：抽一張卡。幸運轉盤：可能拿錢也可能扣錢。`,`稅務局：固定稅額或現金 8% 取高，另外持有超過 ${R.propTaxFree} 塊地的部分每塊加收 $${R.propTax}。`,`罰站區：下回合暫停。咖啡休息：什麼都不會發生。`,`圖奇偷家：被偷走一塊地變回空地；沒有地就被摸走 $100。`])
+   +sec('翻盤機制',[`每回合開始，持有超過 ${R.freeProps} 塊地的部分，每塊繳地價 ${pct(R.upkeepPct)} 維護費。`,`排名最後的人付租金半價。`,`進入最後 ${R.finalRounds} 回合時，排名最後的人領 $${R.homestretch}。`,`終局獎項：苦主獎（付最多租金）+$${R.awards.rent}、冒險獎（抽最多機會卡）+$${R.awards.chance}、旅行獎（最多次經過起點）+$${R.awards.laps}。`])
+   +sec('其他',[`電腦玩家（狐狸、熊熊）會自動行動。`,`點棋盤上的格子可以看持有者和租金。`]);
+}
+function openRules(){ $('m-rules-t').textContent=T('rules_title'); $('m-rules-b').innerHTML=rulesHTML()+`<p class="riot">${T('riot')}</p>`; $('m-rules-x').textContent=T('close'); $('m-rules').classList.add('on'); }
+function pickOf(i){ return typeof CHAMP!=='undefined'?CHAMP.get(i):null; }
+function avatarHTML(i){ const p=st&&st.players[i]; return p&&p.skin&&typeof CHAMP!=='undefined'?CHAMP.avatarImg(p.skin):AVATAR[i]; }
 function applyLang(){
   $('html').lang=lang==='ja'?'ja':'zh-Hant';
   document.querySelectorAll('[data-i]').forEach(e=>e.innerHTML=S()[e.dataset.i]);
@@ -128,6 +149,7 @@ function applyLang(){
   $('b-layout').textContent=layout==='ring'?T('snake'):T('ring');
   const is3=typeof view3d!=='undefined'&&currentView()===view3d; $('b-view').textContent=is3?'2D':'3D'; $('b-layout').style.display=is3?'none':''; $('b-view').style.display=(typeof view3d!=='undefined'&&view3d.ok())?'':'none';
   document.querySelectorAll('#seg-layout button').forEach(b=>b.classList.toggle('sel',b.dataset.v===layout));
+  if(typeof CHAMP!=='undefined') CHAMP.refresh();
   if(st) render();
 }
 
@@ -175,11 +197,12 @@ const rnd=n=>Math.floor(Math.random()*n);
 const hasStorage=()=>typeof window.storage!=='undefined' && window.storage && window.storage.get;
 const key=()=> 'room:'+net.code;
 
-function newState(mode,names){
+function newState(mode,names,skins){
+  skins=skins||[];
   const c=CFG[mode];
   return {
     mode, phase:'lobby', seq:1, code:net.code, guestJoined:false,
-    players:[{name:names[0]||'玩家一',money:c.start,pos:0,skip:0,rentPaid:0,chances:0,laps:0},{name:names[1]||'玩家二',money:c.start+100,pos:0,skip:0,rentPaid:0,chances:0,laps:0}]
+    players:[{name:names[0]||'玩家一',money:c.start,pos:0,skip:0,rentPaid:0,chances:0,laps:0,skin:skins[0]||null},{name:names[1]||'玩家二',money:c.start+100,pos:0,skip:0,rentPaid:0,chances:0,laps:0,skin:skins[1]||null}]
       .concat(Array.from({length:npcCount},(_,k)=>({name:NPC_NAMES[k][lang],money:c.start,pos:0,skip:0,npc:true,rentPaid:0,chances:0,laps:0}))),
     awards:[],
     owners:{}, turn:0, first:0, round:1, step:'roll', pending:null, dice:[], winner:null, log:[], crash:0
@@ -315,7 +338,7 @@ function startPolling(){ if(timer) clearInterval(timer); timer=null; if(hasStora
 function stopPolling(){ if(timer) clearInterval(timer); timer=null; if(conn){ try{conn.close()}catch(e){} conn=null; } if(peer){ try{peer.destroy()}catch(e){} peer=null; } }
 function onData(d){
   let m; try{ m=typeof d==='string'?JSON.parse(d):d; }catch(e){ return; }
-  if(m.type==='join'){ if(!st||st.phase!=='lobby') return; st.players[1].name=m.name; st.guestJoined=true; render(); push(); return; }
+  if(m.type==='join'){ if(!st||st.phase!=='lobby') return; st.players[1].name=m.name; st.players[1].skin=m.skin||null; st.guestJoined=true; render(); push(); return; }
   if(m.seq!=null && (!st||m.seq>st.seq)){ st=m; if(busy) return; render(); }
 }
 function onDisconnect(){ if(!net.online) return; $('home-err').textContent=T('e_disc'); goHome(); }
@@ -340,7 +363,7 @@ function joinPeer(code,name){
     peer.on('error',e=>{ if(!done){ done=true; clearTimeout(t); fail(e); } });
     peer.on('open',()=>{
       conn=peer.connect(PFX+code,{reliable:true});
-      conn.on('open',()=>{ conn.send(JSON.stringify({type:'join',name})); });
+      conn.on('open',()=>{ conn.send(JSON.stringify({type:'join',name,skin:pickOf(0)})); });
       conn.on('data',d=>{ onData(d); if(!done&&st&&st.seq){ done=true; clearTimeout(t); ok(); } });
       conn.on('close',onDisconnect); conn.on('error',e=>{ if(!done){ done=true; clearTimeout(t); fail(e); } else onDisconnect(); });
     });
@@ -360,7 +383,7 @@ function render(){
   $('g-mode').textContent=T('m_'+st.mode)+'・'+(net.online?T('room')+' '+net.code:T('onePhone'));
   $('g-round').textContent=T('round',{r:Math.min(st.round,c.maxRounds),m:c.maxRounds});
   const prevM=render._m||[]; render._m=st.players.map(p=>p.money);
-  $('g-players').innerHTML=st.players.map((p,i)=>`<div class="pl ${st.turn===i&&st.phase==='play'?'turn':''} ${p.out?'out':''}"><span class="dot p${i}">${AVATAR[i]}</span><div style="min-width:0"><div class="nm">${esc(p.name)}${net.online&&net.me===i?T('you'):''}${p.npc?`<span class="npc">NPC</span>`:''}</div><div class="money">$${p.money}</div><div class="worth">${T('worth')} $${worth(i)}${p.skip?'・'+T('skipping'):''}${p.boost?'・'+T('boosted'):''}</div></div><div class="cnt"><b>${propCount(i)}</b><small>${T('props')}</small></div></div>`).join('');
+  $('g-players').innerHTML=st.players.map((p,i)=>`<div class="pl ${st.turn===i&&st.phase==='play'?'turn':''} ${p.out?'out':''}"><span class="dot p${i}">${avatarHTML(i)}</span><div style="min-width:0"><div class="nm">${esc(p.name)}${net.online&&net.me===i?T('you'):''}${p.npc?`<span class="npc">NPC</span>`:''}</div><div class="money">$${p.money}</div><div class="worth">${T('worth')} $${worth(i)}${p.skip?'・'+T('skipping'):''}${p.boost?'・'+T('boosted'):''}</div></div><div class="cnt"><b>${propCount(i)}</b><small>${T('props')}</small></div></div>`).join('');
   document.querySelectorAll('#g-players .money').forEach((el,i)=>{ const a=prevM[i]; if(a!=null&&a!==st.players[i].money){ el.classList.add(st.players[i].money>a?'flash-up':'flash-down'); } });
   renderBoard();
   renderPanel();
@@ -483,7 +506,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
 /* ---------- 大廳 / 流程 ---------- */
 let homeConn='online', homeMode='quick', npcCount=2;
-document.querySelectorAll('#seg-conn button').forEach(b=>b.onclick=()=>{ homeConn=b.dataset.v; document.querySelectorAll('#seg-conn button').forEach(x=>x.classList.toggle('sel',x===b)); $('joincode').parentElement.style.display=homeConn==='online'?'':'none'; $('home-note').style.display=homeConn==='online'?'':'none'; $('f-name2').style.display=homeConn==='online'?'none':''; $('b-create').textContent=homeConn==='online'?T('create'):T('startLocal'); });
+document.querySelectorAll('#seg-conn button').forEach(b=>b.onclick=()=>{ homeConn=b.dataset.v; document.querySelectorAll('#seg-conn button').forEach(x=>x.classList.toggle('sel',x===b)); $('joincode').parentElement.style.display=homeConn==='online'?'':'none'; $('home-note').style.display=homeConn==='online'?'':'none'; $('f-name2').style.display=homeConn==='online'?'none':''; $('f-pick1').style.display=homeConn==='online'?'none':''; $('b-create').textContent=homeConn==='online'?T('create'):T('startLocal'); });
 document.querySelectorAll('#seg-lang button').forEach(b=>b.onclick=()=>{ lang=b.dataset.v; applyLang(); });
 $('b-lang').onclick=()=>{ lang=lang==='ja'?'zh':'ja'; applyLang(); };
 document.querySelectorAll('.b-mute').forEach(b=>b.onclick=()=>setMuted(!muted)); setMuted(muted);
@@ -498,12 +521,12 @@ $('b-create').onclick=async()=>{
   if(homeConn==='local'){
     net={online:false,code:'',me:0};
     const n2=$('name2').value.trim()||(lang==='ja'?'プレイヤー2':'玩家二');
-    st=newState(homeMode,[name||(lang==='ja'?'プレイヤー1':'玩家一'),n2]); startGame('start'); render(); return;
+    st=newState(homeMode,[name||(lang==='ja'?'プレイヤー1':'玩家一'),n2],[pickOf(0),pickOf(1)]); startGame('start'); render(); return;
   }
   if(!netOK()){ $('home-err').textContent=T('e_storage'); return; }
   if(!name){ $('home-err').textContent=T('e_name'); return; }
   net={online:true,code:String(1000+rnd(9000)),me:0};
-  st=newState(homeMode,[name,'']);
+  st=newState(homeMode,[name,''],[pickOf(0)]);
   $('b-create').disabled=true; $('home-err').textContent=T('connecting');
   try{
     if(hasStorage()) await window.storage.set(key(),JSON.stringify(st),true);
@@ -525,7 +548,7 @@ $('b-join').onclick=async()=>{
     $('b-join').disabled=false;
     if(!s){ $('home-err').textContent=T('e_notfound'); return; }
     if(s.guestJoined&&s.phase!=='lobby'){ $('home-err').textContent=T('e_started'); return; }
-    s.players[1].name=name; s.guestJoined=true; st=s; await push();
+    s.players[1].name=name; s.players[1].skin=pickOf(0); s.guestJoined=true; st=s; await push();
   } else {
     st=null;
     try{ await joinPeer(code,name); }
@@ -538,6 +561,7 @@ $('b-join').onclick=async()=>{
 };
 $('b-start').onclick=async()=>{ startGame('start'); render(); await push(); };
 $('b-leave').onclick=goHome;
+$('b-rules').onclick=openRules; $('m-rules-x').onclick=()=>$('m-rules').classList.remove('on'); $('m-rules').onclick=e=>{ if(e.target===$('m-rules')) $('m-rules').classList.remove('on'); };
 
 function renderLobby(){
   show('s-lobby'); $('lobby-code').textContent=net.code;
@@ -547,8 +571,8 @@ function renderLobby(){
   } else { $('lobby-status').textContent=T('guestWait',{n:st.players[0].name}); $('b-start').style.display='none'; }
 }
 function again(){
-  const names=st.players.map(p=>p.name), seq=st.seq;
-  st=newState(st.mode,names); st.seq=seq; st.guestJoined=true; startGame('again');
+  const names=st.players.map(p=>p.name), skins=st.players.map(p=>p.skin), seq=st.seq;
+  st=newState(st.mode,names,skins); st.seq=seq; st.guestJoined=true; startGame('again');
   render(); push();
 }
 function goHome(){ stopPolling(); if(typeof view3d!=='undefined') view3d.stop(); if(npcTimer){ clearTimeout(npcTimer); npcTimer=null; } st=null; net={online:false,code:'',me:0}; show('s-home'); applyLang(); }

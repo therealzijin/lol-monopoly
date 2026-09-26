@@ -38,7 +38,7 @@ const view2d={ update(){
     const band=t.t==='prop'?`<div class="band" style="background:var(--g${t.g})"></div>`:'<div class="band" style="background:transparent"></div>';
     const sub=t.t==='prop'?(o?`<span class="lv">${'▲'.repeat(o.level)||'&nbsp;'}</span>`:`<span class="tp">$${t.p}</span>`):(t.t==='tax'?`<span class="tp">-$${t.a}</span>`:'');
     const here=st.players.map((p,pi)=>!p.out&&p.pos===i?pi:-1).filter(x=>x>=0);
-    const tk=here.length?`<span class="tks n${here.length}">${here.map(pi=>`<span class="tk p${pi} ${st.turn===pi&&st.phase==='play'?'act':''}">${AVATAR[pi]}</span>`).join('')}</span>`:'';
+    const tk=here.length?`<span class="tks n${here.length}">${here.map(pi=>`<span class="tk p${pi} ${st.turn===pi&&st.phase==='play'?'act':''}">${avatarHTML(pi)}</span>`).join('')}</span>`:'';
     const [ar,turn]=dirOf(i,N);
     h+=`<div class="${cls}" style="grid-row:${r+1};grid-column:${c+1}">${band}<span class="idx">${i+1}</span>${o?'<span class="ow"></span>':''}<span class="dir ${turn?'turn':''}">${ar}</span><span class="tn">${tileName(i)}</span>${sub}${tk}</div>`;
   });

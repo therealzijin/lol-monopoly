@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>兩人大富翁</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <style>
 :root{
   --felt:#234B48; --felt-dark:#1B3B39; --felt-line:#2F5F5B;
@@ -77,6 +75,34 @@ h1{font-size:34px;line-height:1.1;font-weight:800;letter-spacing:-.01em;margin:8
 .v3pop{position:absolute;transform:translate(-50%,-100%);background:var(--paper);color:var(--ink);border-radius:10px;padding:8px 10px;font-size:12px;line-height:1.35;box-shadow:0 4px 14px rgba(0,0,0,.35);pointer-events:auto;min-width:130px;max-width:200px;z-index:5}
 .v3pop:after{content:'';position:absolute;left:50%;bottom:-6px;width:12px;height:12px;background:var(--paper);transform:translateX(-50%) rotate(45deg)}
 .v3pop b{display:block;font-size:13px;margin-bottom:3px} .v3pop .row{display:flex;justify-content:space-between;gap:10px;color:var(--ink-soft)} .v3pop .row span:last-child{color:var(--ink);font-weight:700}
+.modal{position:fixed;inset:0;background:rgba(10,20,19,.72);display:none;align-items:flex-end;justify-content:center;z-index:50;padding:12px}
+.modal.on{display:flex}
+.sheet{background:var(--paper);color:var(--ink);border-radius:18px 18px 14px 14px;width:100%;max-width:520px;max-height:88vh;display:flex;flex-direction:column;padding:16px 16px 14px;animation:sheetIn .28s cubic-bezier(.2,1.2,.4,1)}
+@keyframes sheetIn{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.sheet h2{font-size:19px;margin:0 0 8px}
+.sheet-b{overflow-y:auto;flex:1;margin-bottom:12px;-webkit-overflow-scrolling:touch}
+.sheet-b h3{font-size:14px;margin:12px 0 4px;color:#8A5A12}
+.sheet-b ul{margin:0;padding-left:18px;font-size:13.5px;line-height:1.55}
+.sheet-b li{margin:2px 0}
+.riot{font-size:10.5px!important;line-height:1.5;opacity:.7;margin-top:12px}
+.sheet .riot{color:var(--ink-soft)}
+.charpick{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--felt-dark);color:var(--paper);border:2px solid var(--felt-line);padding:8px 12px}
+.charpick img,.charpick .emo{width:40px;height:40px;border-radius:50%;flex:none;object-fit:cover;background:#0f2422;display:flex;align-items:center;justify-content:center;font-size:24px}
+.charpick b{display:block;font-size:14px} .charpick small{display:block;font-size:11px;color:#BFD3CF;font-weight:600}
+.charpick .chg{margin-left:auto;font-size:12px;color:var(--gold)}
+.pick-h{display:flex;align-items:center;gap:8px;margin-bottom:8px} .pick-h h2{flex:1;margin:0;font-size:17px}
+.pick-h button{color:var(--ink);border-color:var(--paper-dim);padding:6px 12px}
+#pick-q{width:100%;border-radius:10px;border:2px solid var(--paper-dim);padding:9px 12px;font:inherit;margin-bottom:6px;background:#fff;color:var(--ink)}
+.pick-note{font-size:11px;color:var(--ink-soft);margin-bottom:8px}
+.pick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;align-content:start}
+.pick-grid.skins{grid-template-columns:repeat(2,1fr)}
+.pick-it{background:#fff;border-radius:12px;padding:6px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--ink);text-align:center;line-height:1.2;border:2px solid transparent}
+.pick-it.sel{border-color:var(--gold)}
+.pick-it img{width:100%;aspect-ratio:1;border-radius:9px;object-fit:cover;background:var(--paper-dim)}
+.pick-grid.skins .pick-it img{aspect-ratio:1}
+.pick-it .emo{width:100%;aspect-ratio:1;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:34px;background:var(--paper-dim)}
+.dot img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+.tk img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
 .fx-float{position:absolute;transform:translate(-50%,-50%);font-weight:900;font-size:16px;pointer-events:none;white-space:nowrap;letter-spacing:.02em;-webkit-text-stroke:3px #2B2420;paint-order:stroke fill;z-index:4}
 .fx-float.up{color:#FFE27A} .fx-float.down{color:#FF8C7A} .fx-float.info{color:#FFF4DE;font-size:13px}
 .fx-count{position:absolute;transform:translate(-50%,-100%);font-size:24px;font-weight:900;color:#fff;-webkit-text-stroke:4px #2B2420;paint-order:stroke fill;pointer-events:none;z-index:4;transition:transform .12s}
@@ -152,7 +178,9 @@ h1{font-size:34px;line-height:1.1;font-weight:800;letter-spacing:-.01em;margin:8
   <p class="sub" data-i="sub"></p>
 
   <div class="field"><label for="myname" data-i="myname"></label><input id="myname" maxlength="8" data-ph="myname_ph" autocomplete="off"></div>
+  <div class="field"><label data-i="char0"></label><button class="charpick" id="pick0"></button></div>
   <div class="field" id="f-name2" style="display:none"><label for="name2" data-i="name2"></label><input id="name2" maxlength="8" data-ph="name2_ph" autocomplete="off"></div>
+  <div class="field" id="f-pick1" style="display:none"><label data-i="char1"></label><button class="charpick" id="pick1"></button></div>
 
   <div class="field"><label data-i="how"></label>
     <div class="seg" id="seg-conn">
@@ -183,10 +211,12 @@ h1{font-size:34px;line-height:1.1;font-weight:800;letter-spacing:-.01em;margin:8
 
   <div class="stack">
     <button class="primary" id="b-create"></button>
+    <button class="ghost" id="b-rules" data-i="rules"></button>
     <div class="seg" style="margin:0"><input id="joincode" inputmode="numeric" maxlength="4" data-ph="code_ph" style="flex:1"><button id="b-join" style="flex:none" data-i="join"></button></div>
     <div class="err" id="home-err"></div>
   </div>
   <p class="note" id="home-note" data-i="note"></p>
+  <p class="note riot" data-i="riot"></p>
 </section>
 
 <!-- 大廳 -->
@@ -214,10 +244,22 @@ h1{font-size:34px;line-height:1.1;font-weight:800;letter-spacing:-.01em;margin:8
   <div class="log" id="log"></div>
 </section>
 
-<script src="game.js?v=202609232008"></script>
-<script src="view2d.js?v=202609232008"></script>
-<script src="view3d.js?v=202609232008"></script>
-<script>applyLang();</script>
+<div class="modal" id="m-rules"><div class="sheet"><h2 id="m-rules-t"></h2><div class="sheet-b" id="m-rules-b"></div><button class="primary wide" id="m-rules-x"></button></div></div>
+<div class="modal" id="m-pick"><div class="sheet"><div class="pick-h"><button class="ghost" id="pick-back">‹</button><h2 id="pick-t"></h2><button class="ghost" id="pick-x">✕</button></div><input id="pick-q" autocomplete="off"><div class="pick-note" id="pick-note"></div><div class="sheet-b pick-grid" id="pick-g"></div></div></div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+// 先載入 Three.js（模組版），掛到 window.THREE 後再依序載入遊戲腳本；載入失敗就只用 2D
+const SCRIPTS=["game.js?v=20260926164957","champs.js?v=20260926164957","view2d.js?v=20260926164957","view3d.js?v=20260926164957"];
+const load=src=>new Promise((ok,no)=>{ const e=document.createElement('script'); e.src=src; e.onload=ok; e.onerror=no; document.body.appendChild(e); });
+try{
+  const T=await import('three');
+  const [a,b,c,d,e]=await Promise.all(['controls/OrbitControls.js','loaders/GLTFLoader.js','loaders/KTX2Loader.js','libs/meshopt_decoder.module.js','utils/SkeletonUtils.js'].map(x=>import('three/addons/'+x)));
+  window.THREE=Object.assign({},T,{OrbitControls:a.OrbitControls,GLTFLoader:b.GLTFLoader,KTX2Loader:c.KTX2Loader,MeshoptDecoder:d.MeshoptDecoder,SkeletonUtils:e});
+  T.ColorManagement.enabled=false;   // 沿用原本的色彩處理（材質顏色自行轉線性）
+}catch(err){ console.warn('3D 載入失敗，改用 2D',err); }
+for(const x of SCRIPTS) await load(x);
+applyLang();
+</script>
 
 </body>
 </html>
