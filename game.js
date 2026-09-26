@@ -246,7 +246,7 @@ function playSfx(k){ if(muted) return; try{ if(k.startsWith('v:')){ const [,cid,
 // 類別：move 移動｜first 第一次移動｜buy 買地（攻擊台詞）｜ult 升級（大招）｜pay 付錢／坐牢（陣亡）｜earn 收租（擊殺）
 //       go 經過起點（回城）｜joke 機會｜laugh 轉盤、撿到錢｜taunt 獲勝｜meet 同格相遇（meet_英雄＝專屬台詞）｜respawn
 const VO_FALLBACK={first:['move'],buy:['ult','taunt','move'],ult:['buy','taunt','move'],pay:['respawn','move'],earn:['laugh','taunt','buy'],
-  go:['respawn','move'],joke:['laugh','taunt','move'],laugh:['joke','taunt','earn'],taunt:['laugh','earn','joke'],meet:['first','taunt','move'],respawn:['move'],move:[]};
+  go:['respawn','move'],joke:['laugh','taunt','move'],laugh:['taunt','earn','joke'],taunt:['laugh','earn','joke'],meet:['first','taunt','move'],respawn:['move'],move:[]};
 let voiceIdx={}, voiceBusy=0; const voiceRaw={}, voiceLast={};
 const vlang=()=>lang==='ja'?'ja':'en';
 const voiceIndex=(L=vlang())=>voiceIdx[L]||(voiceIdx[L]=fetch(`voice/${L}/index.json`).then(r=>r.json()).catch(()=>({})));
@@ -264,20 +264,17 @@ async function playVoice(cid,cat,r){
 function say(p,cat,delay){ const cid=p&&p.skin&&p.skin.cid; if(!cid) return; const key=cid+cat;
   let r=Math.floor(Math.random()*12); if(r===voiceLast[key]) r=(r+1)%12; voiceLast[key]=r;
   const go=()=>sfx(`v:${cid}:${cat}:${r}`); if(delay) setTimeout(()=>{ go(); push(); },delay); else go(); }
-function sayMove(p){ say(p,(p.laps||0)===0&&p.pos===0&&!p.moved?'first':'move'); p.moved=1; }
 const byName=n=>st&&st.players.find(q=>q.name===n);
-// 遊戲事件（log）→ 台詞
-const VO_ON={passGo:'go',go:'go',bought:'buy',npcBuy:'buy',upgraded:'ult',chance:'joke',wheel:'laugh',jail:'pay',twitch:'pay',twitchCash:'pay',
-  taxPct:'pay',taxProp:'pay',bankrupt:'pay',out:'pay',robin:'laugh',lastAid:'laugh'};
+// 遊戲事件（log）→ 台詞：只在「收錢大笑、扣錢哀號」時說話（全部都說太吵）
+const VO_PAY={jail:1,twitch:1,twitchCash:1,taxPct:1,taxProp:1,bankrupt:1,out:1};
 function voiceOnLog(k,p){ if(!st||st.phase!=='play'||!p) return;
-  if(k==='rent'||k==='rentHalf'){ say(byName(p.n),'pay'); say(byName(p.o),'earn',1400); return; }
-  if(k==='steal'){ say(byName(p.n),'laugh'); say(byName(p.o),'pay',1400); return; }
-  if(k==='auctionWin'){ say(byName(p.b),'earn'); return; }
-  if(VO_ON[k]) say(byName(p.n),VO_ON[k]); }
-// 開局時先把場上英雄的台詞下載好（每位約 25 句、每句約 8 KB）
+  if(k==='rent'||k==='rentHalf'){ say(byName(p.n),'pay'); say(byName(p.o),'laugh',1300); return; }
+  if(k==='steal'){ say(byName(p.o),'pay'); say(byName(p.n),'laugh',1300); return; }
+  if(VO_PAY[k]) say(byName(p.n),'pay'); }
+// 開局時先把場上英雄會用到的台詞下載好（笑聲＋哀號，每位約 5 句）
 let voicePre='';
 async function prefetchVoices(){ if(!st||!st.players) return; const ids=st.players.map(p=>p.skin&&p.skin.cid).filter(Boolean), L=vlang(), sig=L+ids.join(); if(sig===voicePre) return; voicePre=sig;
-  const idx=await voiceIndex(); ids.forEach(c=>{ const e=idx[c]||{}; Object.keys(e).forEach(cat=>{ if(cat.startsWith('meet_')&&!ids.includes(cat.slice(5))) return; for(let i=0;i<e[cat];i++) fetchVoice(`${L}/${c}/${cat}${i}`); }); }); }
+  const idx=await voiceIndex(); ids.forEach(c=>{ const e=idx[c]||{}; [voiceCat(e,'laugh'),voiceCat(e,'pay')].filter(Boolean).forEach(cat=>{ for(let i=0;i<e[cat];i++) fetchVoice(`${L}/${c}/${cat}${i}`); }); }); }
 function hearRemote(){
   if(!st) return; if(heardSq>(st.sq||0)) heardSq=0;  // 新的一局重新計數
   if(!st.sfx) return; const q=st.sfx.filter(e=>e[0]>heardSq);
@@ -508,7 +505,7 @@ function renderPanel(){
   over.innerHTML='';
   if(st.phase==='over'){
     $('panel').style.display='none';
-    if(!renderPanel.overSeq||renderPanel.overSeq!==st.seq+':'+st.round){ renderPanel.overSeq=st.seq+':'+st.round; const w=st.winner; sfx(w==null?'win':(!net.online||w===net.me)?'win':'lose'); const wp=w!=null&&st.players[w]; if(wp&&wp.skin) setTimeout(()=>playVoice(wp.skin.cid,'taunt',st.round),1300); }
+    if(!renderPanel.overSeq||renderPanel.overSeq!==st.seq+':'+st.round){ renderPanel.overSeq=st.seq+':'+st.round; const w=st.winner; sfx(w==null?'win':(!net.online||w===net.me)?'win':'lose'); const wp=w!=null&&st.players[w]; if(wp&&wp.skin) setTimeout(()=>playVoice(wp.skin.cid,'laugh',st.round),1300); }
     const w=st.winner;
     const rk=ranking().map((i,k)=>`${k+1}. ${st.players[i].name} $${worth(i)}`).join('　');
     over.innerHTML=`<div class="over"><h2>${w==null?T('draw'):T('wins',{n:st.players[w].name})}</h2><p>${w==null?T('drawSub'):(st.players[w].npc?T('npcWin'):T('winSub'))}</p><p class="sub" style="font-size:12px;color:var(--ink-soft)">${T('rankSub',{r:rk})}</p>${(st.awards&&st.awards.length)?`<p class="sub" style="font-size:12px;color:var(--ink-soft)">${T('awardsTitle')}：${st.awards.map(a=>`${T('aw_'+a.k)} ${esc(st.players[a.pi].name)} +$${a.a}`).join('　')}</p>`:''}
@@ -681,14 +678,11 @@ async function roll(){
   }
   let steps=d.reduce((a,b)=>a+b,0);
   if(p.boost){ p.boost=0; steps*=2; log('boost',{n:p.name,s:steps}); } else log('roll',{n:p.name,s:steps});
-  sayMove(p);                                          // 英雄的口頭禪（移動台詞）
   if(!reduce&&v.walkPlan) v.walkPlan(st.turn,steps);
   for(let k=0;k<steps;k++){ p.pos=(p.pos+1)%TT.length; if(p.pos===0){ const a=goBonus(st.turn); p.money+=a; p.laps=(p.laps||0)+1; log('passGo',{n:p.name,a}); sfx('coin'); } else sfx('step'); push(); if(!reduce){ renderBoard(); await sleep(v.stepMs||140); } }   // 每走一格同步一次
   if(!reduce&&v.settle) await v.settle();          // 3D：等棋子真的走到再結算
   busy=false;
   land(st.turn,0);
-  // 停在有其他英雄的格子：一半機率打招呼（有專屬台詞就用專屬的，例如阿璃遇到犽宿）
-  { const mates=st.players.filter((q,j)=>j!==st.turn&&!q.out&&q.pos===p.pos&&q.skin); if(mates.length&&st.phase==='play'&&Math.random()<.5){ const q=mates[Math.floor(Math.random()*mates.length)]; say(p,'meet_'+q.skin.cid,900); } }
   if(st.phase==='over'){ render(); push(); return; }
   st.step=st.pending?'decide':'end';
   render(); push();
