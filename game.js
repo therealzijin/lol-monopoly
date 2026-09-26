@@ -5,7 +5,7 @@ const NPC_NAMES=[{zh:'狐狸',ja:'キツネ'},{zh:'熊熊',ja:'クマ'}];
 const NPC_POOL=[['Garen',86,'蓋倫','ガレン'],['Jinx',222,'吉茵珂絲','ジンクス'],['Ahri',103,'阿璃','アーリ'],['Teemo',17,'提摩','ティーモ'],['Lux',99,'拉克絲','ラックス'],
   ['Ashe',22,'艾希','アッシュ'],['Darius',122,'達瑞斯','ダリウス'],['Annie',1,'安妮','アニー'],['MissFortune',21,'好運姐','ミス・フォーチュン'],['Ezreal',81,'伊澤瑞爾','エズリアル'],
   ['Yasuo',157,'犽宿','ヤスオ'],['Leona',89,'雷歐娜','レオナ'],['Amumu',32,'阿姆姆','アムム'],['Poppy',78,'波比','ポッピー'],['Katarina',55,'卡特蓮娜','カタリナ'],
-  ['Lulu',117,'露璐','ルル'],['Braum',201,'布郎姆','ブラウム'],['Vi',254,'菲艾','ヴァイ'],['Caitlyn',51,'凱特琳','ケイトリン'],['Sona',37,'索娜','ソナ']];
+  ['Lulu',117,'露璐','ルル'],['Braum',201,'布郎姆','ブラウム'],['Vi',254,'菲艾','ヴァイ'],['Caitlyn',51,'凱特琳','ケイトリン'],['Gwen',887,'關','グウェン']];
 function rerollNpcs(){ // 對方加入後才知道他的英雄：撞角就重抽
   const ps=st.players, np=ps.filter(p=>p.npc); if(!np.some(p=>p.skin&&ps.some(q=>!q.npc&&q.skin&&q.skin.cid===p.skin.cid))) return;
   const fresh=npcChamps(np.length,ps.filter(p=>!p.npc).map(p=>p.skin)); np.forEach((p,k)=>{ if(fresh[k]){ p.skin=fresh[k]; p.name=fresh[k].n[lang]||fresh[k].n.zh; } });
@@ -240,7 +240,21 @@ function sfx(k){
   if(net&&net.online&&st&&st.phase==='play'&&!SFX_LOCAL[k]){ st.sq=(st.sq||0)+1; st.sfx=(st.sfx||[]).concat([[st.sq,k]]).slice(-12); heardSq=st.sq; }
   playSfx(k);
 }
-function playSfx(k){ if(muted) return; try{ SFX[k]&&SFX[k](); }catch(e){} }
+function playSfx(k){ if(muted) return; try{ if(k.startsWith('v:')){ const [,cid,i]=k.split(':'); playVoice(cid,+i); } else SFX[k]&&SFX[k](); }catch(e){} }
+// ---- 英雄語音（移動台詞）：voice/{英雄}/{n}.m4a，來自 LoL Wiki 的官方配音，轉成 iPhone 能播的 AAC ----
+let voiceIdx=null, voiceSrc=null; const voiceBuf={}, voiceLast={};
+const voiceIndex=()=>voiceIdx||(voiceIdx=fetch('voice/index.json').then(r=>r.json()).catch(()=>({})));
+function loadVoice(cid,i){ const k=cid+'/'+i; if(!voiceBuf[k]) voiceBuf[k]=fetch(`voice/${k}.m4a`).then(r=>{ if(!r.ok) throw 0; return r.arrayBuffer(); }).then(b=>{ const a=ac(); return a?new Promise((ok,no)=>a.decodeAudioData(b,ok,no)):null; }).catch(()=>{ delete voiceBuf[k]; return null; }); return voiceBuf[k]; }
+async function playVoice(cid,i){ const buf=await loadVoice(cid,i), B=out(); if(!buf||!B||muted) return;
+  try{ voiceSrc&&voiceSrc.stop(); }catch(e){}
+  const src=B.a.createBufferSource(), g=B.a.createGain(); src.buffer=buf; g.gain.value=1.1; src.connect(g); g.connect(B.dry); const s2=B.a.createGain(); s2.gain.value=.12; g.connect(s2).connect(B.send); src.start(); voiceSrc=src; }
+// 輪到誰走：挑一句（不跟上一句重複），用 sfx 送出，兩支手機播同一句
+async function sayMove(p){ const cid=p&&p.skin&&p.skin.cid; if(!cid) return; const n=(await voiceIndex())[cid]; if(!n) return;
+  let i=Math.floor(Math.random()*n); if(n>1&&i===voiceLast[cid]) i=(i+1)%n; voiceLast[cid]=i; sfx(`v:${cid}:${i}`); }
+// 開局時先把場上英雄的台詞下載好（每句約 10 KB）
+let voicePre='';
+async function prefetchVoices(){ if(!st||!st.players) return; const ids=st.players.map(p=>p.skin&&p.skin.cid).filter(Boolean), sig=ids.join(); if(sig===voicePre) return; voicePre=sig;
+  const idx=await voiceIndex(); ids.forEach(c=>{ for(let i=0;i<(idx[c]||0);i++) loadVoice(c,i); }); }
 function hearRemote(){
   if(!st) return; if(heardSq>(st.sq||0)) heardSq=0;  // 新的一局重新計數
   if(!st.sfx) return; const q=st.sfx.filter(e=>e[0]>heardSq);
@@ -443,7 +457,7 @@ function isHost(){ return !net.online || net.me===0; }
 function render(){
   if(!st) return;
   if(st.phase==='lobby'){ renderLobby(); return; }
-  show('s-game');
+  show('s-game'); prefetchVoices();
   const c=cfg();
   $('g-mode').textContent=T('m_'+st.mode)+'・'+(net.online?T('room')+' '+net.code:T('onePhone'));
   $('g-round').textContent=T('round',{r:Math.min(st.round,c.maxRounds),m:c.maxRounds});
@@ -644,6 +658,7 @@ async function roll(){
   }
   let steps=d.reduce((a,b)=>a+b,0);
   if(p.boost){ p.boost=0; steps*=2; log('boost',{n:p.name,s:steps}); } else log('roll',{n:p.name,s:steps});
+  sayMove(p);                                          // 英雄的口頭禪（移動台詞）
   if(!reduce&&v.walkPlan) v.walkPlan(st.turn,steps);
   for(let k=0;k<steps;k++){ p.pos=(p.pos+1)%TT.length; if(p.pos===0){ const a=goBonus(st.turn); p.money+=a; p.laps=(p.laps||0)+1; log('passGo',{n:p.name,a}); sfx('coin'); } else sfx('step'); push(); if(!reduce){ renderBoard(); await sleep(v.stepMs||140); } }   // 每走一格同步一次
   if(!reduce&&v.settle) await v.settle();          // 3D：等棋子真的走到再結算

@@ -140,8 +140,9 @@ const view3d=(()=>{
   function makeStars(){ const g=new THREE.Group(); for(let k=0;k<3;k++){ const s=new THREE.Mesh(new THREE.OctahedronGeometry(.025),basicMat(0xFFE27A)); s.userData.a=k/3*Math.PI*2; g.add(s); } return g; }
 
   /* ---------- 英雄模型（modelviewer.lol 的 glTF：meshopt 壓縮 + KTX2 貼圖） ---------- */
-  const CH_YAW=0, CH_H=.62, CH_MAX=1, HEAD_WORLD=.24, HEAD_TARGET=.38, HEAD_MAX=2.8, BASIS='https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/basis/';
-  const Q_TORSO=.82, Q_NECK=.5, Q_HIPS=1.06, Q_LEG=.55, Q_FOOT=.85, Q_ARM=.74, Q_HAND=.85;   // Q 版各部位的目標倍數
+  const CH_YAW=0, CH_H=.62, CH_MAX=1, HEAD_WORLD=.24, HEAD_TARGET=.4, HEAD_MAX=3.4, BASIS='https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/basis/';
+  // Q 版手辦（黏土人）比例：[沿骨頭方向的長度倍數, 粗細倍數]。四肢短而粗、軀幹短沒腰身、手腳略大、脖子幾乎看不到
+  const Q_PELVIS=[.75,1], Q_TORSO=[.55,1.02], Q_NECK=[.25,1.15], Q_LEG=[.48,1.15], Q_ARM=[.58,1.1], Q_FOOT=1.05, Q_HAND=1.08, Q_TAIL=.75, Q_HAIR_LEN=.5, HAIR_HANG=.6, HEAD_CAP=.6;
   let gltfLoader=null; const champCache={};
   function champLoader(){
     if(!gltfLoader){ const k=new THREE.KTX2Loader().setTranscoderPath(BASIS).detectSupport(renderer); gltfLoader=new THREE.GLTFLoader().setKTX2Loader(k).setMeshoptDecoder(THREE.MeshoptDecoder); }
@@ -166,8 +167,8 @@ const view3d=(()=>{
         if(o.isSkinnedMesh){ o.computeBoundingBox(); bb=o.boundingBox.clone(); } else { if(!o.geometry.boundingBox) o.geometry.computeBoundingBox(); bb=o.geometry.boundingBox.clone(); }
         box.union(bb.applyMatrix4(o.matrixWorld)); }); return box; };
     // Q 版化（參考 SD／Q 版比例：2.5～3 頭身、軀幹約一個頭、腿短、手到大腿上半、手腳小而圓、脖子幾乎不見）
-    // 每個部位用「等比例縮放」並對子骨骼反向補償，關節彎曲時不會產生歪斜變形
-    const Q=chibify(model);
+    // 每個部位沿骨頭方向縮短、另外控制粗細（改綁定矩陣，不影響子骨頭，關節彎曲不會歪）
+    const Q=chibify(model,tk.cid);
     const box=measure();
     const face=Q.face*Q.hk;
     // 以臉的大小為基準縮放全身，讓每位英雄的臉在棋盤上差不多大；身高限制在 CH_H～CH_MAX 之間
@@ -176,14 +177,16 @@ const view3d=(()=>{
     const holder=new THREE.Group(), inner=new THREE.Group(); inner.add(model); holder.add(inner);
     inner.scale.setScalar(sc); inner.position.set(-(box.min.x+box.max.x)/2*sc,-box.min.y*sc,-(box.min.z+box.max.z)/2*sc);
     tk.body.remove(tk.A.root); tk.body.add(holder);
-    tk.champ={holder,mixer,clips,cur:null,act:null,mods:Q.mods,hk:Q.hk,humanoid:Q.humanoid,q:Q};
+    tk.champ={holder,mixer,clips,cur:null,act:null,hk:Q.hk,humanoid:Q.humanoid,q:Q};
     dust(tk.g.position,10); tk.crown.position.y=tk.arrow.position.y=0;   // 高度下一幀重算
   }
   // 更新動畫後把頭放大（沒有縮放軌道的動作也要先還原，避免越乘越大）
-  function mixUpdate(C,dt){ C.mods.forEach(m=>m[0].scale.copy(m[1])); C.mixer.update(dt); C.mods.forEach(m=>m[0].scale.multiplyScalar(m[2])); }
+  function mixUpdate(C,dt){ const q=C.q; q.pm.forEach(m=>m[0].position.copy(q.pos0.get(m[0]))); C.mixer.update(dt); q.pm.forEach(m=>m[0].position.applyMatrix3(m[1])); }
   // ---- Q 版化 ----
   // 骨骼命名有兩套：新版（Pelvis/Spine1/L_Hip/L_Shoulder=上臂）與舊版（hip/spine/L_Thigh/L_UpArm，L_Shoulder=鎖骨）
-  function chibify(model){
+  // 約德爾人本來就是 Q 版體型：只微調（波比的綁定比例量起來像真人，要特別處理）
+  const YORDLE=new Set(['Corki','Gnar','Heimerdinger','Kennen','Kled','Lulu','Poppy','Rumble','Teemo','Tristana','Veigar','Vex','Yuumi','Ziggs','Fizz','Smolder']);
+  function chibify(model,cid){
     const bones=[]; model.traverse(o=>{ if(o.isBone) bones.push(o); });
     const find=re=>bones.filter(b=>re.test(b.name));
     const one=re=>find(re)[0]||null, side=(re,s)=>bones.find(b=>re.test(b.name)&&new RegExp('^'+s+'_','i').test(b.name))||null;
@@ -192,38 +195,110 @@ const view3d=(()=>{
     const upArm=s=>side(/^[lr]_uparm1?$/i,s)||(side(/^[lr]_elbow$/i,s)?side(/^[lr]_shoulder$/i,s):null);
     const L={thigh:thigh('l'),foot:foot('l'),arm:upArm('l'),hand:hand('l')}, R={thigh:thigh('r'),foot:foot('r'),arm:upArm('r'),hand:hand('r')};
     const humanoid=!!(head&&L.thigh&&R.thigh&&L.arm&&R.arm);
-    // 目標「世界倍數」（相對原本大小）
-    const D=new Map();
-    if(humanoid){
-      if(spine) D.set(spine,Q_TORSO); if(neck) D.set(neck,Q_NECK); if(pelvis) D.set(pelvis,Q_HIPS); D.set(head,1);   // 量臉時頭維持原大小
-      [L,R].forEach(S=>{ D.set(S.thigh,Q_LEG); if(S.foot) D.set(S.foot,Q_FOOT); D.set(S.arm,Q_ARM); if(S.hand) D.set(S.hand,Q_HAND); });
+    // 綁定姿勢的資料：每副骨架複製一份 boneInverses（原本和快取的模型共用）
+    const skels=new Set(); model.traverse(o=>{ if(o.isSkinnedMesh) skels.add(o.skeleton); });
+    skels.forEach(sk=>{ sk.boneInverses=sk.boneInverses.map(m=>m.clone()); sk.inv0=sk.boneInverses.map(m=>m.clone()); });
+    const invOf=new Map(); skels.forEach(sk=>sk.bones.forEach((b,i)=>{ if(b&&!invOf.has(b)) invOf.set(b,sk.inv0[i]); }));
+    const bindPos=b=>{ const m=invOf.get(b); return m?new THREE.Vector3().setFromMatrixPosition(m.clone().invert()):b.getWorldPosition(new THREE.Vector3()); };
+    const axisOf=(a,b)=>a&&b?bindPos(b).sub(bindPos(a)).normalize():null;
+    const pos0=new Map(bones.map(b=>[b,b.position.clone()]));
+    // 部位：關鍵骨頭決定部位，其餘骨頭（手指、武器、尾巴…）跟著最近的上層
+    const key=new Map(), P={};                        // P[部位] = {l:沿骨頭方向的倍數, t:粗細倍數, ax:世界方向}
+    // 頭身比例用「綁定姿勢」量：頭頂到頭部關節的高度 ÷ 全身高（不受待機姿勢、垂下的長髮影響）
+    const rB=bindRatio(), r0=head?faceBox():0, h0=height(), rr=rB>0&&rB<.6?rB:r0/h0; let str=rr>0?Math.max(0,Math.min(1,(.28-rr)/.1)):0, yordle=YORDLE.has(cid);
+    if(yordle) str=Math.min(str,.2);
+    const sp0=headTop();
+    const mix=v=>1-str*(1-v);
+    const torsoAx=axisOf(spine||pelvis,neck||head);
+    if(humanoid&&str>0){
+      const def=(k,q,ax)=>{ P[k]={l:mix(q[0]),t:mix(q[1]),ax}; };
+      def('pelvis',Q_PELVIS,torsoAx); def('torso',Q_TORSO,torsoAx); def('neck',Q_NECK,axisOf(neck,head));
+      if(pelvis) key.set(pelvis,'pelvis'); if(spine) key.set(spine,'torso'); if(neck) key.set(neck,'neck');
+      [['l',L],['r',R]].forEach(([sd,S])=>{
+        def('leg'+sd,Q_LEG,axisOf(S.thigh,S.foot)); def('arm'+sd,Q_ARM,axisOf(S.arm,S.hand)); def('foot',[Q_FOOT,Q_FOOT],null); def('hand',[Q_HAND,Q_HAND],null);
+        key.set(S.thigh,'leg'+sd); key.set(S.arm,'arm'+sd); if(S.foot) key.set(S.foot,'foot'); if(S.hand) key.set(S.hand,'hand');
+      });
     }
-    const base=new Map(bones.map(b=>[b,b.scale.clone()]));
-    const faceBox=()=>{ if(!head) return 0; const fb=new THREE.Box3(), v=new THREE.Vector3(); let n=0; model.updateMatrixWorld(true);
-      model.traverse(o=>{ if(!o.isSkinnedMesh) return; const hi=o.skeleton.bones.indexOf(head); if(hi<0) return;
-        const P=o.geometry.attributes.position, SI=o.geometry.attributes.skinIndex, SW=o.geometry.attributes.skinWeight;
-        for(let i=0;i<P.count;i++){ let w=0; for(let c=0;c<4;c++) if(SI.getComponent(i,c)===hi) w+=SW.getComponent(i,c); if(w<.5) continue;
-          v.fromBufferAttribute(P,i); o.applyBoneTransform(i,v); v.applyMatrix4(o.matrixWorld); fb.expandByPoint(v); n++; } });
-      if(n<20) return 0; const d=fb.getSize(new THREE.Vector3()); return Math.max(d.x,d.y,d.z); };
-    const height=()=>{ const box=new THREE.Box3(); model.updateMatrixWorld(true); model.traverse(o=>{ if(o.isSkinnedMesh){ o.computeBoundingBox(); box.union(o.boundingBox.clone().applyMatrix4(o.matrixWorld)); } }); return Math.max(1e-6,box.max.y-box.min.y); };
-    // 原本就是大頭（臉佔身高 30% 以上，例如提摩）就不改身體；越接近真人比例改得越多
-    const r0=head?faceBox()/height():0, str=r0>0?Math.max(0,Math.min(1,(.3-r0)/.15)):0;
-    for(const [b,v] of D) if(b!==head) D.set(b,1-str*(1-v));
-    const apply=()=>{ bones.forEach(b=>{ if(D.has(b)){ let p=b.parent, acc=1; while(p){ if(D.has(p)){ acc=D.get(p); break; } p=p.parent; } b.userData.qk=D.get(b)/acc; b.scale.copy(base.get(b)).multiplyScalar(b.userData.qk); } }); model.updateMatrixWorld(true); };
+    if(humanoid&&str>0){ P.tail={l:mix(Q_TAIL),t:mix(Q_TAIL)}; bones.forEach(b=>{ if(/tail|wing/i.test(b.name)&&!(b.parent&&/tail|wing/i.test(b.parent.name))&&!isUnder(b,head)) key.set(b,'tail'); }); }   // 身上的尾巴、翅膀跟著身體縮小
+    if(head){ key.set(head,'head'); P.head={l:1,t:1,ax:axisOf(neck,head)}; }
+    const region=new Map(); const walk=(b,r)=>{ const k=key.get(b)||r; if(k) region.set(b,k); b.children.forEach(c=>{ if(c.isBone) walk(c,k); }); };
+    bones.filter(b=>!b.parent||!b.parent.isBone).forEach(b=>walk(b,null));
+    const I3=new THREE.Matrix3(), SM=new Map();
+    // 某骨頭的變形矩陣（骨頭自己的座標）：沿部位方向 l 倍、其他方向 t 倍
+    const build=()=>{ SM.clear(); bones.forEach(b=>{ const k=region.get(b), q=k&&P[k]; if(!q||(Math.abs(q.l-1)<1e-3&&Math.abs(q.t-1)<1e-3)) return;
+      const m=new THREE.Matrix3().identity().multiplyScalar(q.t);
+      if(q.ax&&Math.abs(q.l-q.t)>1e-3){ const inv=invOf.get(b)||b.matrixWorld.clone().invert(), a=q.ax.clone().transformDirection(inv), d=q.l-q.t, e=a.toArray();
+        const el=m.elements; for(let i=0;i<3;i++) for(let j=0;j<3;j++) el[j*3+i]+=d*e[i]*e[j]; }
+      SM.set(b,m); }); };
+    // 套用：網格用「修改過的綁定矩陣」變形（不會傳給子骨頭，所以關節彎曲不會歪）；子骨頭的位置跟著父骨頭縮放
+    const pm=[];
+    const apply=()=>{ build();
+      skels.forEach(sk=>sk.bones.forEach((b,i)=>{ const m=SM.get(b); sk.boneInverses[i].copy(sk.inv0[i]); if(m) sk.boneInverses[i].premultiply(new THREE.Matrix4().setFromMatrix3(m)); }));
+      pm.length=0; bones.forEach(b=>{ const m=b.parent&&SM.get(b.parent); b.position.copy(pos0.get(b)); if(m){ b.position.applyMatrix3(m); pm.push([b,m]); } });
+      model.updateMatrixWorld(true); };
     apply();
     // 用「主要綁在頭上的頂點」量臉的大小（頭髮、帽子、武器不算），再決定頭要放大幾倍
     let face=0, hk=1;
     if(head){
       face=faceBox();
-      if(face>0){ hk=Math.max(1,Math.min(HEAD_MAX,HEAD_TARGET/(face/height()))); if(hk<1.05) hk=1; }
-      // 頭：放大後，掛在頭上的頭髮、辮子、披風只放大開根號倍數，免得拖到地上
-      if(hk>1||D.size) D.set(head,hk);
-      if(hk>1) head.children.forEach(c=>{ if(c.isBone&&/hair|braid|tail|pony|ribbon|cape|scarf|cloth|chain|ear_?ring/i.test(c.name)) D.set(c,Math.sqrt(hk)); });
+      // 目標：頭（關節以上）約佔全身 HEAD_TARGET。身體縮短的比例 f 用同一個姿勢前後的身高推算
+      const f=Math.max(.3,Math.min(1,(height()-sp0)/Math.max(1e-6,h0-sp0)));
+      if(face>0&&rr>0) hk=HEAD_TARGET*(1-rr)*f/((1-HEAD_TARGET)*rr);
+      hk=Math.max(1,Math.min(yordle?1.3:HEAD_MAX,hk)); if(hk<1.05) hk=1;
+      if(hk>1){
+        const hyB=new THREE.Vector3().setFromMatrixPosition(invOf.get(head)?invOf.get(head).clone().invert():head.matrixWorld).y, skB=bindSkull();
+        const setHead=k=>{
+          // 手辦的頭：稍微扁圓（寬一點、矮一點）
+          P.head={l:k*(humanoid&&str>0?.95:1),t:k*(humanoid&&str>0?1.04:1),ax:P.head.ax};
+          // 頭上的頭髮骨頭：垂下來的（辮子、長髮）只變粗不變長；短的（瀏海、翹毛）跟頭一起放大
+          head.children.forEach(c=>{ if(!c.isBone||!/hair|braid|tail|pony|ribbon|cape|scarf|cloth|chain|ear_?ring/i.test(c.name)) return;
+            const chain=[]; c.traverse(o=>{ if(o.isBone) chain.push(o); });
+            const low=Math.min(...chain.map(o=>bindPos(o).y)), hang=skB>0&&low<hyB-skB*.3;
+            chain.forEach(o=>{ const kk='hair'+o.id; key.set(o,kk); region.set(o,kk);
+              if(!hang){ P[kk]={l:k,t:k}; return; }
+              const ch=o.children.find(x=>x.isBone); P[kk]={l:Q_HAIR_LEN,t:Math.sqrt(k),ax:ch?axisOf(o,ch):null}; }); });
+          squashHair(k); apply(); };
+        setHead(hk);
+        // 帽子、耳朵很大的角色：頭（含配件）最多佔全身約 6 成
+        const fb=faceBox(), H=height(); if(fb/H>HEAD_CAP){ hk=Math.max(1,hk*Math.pow(HEAD_CAP/(fb/H),1.4)); setHead(hk); }
+      }
     }
-    apply();
-    const mods=[...D.keys()].map(b=>[b,base.get(b),b.userData.qk]);
     const heads=face>0?height()/(face*hk):0;          // 最後大約幾頭身（除錯用）
-    return {mods,hk,face,humanoid,heads,r0,str};
+    return {pm,pos0,hk,face,humanoid,heads,r0:rr,str};
+
+    function headVerts(fn){ model.traverse(o=>{ if(!o.isSkinnedMesh) return; const hi=o.skeleton.bones.indexOf(head); if(hi<0) return;
+      const Pp=o.geometry.attributes.position, SI=o.geometry.attributes.skinIndex, SW=o.geometry.attributes.skinWeight;
+      for(let i=0;i<Pp.count;i++){ let w=0; for(let c=0;c<4;c++) if(SI.getComponent(i,c)===hi) w+=SW.getComponent(i,c); if(w>=.5) fn(o,i,Pp); } }); }
+    // 綁定空間的頂點座標（用 bindMatrix；原始頂點若被改過就用備份）
+    function bindV(o,i,v){ const A=o.userData.pos0; if(A) v.set(A[i*3],A[i*3+1],A[i*3+2]); else v.fromBufferAttribute(o.geometry.attributes.position,i); return v.applyMatrix4(o.bindMatrix); }
+    function bindSkull(){ if(!head||!invOf.get(head)) return 0; let top=-1e9; const v=new THREE.Vector3(); headVerts((o,i)=>{ top=Math.max(top,bindV(o,i,v).y); });
+      return top<-1e8?0:top-new THREE.Vector3().setFromMatrixPosition(invOf.get(head).clone().invert()).y; }
+    // 直接綁在頭上的長髮：下巴以下的部分往上收，放大頭之後不會拖到地上
+    function squashHair(k){ if(!head||!invOf.get(head)) return; const hy=new THREE.Vector3().setFromMatrixPosition(invOf.get(head).clone().invert()).y, sk=bindSkull(), c0=sk*.3, kk=Math.min(1,HAIR_HANG/k), v=new THREE.Vector3();
+      model.traverse(o=>{ if(!o.isSkinnedMesh) return; const hi=o.skeleton.bones.indexOf(head); if(hi<0) return;
+        const Pp=o.geometry.attributes.position, SI=o.geometry.attributes.skinIndex, SW=o.geometry.attributes.skinWeight, inv=o.bindMatrix.clone().invert(); let touched=false;   // 注意：attached 模式的 bindMatrixInverse 跟著 matrixWorld，不能用
+        for(let i=0;i<Pp.count;i++){ let w=0; for(let c=0;c<4;c++) if(SI.getComponent(i,c)===hi) w+=SW.getComponent(i,c); if(w<.3) continue;
+          bindV(o,i,v); const d=hy-v.y; if(d<=c0&&!o.userData.pos0) continue;
+          if(!o.userData.pos0){ o.geometry=o.geometry.clone(); const src=o.geometry.attributes.position, f=new Float32Array(src.count*3);   // 共用的幾何先複製一份再改；壓縮過的整數座標轉成浮點
+            for(let j=0;j<src.count;j++){ f[j*3]=src.getX(j); f[j*3+1]=src.getY(j); f[j*3+2]=src.getZ(j); }
+            o.geometry.setAttribute('position',new THREE.BufferAttribute(f,3)); o.userData.pos0=f.slice(); return squashHair(k); }
+          if(d>c0) v.y+=(d-(c0+(d-c0)*kk))*Math.min(1,w*1.4); v.applyMatrix4(inv); o.geometry.attributes.position.setXYZ(i,v.x,v.y,v.z); touched=true; }
+        if(touched) o.geometry.attributes.position.needsUpdate=true; }); }
+    function bindRatio(){ if(!head||!invOf.get(head)) return 0; let top=-1e9, minY=1e9; const v=new THREE.Vector3();
+      model.traverse(o=>{ if(o.isSkinnedMesh){ const Pp=o.geometry.attributes.position; for(let i=0;i<Pp.count;i++) minY=Math.min(minY,bindV(o,i,v).y); } });
+      headVerts((o,i)=>{ top=Math.max(top,bindV(o,i,v).y); }); if(top<-1e8) return 0;
+      const hy=new THREE.Vector3().setFromMatrixPosition(invOf.get(head).clone().invert()).y; return (top-hy)/Math.max(1e-6,top-minY); }
+    function headTop(){ if(!head) return 0; model.updateMatrixWorld(true); let top=-1e9; const v=new THREE.Vector3();
+      headVerts((o,i,Pp)=>{ v.fromBufferAttribute(Pp,i); o.applyBoneTransform(i,v); v.applyMatrix4(o.matrixWorld); top=Math.max(top,v.y); });
+      return top<-1e8?0:Math.max(0,top-head.getWorldPosition(new THREE.Vector3()).y); }
+    function isUnder(b,a){ if(!a) return false; for(let p=b.parent;p;p=p.parent) if(p===a) return true; return false; }
+    function faceBox(){ if(!head) return 0; const fb=new THREE.Box3(), v=new THREE.Vector3(); let n=0; model.updateMatrixWorld(true);
+      model.traverse(o=>{ if(!o.isSkinnedMesh) return; const hi=o.skeleton.bones.indexOf(head); if(hi<0) return;
+        const Pp=o.geometry.attributes.position, SI=o.geometry.attributes.skinIndex, SW=o.geometry.attributes.skinWeight;
+        for(let i=0;i<Pp.count;i++){ let w=0; for(let c=0;c<4;c++) if(SI.getComponent(i,c)===hi) w+=SW.getComponent(i,c); if(w<.5) continue;
+          v.fromBufferAttribute(Pp,i); o.applyBoneTransform(i,v); v.applyMatrix4(o.matrixWorld); fb.expandByPoint(v); n++; } });
+      if(n<20) return 0; const d=fb.getSize(new THREE.Vector3()); return Math.max(d.x,d.y,d.z); }
+    function height(){ const box=new THREE.Box3(); model.updateMatrixWorld(true); model.traverse(o=>{ if(o.isSkinnedMesh){ o.computeBoundingBox(); box.union(o.boundingBox.clone().applyMatrix4(o.matrixWorld)); } }); return Math.max(1e-6,box.max.y-box.min.y); }
   }
   function champPlay(C,key){
     if(C.cur===key) return;
@@ -387,7 +462,7 @@ const view3d=(()=>{
       const countEl=document.createElement('div'); countEl.className='fx-count'; countEl.style.display='none'; labelsEl.appendChild(countEl);
       tokens.push({pi,g,lift,A,body,champ:null,shadow,ring:ringM,crown,arrow,stars,countEl,idx:null,queue:[],hop:null,slot:[0,.12],sc:1,count:0,emo:null,yaw:0,spin:0,
         blinkAt:performance.now()+1000+Math.random()*3000,blinkT:0,phase:Math.random()*6,holdUntil:0,out:false,dieT:0,crownS:0,landSq:0});
-      if(p.skin&&typeof CHAMP!=='undefined'&&THREE.GLTFLoader){ const tk=tokens[tokens.length-1]; loadChamp(CHAMP.modelUrl(p.skin)).then(gl=>attachChamp(tk,gl)).catch(e=>console.warn('英雄模型載入失敗，改用小動物',p.skin.sid,e)); }
+      if(p.skin&&typeof CHAMP!=='undefined'&&THREE.GLTFLoader){ const tk=tokens[tokens.length-1]; tk.cid=p.skin.cid; loadChamp(CHAMP.modelUrl(p.skin)).then(gl=>attachChamp(tk,gl)).catch(e=>console.warn('英雄模型載入失敗，改用小動物',p.skin.sid,e)); }
     });
     // 鏡頭：從高處斜掃進場
     const fov=camera.fov*Math.PI/180, span=Math.max(rows+1.6,(cols+1.6)*1.25);
@@ -813,5 +888,5 @@ const view3d=(()=>{
   // 除錯：特寫某位玩家（closeup(-1) 取消）
   function closeup(pi,d,tile){ if(pi<0&&tile==null){ dbgCam=null; return; } const tk=tokens[pi]; const t=tile!=null?new THREE.Vector3(posOf(tile).x,.3,posOf(tile).z):tk?tk.g.position.clone().add(new THREE.Vector3(0,.3,0)):null; if(!t) return; dbgCam={t,p:t.clone().add(new THREE.Vector3(.0,(d||1.2)*.45,(d||1.2)))}; }
   function diceUp(){ return dice.filter(d=>d.visible).map(d=>{ let best=-1,bi=0; FACE_N.forEach((n,i)=>{ const w=n.clone().applyQuaternion(d.quaternion).y; if(w>best){ best=w; bi=i; } }); return FACE_VAL[bi]; }); }
-  return {ok,update,stop,rollDice,walkPlan,settle,stepMs:STEP_MS,closeup,diceUp,_tk:()=>tokens,_hk:()=>tokens.map(t=>t.champ?{hk:+t.champ.hk.toFixed(2),humanoid:t.champ.humanoid,r0:+t.champ.q.r0.toFixed(2),str:+t.champ.q.str.toFixed(2),heads:+t.champ.q.heads.toFixed(2)}:null)};
+  return {ok,update,stop,rollDice,walkPlan,settle,stepMs:STEP_MS,closeup,diceUp,_dbg:{loadChamp,chibify,findClip,mixUpdate},_tk:()=>tokens,_hk:()=>tokens.map(t=>t.champ?{hk:+t.champ.hk.toFixed(2),humanoid:t.champ.humanoid,r0:+t.champ.q.r0.toFixed(2),str:+t.champ.q.str.toFixed(2),heads:+t.champ.q.heads.toFixed(2)}:null)};
 })();
