@@ -140,7 +140,7 @@ const view3d=(()=>{
   function makeStars(){ const g=new THREE.Group(); for(let k=0;k<3;k++){ const s=new THREE.Mesh(new THREE.OctahedronGeometry(.025),basicMat(0xFFE27A)); s.userData.a=k/3*Math.PI*2; g.add(s); } return g; }
 
   /* ---------- 英雄模型（modelviewer.lol 的 glTF：meshopt 壓縮 + KTX2 貼圖） ---------- */
-  const CH_YAW=0, CH_H=.6, BASIS='https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/basis/';
+  const CH_YAW=0, CH_H=.68, CH_MAX=1.05, HEAD_WORLD=.24, HEAD_TARGET=.3, HEAD_MAX=2.4, BASIS='https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/basis/';
   let gltfLoader=null; const champCache={};
   function champLoader(){
     if(!gltfLoader){ const k=new THREE.KTX2Loader().setTranscoderPath(BASIS).detectSupport(renderer); gltfLoader=new THREE.GLTFLoader().setKTX2Loader(k).setMeshoptDecoder(THREE.MeshoptDecoder); }
@@ -158,18 +158,38 @@ const view3d=(()=>{
     Object.keys(CLIP).forEach(k=>{ const c=findClip(gltf.animations,k); if(c) clips[k]=c; });
     if(clips.idle){ mixer.clipAction(clips.idle).play(); mixer.update(0); }
     model.updateMatrixWorld(true);
-    // 以待機姿勢的實際外框量高度，統一縮成同樣大小
-    const box=new THREE.Box3();
-    model.traverse(o=>{ if(!o.isMesh) return; o.frustumCulled=false; let bb;
-      if(o.isSkinnedMesh){ o.computeBoundingBox(); bb=o.boundingBox.clone(); } else { if(!o.geometry.boundingBox) o.geometry.computeBoundingBox(); bb=o.geometry.boundingBox.clone(); }
-      box.union(bb.applyMatrix4(o.matrixWorld)); });
-    const h=Math.max(1e-6,box.max.y-box.min.y), sc=CH_H/h;
+    const measure=()=>{ const box=new THREE.Box3(); model.updateMatrixWorld(true);
+      model.traverse(o=>{ if(!o.isMesh) return; o.frustumCulled=false; let bb;
+        if(o.isSkinnedMesh){ o.computeBoundingBox(); bb=o.boundingBox.clone(); } else { if(!o.geometry.boundingBox) o.geometry.computeBoundingBox(); bb=o.geometry.boundingBox.clone(); }
+        box.union(bb.applyMatrix4(o.matrixWorld)); }); return box; };
+    let box=measure();
+    // 大頭化：找頭部骨骼；用「主要綁在頭上的頂點」量出臉的大小（頭髮、帽子、武器不算）
+    let head=null; model.traverse(o=>{ if(!head&&o.isBone&&/^(c_)?head$/i.test(o.name)) head=o; });
+    const faceSize=()=>{ const fb=new THREE.Box3(), v=new THREE.Vector3(); let n=0; model.updateMatrixWorld(true);
+      model.traverse(o=>{ if(!o.isSkinnedMesh) return; const hi=o.skeleton.bones.indexOf(head); if(hi<0) return;
+        const P=o.geometry.attributes.position, SI=o.geometry.attributes.skinIndex, SW=o.geometry.attributes.skinWeight;
+        for(let i=0;i<P.count;i++){ let w=0; for(let c=0;c<4;c++) if(SI.getComponent(i,c)===hi) w+=SW.getComponent(i,c); if(w<.5) continue;
+          v.fromBufferAttribute(P,i); o.applyBoneTransform(i,v); v.applyMatrix4(o.matrixWorld); fb.expandByPoint(v); n++; } });
+      if(n<20) return 0; const d=fb.getSize(new THREE.Vector3()); return Math.max(d.x,d.y,d.z); };
+    let hk=1, hair=[], face=0;
+    if(head){ face=faceSize(); const H0=Math.max(1e-6,box.max.y-box.min.y);
+      if(face>0){ hk=Math.max(1,Math.min(HEAD_MAX,HEAD_TARGET/(face/H0)));
+        if(hk>1.05){ head.scale.multiplyScalar(hk);
+          // 頭髮、辮子、披風這類掛在頭上的長骨骼：只放大開根號的倍數，免得辮子拖到地上
+          head.children.forEach(c=>{ if(c.isBone&&/hair|braid|tail|pony|ribbon|cape|scarf|cloth|chain|ear_?ring/i.test(c.name)){ hair.push([c,c.scale.clone()]); c.scale.multiplyScalar(Math.sqrt(hk)/hk); } });
+          box=measure(); face*=hk; } else hk=1; } }
+    // 以臉的大小為基準縮放，讓每位英雄的臉在棋盤上差不多大；身高限制在 CH_H～CH_MAX 之間
+    const h=Math.max(1e-6,box.max.y-box.min.y);
+    const sc=face>0?Math.max(CH_H/h,Math.min(HEAD_WORLD/face,CH_MAX/h)):CH_H/h;
     const holder=new THREE.Group(), inner=new THREE.Group(); inner.add(model); holder.add(inner);
     inner.scale.setScalar(sc); inner.position.set(-(box.min.x+box.max.x)/2*sc,-box.min.y*sc,-(box.min.z+box.max.z)/2*sc);
     tk.body.remove(tk.A.root); tk.body.add(holder);
-    tk.champ={holder,mixer,clips,cur:null,act:null};
+    tk.champ={holder,mixer,clips,cur:null,act:null,head:hk>1?head:null,hk,headBase:head?head.scale.clone().divideScalar(hk):null,hair};
     dust(tk.g.position,10); tk.crown.position.y=tk.arrow.position.y=0;   // 高度下一幀重算
   }
+  // 更新動畫後把頭放大（沒有縮放軌道的動作也要先還原，避免越乘越大）
+  function mixUpdate(C,dt){ if(C.head){ C.head.scale.copy(C.headBase); C.hair.forEach(([b,s])=>b.scale.copy(s)); } C.mixer.update(dt);
+    if(C.head){ C.head.scale.multiplyScalar(C.hk); const k=Math.sqrt(C.hk)/C.hk; C.hair.forEach(([b])=>b.scale.multiplyScalar(k)); } }
   function champPlay(C,key){
     if(C.cur===key) return;
     const clip=C.clips[key]||C.clips.idle; C.cur=key; if(!clip) return;
@@ -587,7 +607,7 @@ const view3d=(()=>{
   function idle(tk){ return tk.out||(!tk.hop&&!tk.queue.length); }
   function stepToken(tk,now,dt){
     const p=st.players[tk.pi], g=tk.g, A=tk.A, rm=RM(), C=tk.champ, R=C?C.holder:A.root;
-    if(tk.out){ if(C){ champPlay(C,'death'); C.mixer.update(dt); } const u=clamp((now-tk.dieT-(C?1500:0))/600,0,1); R.scale.setScalar(Math.max(.001,1-easeIO(u))); tk.shadow.scale.setScalar(1-u); tk.ring.visible=tk.crown.visible=tk.arrow.visible=tk.stars.visible=false; tk.countEl.style.display='none'; if(u>=1) g.visible=false; return; }
+    if(tk.out){ if(C){ champPlay(C,'death'); mixUpdate(C,dt); } const u=clamp((now-tk.dieT-(C?1500:0))/600,0,1); R.scale.setScalar(Math.max(.001,1-easeIO(u))); tk.shadow.scale.setScalar(1-u); tk.ring.visible=tk.crown.visible=tk.arrow.visible=tk.stars.visible=false; tk.countEl.style.display='none'; if(u>=1) g.visible=false; return; }
     g.visible=true; g.scale.setScalar(tk.sc+(g.scale.x-tk.sc)*.8);
     // 開始下一跳
     if(!tk.hop&&tk.queue.length&&now>=tk.holdUntil){
@@ -627,7 +647,7 @@ const view3d=(()=>{
       else if(tk.emo&&tk.emo.type==='happy') want='laugh';
       else if(tk.emo&&tk.emo.type==='sad') want='hit';
       else if(p.skip>0) want='stun';
-      champPlay(C,want); C.mixer.update(dt);
+      champPlay(C,want); mixUpdate(C,dt);
       if(!tk.hop||!tk.hop.leap) lift=tk.hop?lift:0; extraSpin=0; happy=false; sad=0;
     }
     else if(!tk.hop&&cur&&!tk.emo&&!rm) lift+=.035*Math.abs(Math.sin(t*3.2));
@@ -652,8 +672,8 @@ const view3d=(()=>{
     // 影子、光圈、箭頭、皇冠、星星
     tk.shadow.scale.setScalar(clamp(1-lift*.55,.35,1));
     tk.ring.visible=cur&&!rm; if(tk.ring.visible){ const s=1+.08*Math.sin(t*5); tk.ring.scale.set(s,s,s); }
-    tk.arrow.visible=cur&&idle(tk)&&st.phase==='play'; tk.arrow.position.y=(C?.98:.86)+(rm?0:.04*Math.sin(t*4)); tk.arrow.rotation.y=t*1.5;
-    tk.crownS+=((tk.lead?1:0)-tk.crownS)*Math.min(1,dt*6); tk.crown.visible=tk.crownS>.02; tk.crown.scale.setScalar(Math.max(.001,elastic(tk.crownS))); tk.crown.rotation.y=Math.sin(t*1.2)*.4; tk.crown.position.y=(C?.8:.63)-.07*sad;
+    tk.arrow.visible=cur&&idle(tk)&&st.phase==='play'; tk.arrow.position.y=(C?1.06:.86)+(rm?0:.04*Math.sin(t*4)); tk.arrow.rotation.y=t*1.5;
+    tk.crownS+=((tk.lead?1:0)-tk.crownS)*Math.min(1,dt*6); tk.crown.visible=tk.crownS>.02; tk.crown.scale.setScalar(Math.max(.001,elastic(tk.crownS))); tk.crown.rotation.y=Math.sin(t*1.2)*.4; tk.crown.position.y=(C?.88:.63)-.07*sad;
     tk.stars.visible=p.skip>0; if(tk.stars.visible) tk.stars.children.forEach(s=>{ const a=s.userData.a+t*3; s.position.set(Math.cos(a)*.16,Math.sin(t*6+s.userData.a)*.02,Math.sin(a)*.16); s.rotation.y=t*4; });
     // 剩餘步數
     const showCount=tk.count>0&&!rm;
@@ -758,5 +778,5 @@ const view3d=(()=>{
   // 除錯：特寫某位玩家（closeup(-1) 取消）
   function closeup(pi,d,tile){ if(pi<0&&tile==null){ dbgCam=null; return; } const tk=tokens[pi]; const t=tile!=null?new THREE.Vector3(posOf(tile).x,.3,posOf(tile).z):tk?tk.g.position.clone().add(new THREE.Vector3(0,.3,0)):null; if(!t) return; dbgCam={t,p:t.clone().add(new THREE.Vector3(.0,(d||1.2)*.45,(d||1.2)))}; }
   function diceUp(){ return dice.filter(d=>d.visible).map(d=>{ let best=-1,bi=0; FACE_N.forEach((n,i)=>{ const w=n.clone().applyQuaternion(d.quaternion).y; if(w>best){ best=w; bi=i; } }); return FACE_VAL[bi]; }); }
-  return {ok,update,stop,rollDice,walkPlan,settle,stepMs:STEP_MS,closeup,diceUp};
+  return {ok,update,stop,rollDice,walkPlan,settle,stepMs:STEP_MS,closeup,diceUp,_tk:()=>tokens,_hk:()=>tokens.map(t=>t.champ?[+t.champ.hk.toFixed(2),+t.champ.holder.children[0].scale.x.toFixed(4),t.champ.hair.length]:null)};
 })();
