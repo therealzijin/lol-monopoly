@@ -1,6 +1,20 @@
 /* ---------- 資料 ---------- */
 const AVATAR=['🐱','🐶','🦊','🐻'];
 const NPC_NAMES=[{zh:'狐狸',ja:'キツネ'},{zh:'熊熊',ja:'クマ'}];
+// NPC：每局隨機抽 LoL 英雄（預設造型，已確認模型存在且 Q 版化正常）
+const NPC_POOL=[['Garen',86,'蓋倫','ガレン'],['Jinx',222,'吉茵珂絲','ジンクス'],['Ahri',103,'阿璃','アーリ'],['Teemo',17,'提摩','ティーモ'],['Lux',99,'拉克絲','ラックス'],
+  ['Ashe',22,'艾希','アッシュ'],['Darius',122,'達瑞斯','ダリウス'],['Annie',1,'安妮','アニー'],['MissFortune',21,'好運姐','ミス・フォーチュン'],['Ezreal',81,'伊澤瑞爾','エズリアル'],
+  ['Yasuo',157,'犽宿','ヤスオ'],['Leona',89,'雷歐娜','レオナ'],['Amumu',32,'阿姆姆','アムム'],['Poppy',78,'波比','ポッピー'],['Katarina',55,'卡特蓮娜','カタリナ'],
+  ['Lulu',117,'露璐','ルル'],['Braum',201,'布郎姆','ブラウム'],['Vi',254,'菲艾','ヴァイ'],['Caitlyn',51,'凱特琳','ケイトリン'],['Sona',37,'索娜','ソナ']];
+function rerollNpcs(){ // 對方加入後才知道他的英雄：撞角就重抽
+  const ps=st.players, np=ps.filter(p=>p.npc); if(!np.some(p=>p.skin&&ps.some(q=>!q.npc&&q.skin&&q.skin.cid===p.skin.cid))) return;
+  const fresh=npcChamps(np.length,ps.filter(p=>!p.npc).map(p=>p.skin)); np.forEach((p,k)=>{ if(fresh[k]){ p.skin=fresh[k]; p.name=fresh[k].n[lang]||fresh[k].n.zh; } });
+}
+function npcChamps(n,skins){
+  const taken=new Set((skins||[]).filter(Boolean).map(s=>s.cid)), pool=NPC_POOL.filter(c=>!taken.has(c[0]));
+  for(let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
+  return pool.slice(0,n).map(([cid,key,zh,ja])=>({cid,sid:String(key*1000),n:{zh,ja},cn:{zh,ja}}));
+}
 const P=(zh,ja,p,g)=>({t:'prop',n:{zh,ja},p,g});
 const TILES={
   quick:[
@@ -159,34 +173,80 @@ let muted=lsGet('mp-muted')==='1', actx=null;
 let acIdle=null;
 // 省電：20 秒沒有聲音或頁面切到背景就讓音訊晶片休眠；任何觸控或下一個音效再喚醒
 function ac(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(actx&&actx.state==='suspended') actx.resume();
-  if(actx){ clearTimeout(acIdle); acIdle=setTimeout(()=>{ try{ actx.suspend(); }catch(e){} },20000); } return actx; }
-function tone(f,t0,dur,type='sine',vol=.18,f2){
-  const a=ac(); if(!a) return; const o=a.createOscillator(), g=a.createGain();
-  o.type=type; o.frequency.setValueAtTime(f,a.currentTime+t0); if(f2) o.frequency.exponentialRampToValueAtTime(f2,a.currentTime+t0+dur);
-  g.gain.setValueAtTime(0,a.currentTime+t0); g.gain.linearRampToValueAtTime(vol,a.currentTime+t0+.01); g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t0+dur);
-  o.connect(g).connect(a.destination); o.start(a.currentTime+t0); o.stop(a.currentTime+t0+dur+.02);
+  if(actx){ clearTimeout(acIdle); acIdle=setTimeout(()=>{ try{ actx.suspend(); }catch(e){} },45000); } return actx; }
+// 主輸出：壓縮器（音量一致、不爆音）＋ 很短的空間殘響（讓合成音不那麼「電子」）
+let bus=null;
+function out(){
+  const a=ac(); if(!a) return null; if(bus&&bus.a===a) return bus;
+  const comp=a.createDynamicsCompressor(); comp.threshold.value=-14; comp.ratio.value=4; comp.attack.value=.003; comp.release.value=.15;
+  const master=a.createGain(); master.gain.value=.9; comp.connect(master).connect(a.destination);
+  const dry=a.createGain(); dry.connect(comp);
+  const n=a.sampleRate*.7|0, ir=a.createBuffer(2,n,a.sampleRate);
+  for(let c=0;c<2;c++){ const d=ir.getChannelData(c); for(let i=0;i<n;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3.2); }
+  const rev=a.createConvolver(); rev.buffer=ir; const wet=a.createGain(); wet.gain.value=.22; rev.connect(wet).connect(comp);
+  const send=a.createGain(); send.connect(rev);
+  return bus={a,dry,send};
 }
-function noise(t0,dur,vol=.12){
-  const a=ac(); if(!a) return; const n=a.sampleRate*dur|0, b=a.createBuffer(1,n,a.sampleRate), d=b.getChannelData(0);
-  for(let i=0;i<n;i++) d[i]=(Math.random()*2-1)*(1-i/n);
-  const src=a.createBufferSource(), g=a.createGain(), f=a.createBiquadFilter(); f.type='highpass'; f.frequency.value=1800;
-  src.buffer=b; g.gain.value=vol; src.connect(f).connect(g).connect(a.destination); src.start(a.currentTime+t0);
+// 單一音：包絡 attack→指數衰減；可選滑音、低通、殘響量、顫音
+function tone(f,t0,dur,type='sine',vol=.18,f2,o={}){
+  const B=out(); if(!B) return; const a=B.a, t=a.currentTime+.005+t0;
+  const osc=a.createOscillator(), g=a.createGain(); let node=osc;
+  osc.type=type; osc.frequency.setValueAtTime(f,t); if(f2) osc.frequency.exponentialRampToValueAtTime(f2,t+(o.glide||dur));
+  if(o.det) osc.detune.value=o.det;
+  if(o.vib){ const l=a.createOscillator(), lg=a.createGain(); l.frequency.value=o.vib; lg.gain.value=f*.025; l.connect(lg).connect(osc.frequency); l.start(t); l.stop(t+dur+.05); }
+  if(o.lp){ const fl=a.createBiquadFilter(); fl.type='lowpass'; fl.frequency.setValueAtTime(o.lp,t); if(o.lp2) fl.frequency.exponentialRampToValueAtTime(o.lp2,t+dur); fl.Q.value=o.q||.7; node.connect(fl); node=fl; }
+  const at=o.at||.006, hold=o.hold||0;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+at); if(hold) g.gain.setValueAtTime(vol,t+at+hold); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  node.connect(g); g.connect(B.dry); if(o.rev!==0){ const s=a.createGain(); s.gain.value=o.rev==null?.35:o.rev; g.connect(s).connect(B.send); }
+  osc.start(t); osc.stop(t+dur+.05);
 }
+// 帶通/高通雜訊：骰子碰撞、翻牌、腳步
+const noiseBuf={};
+function noise(t0,dur,vol=.12,o={}){
+  const B=out(); if(!B) return; const a=B.a, t=a.currentTime+.005+t0;
+  if(!noiseBuf[a.sampleRate]){ const n=a.sampleRate|0, b=a.createBuffer(1,n,a.sampleRate), d=b.getChannelData(0); for(let i=0;i<n;i++) d[i]=Math.random()*2-1; noiseBuf[a.sampleRate]=b; }
+  const src=a.createBufferSource(), g=a.createGain(), f=a.createBiquadFilter();
+  src.buffer=noiseBuf[a.sampleRate]; f.type=o.type||'highpass'; f.frequency.setValueAtTime(o.f||1800,t); if(o.f2) f.frequency.exponentialRampToValueAtTime(o.f2,t+dur); f.Q.value=o.q||.8;
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+(o.at||.003)); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  src.connect(f).connect(g); g.connect(B.dry); if(o.rev){ const s=a.createGain(); s.gain.value=o.rev; g.connect(s).connect(B.send); }
+  src.start(t,Math.random()*.5); src.stop(t+dur+.02);
+}
+// 鐘聲（非整數倍泛音）：金幣、收銀機、升級
+function bell(f,t0,dur=.6,vol=.12){ tone(f,t0,dur,'sine',vol,0,{rev:.5}); tone(f*2.76,t0,dur*.45,'sine',vol*.35,0,{rev:.5}); tone(f*5.4,t0,dur*.2,'sine',vol*.15,0,{rev:.5}); }
+const jit=(x,r=.06)=>x*(1+(Math.random()*2-1)*r);
 const SFX={
-  click:()=>tone(900,0,.05,'square',.06),
-  dice:()=>{ noise(0,.06,.15); tone(300+rnd(200),0,.05,'triangle',.08); },
-  step:()=>tone(520,0,.06,'triangle',.1,420),
-  coin:()=>{ tone(988,0,.09,'sine',.16); tone(1319,.08,.16,'sine',.16); },
-  pay:()=>{ tone(330,0,.12,'sawtooth',.1,220); tone(220,.12,.18,'sawtooth',.1,150); },
-  buy:()=>{ [523,659,784,1047].forEach((f,i)=>tone(f,i*.07,.12,'sine',.14)); },
-  up:()=>{ [659,784,988,1319].forEach((f,i)=>tone(f,i*.06,.1,'triangle',.12)); },
-  card:()=>{ noise(0,.08,.1); tone(700,.05,.12,'sine',.1,1100); },
-  wheel:()=>{ for(let i=0;i<8;i++) tone(400+i*60,i*.07,.05,'square',.06); },
-  jail:()=>{ tone(150,0,.25,'sawtooth',.14,60); noise(0,.15,.08); },
-  win:()=>{ [523,659,784,1047,784,1047,1319].forEach((f,i)=>tone(f,i*.12,.22,'triangle',.16)); },
-  lose:()=>{ [440,415,392,349].forEach((f,i)=>tone(f,i*.2,.28,'sawtooth',.1)); },
+  click:()=>{ tone(1500,0,.035,'sine',.05,900,{rev:0}); noise(0,.015,.03,{f:4000,rev:0}); },
+  dice:()=>{ noise(0,.05,.16,{type:'bandpass',f:jit(2600,.2),q:1.4}); tone(jit(230,.15),0,.06,'triangle',.1,150,{rev:.15}); },
+  step:()=>{ const f=jit(560,.12); tone(f,0,.09,'sine',.13,f*.55,{rev:.2}); noise(0,.04,.05,{type:'lowpass',f:900}); tone(f*2,0,.03,'triangle',.03,0,{rev:0}); },
+  coin:()=>{ tone(988,0,.08,'square',.07,0,{lp:3500}); tone(1319,.07,.35,'square',.07,0,{lp:3500,lp2:1500}); bell(2637,.07,.4,.05); },
+  pay:()=>{ tone(523,0,.14,'triangle',.12,494); tone(392,.12,.16,'triangle',.12,370); tone(262,.26,.4,'sawtooth',.08,196,{lp:900,lp2:300,glide:.35});
+    [0,.05,.11].forEach((d,i)=>bell(jit(2000-i*300),.05+d,.25,.03)); },
+  buy:()=>{ noise(0,.08,.1,{type:'bandpass',f:3000,q:2}); bell(1568,.06,.8,.1); bell(2093,.14,.9,.08);
+    [523,659,784,1047].forEach((f,i)=>tone(f,.02+i*.06,.25,'triangle',.08,0,{rev:.3})); },
+  up:()=>{ noise(0,.35,.05,{type:'bandpass',f:600,f2:5000,q:1.5,at:.2}); [659,784,988,1319,1568].forEach((f,i)=>{ tone(f,i*.055,.22,'triangle',.08); bell(f*2,i*.055,.3,.03); }); },
+  card:()=>{ noise(0,.12,.12,{type:'bandpass',f:1200,f2:5000,q:1.2}); tone(880,.08,.25,'sine',.09,1320,{glide:.08}); bell(1760,.14,.5,.05); },
+  wheel:()=>{ let t=0; for(let i=0;i<12;i++){ tone(jit(1800,.03),t,.03,'square',.04,0,{lp:3000,rev:.1}); noise(t,.02,.05,{f:3000}); t+=.045+i*i*.0022; } bell(1318,t+.05,.7,.1); },
+  jail:()=>{ [220,331,467,618].forEach((f,i)=>tone(f,0,.9-i*.15,'square',.05,f*.98,{lp:1800,lp2:400})); tone(80,0,.35,'sine',.22,40); noise(0,.2,.1,{type:'bandpass',f:1500,q:3}); },
+  auction:()=>{ bell(1047,0,.9,.1); bell(1047,.35,.9,.08); },
+  gavel:()=>{ tone(160,0,.12,'sine',.25,70,{rev:.4}); noise(0,.06,.18,{type:'bandpass',f:900,q:1.2}); bell(1568,.12,.8,.07); bell(2093,.2,.9,.06); },
+  win:()=>{ const n=[[523,0],[659,.12],[784,.24],[1047,.36],[784,.54],[1047,.66]]; n.forEach(([f,t])=>{ tone(f,t,.22,'triangle',.12); tone(f/2,t,.2,'square',.04,0,{lp:1200}); });
+    [523,659,784,1047].forEach(f=>tone(f,.84,1.4,'triangle',.07,0,{vib:5,at:.02,hold:.3})); bell(2093,.84,1.2,.06); },
+  lose:()=>{ [[466,0,.3],[440,.32,.3],[415,.64,.3],[392,.96,1]].forEach(([f,t,d])=>tone(f,t,d,'sawtooth',.08,d>.5?370:0,{lp:1100,vib:d>.5?6:0,at:.03,hold:d*.4,glide:d})); },
 };
-function sfx(k){ if(muted) return; try{ SFX[k]&&SFX[k](); }catch(e){} }
+// 連線：遊戲事件的音效寫進 st.sfx 一起同步，對方手機收到後照播（click/dice/勝負各自本地判斷）
+const SFX_LOCAL={click:1,dice:1,win:1,lose:1};
+let heardSq=0;
+function sfx(k){
+  if(net&&net.online&&st&&st.phase==='play'&&!SFX_LOCAL[k]){ st.sq=(st.sq||0)+1; st.sfx=(st.sfx||[]).concat([[st.sq,k]]).slice(-12); heardSq=st.sq; }
+  playSfx(k);
+}
+function playSfx(k){ if(muted) return; try{ SFX[k]&&SFX[k](); }catch(e){} }
+function hearRemote(){
+  if(!st) return; if(heardSq>(st.sq||0)) heardSq=0;  // 新的一局重新計數
+  if(!st.sfx) return; const q=st.sfx.filter(e=>e[0]>heardSq);
+  q.slice(-3).forEach((e,i)=>setTimeout(()=>playSfx(e[1]),i*110));
+  if(st.sq) heardSq=Math.max(heardSq,st.sq);
+}
 function setMuted(m){ muted=m; lsSet('mp-muted',m?'1':'0'); document.querySelectorAll('.b-mute').forEach(b=>b.textContent=m?'🔇':'🔊'); }
 document.addEventListener('pointerdown',()=>ac());
 document.addEventListener('visibilitychange',()=>{ if(document.hidden&&actx){ try{ actx.suspend(); }catch(e){} } });
@@ -203,11 +263,11 @@ const key=()=> 'room:'+net.code;
 
 function newState(mode,names,skins){
   skins=skins||[];
-  const c=CFG[mode];
+  const c=CFG[mode], npcs=npcChamps(npcCount,skins);
   return {
     mode, phase:'lobby', seq:1, code:net.code, guestJoined:false,
     players:[{name:names[0]||'玩家一',money:c.start,pos:0,skip:0,rentPaid:0,chances:0,laps:0,skin:skins[0]||null},{name:names[1]||'玩家二',money:c.start+100,pos:0,skip:0,rentPaid:0,chances:0,laps:0,skin:skins[1]||null}]
-      .concat(Array.from({length:npcCount},(_,k)=>({name:NPC_NAMES[k][lang],money:c.start,pos:0,skip:0,npc:true,rentPaid:0,chances:0,laps:0}))),
+      .concat(Array.from({length:npcCount},(_,k)=>({name:npcs[k]?npcs[k].n[lang]||npcs[k].n.zh:NPC_NAMES[k][lang],money:c.start,pos:0,skip:0,npc:true,rentPaid:0,chances:0,laps:0,skin:npcs[k]||null}))),
     awards:[],
     owners:{}, turn:0, first:0, round:1, step:'roll', pending:null, dice:[], winner:null, log:[], crash:0
   };
@@ -336,15 +396,15 @@ async function push(){
 }
 async function pull(){
   if(!net.online||busy||!hasStorage()) return;
-  try{ const r=await window.storage.get(key(),true); if(!r) return; const s=JSON.parse(r.value); if(s.seq>st.seq){ st=s; render(); } }catch(e){}
+  try{ const r=await window.storage.get(key(),true); if(!r) return; const s=JSON.parse(r.value); if(s.seq>st.seq){ st=s; hearRemote(); render(); } }catch(e){}
 }
 function startPolling(){ if(timer) clearInterval(timer); timer=null; if(hasStorage()) timer=setInterval(pull,2000); }
 function stopPolling(){ if(timer) clearInterval(timer); timer=null; if(conn){ try{conn.close()}catch(e){} conn=null; } if(peer){ try{peer.destroy()}catch(e){} peer=null; } }
 function onData(d){
   let m; try{ m=typeof d==='string'?JSON.parse(d):d; }catch(e){ return; }
   if(m.type==='act'){ if(net.online&&net.me===0&&st) doAct(Object.assign({},m,{pi:1})); return; }
-  if(m.type==='join'){ if(!st||st.phase!=='lobby') return; st.players[1].name=m.name; st.players[1].skin=m.skin||null; st.guestJoined=true; render(); push(); return; }
-  if(m.seq!=null && (!st||m.seq>st.seq)){ st=m; if(busy) return; render(); }
+  if(m.type==='join'){ if(!st||st.phase!=='lobby') return; st.players[1].name=m.name; st.players[1].skin=m.skin||null; st.guestJoined=true; rerollNpcs(); render(); push(); return; }
+  if(m.seq!=null && (!st||m.seq>st.seq)){ st=m; hearRemote(); if(busy) return; render(); }
 }
 function onDisconnect(){ if(!net.online) return; $('home-err').textContent=T('e_disc'); goHome(); }
 function hostPeer(){
@@ -467,7 +527,7 @@ function startAuction(pi,i){
   const bidders=alive().filter(j=>j!==pi);
   const a=st.auction={seller:pi,tile:i,value,min,bids:{},bidders,deadline:Date.now()+AUCTION_MS};
   bidders.forEach(j=>{ const q=st.players[j]; if(q.npc) a.bids[j]=npcBid(j,a); else if(q.money<min) a.bids[j]=0; });
-  log('auctionStart',{n:st.players[pi].name,ti:i,m:min}); sfx('card');
+  log('auctionStart',{n:st.players[pi].name,ti:i,m:min}); sfx('auction');
   armAuction(); render(); push(); return true;
 }
 function submitBid(pi,amt){
@@ -479,7 +539,7 @@ function resolveAuction(){
   const a=st.auction; if(!a) return; clearInterval(auctionTimer); auctionTimer=null;
   let best=-1, bv=0; a.bidders.forEach(j=>{ const v=a.bids[j]||0; if(v>bv||(v===bv&&v>0&&Math.random()<.5)){ bv=v; best=j; } });
   const s=st.players[a.seller];
-  if(best>=0&&bv>=a.min&&st.owners[a.tile]&&st.owners[a.tile].owner===a.seller){ st.owners[a.tile].owner=best; pay(best,bv,a.seller); log('auctionWin',{b:st.players[best].name,p:bv,n:s.name,ti:a.tile}); sfx('buy'); }
+  if(best>=0&&bv>=a.min&&st.owners[a.tile]&&st.owners[a.tile].owner===a.seller){ st.owners[a.tile].owner=best; pay(best,bv,a.seller); log('auctionWin',{b:st.players[best].name,p:bv,n:s.name,ti:a.tile}); sfx('gavel'); }
   else log('auctionNone',{ti:a.tile});
   st.auction=null; render(); push();
 }

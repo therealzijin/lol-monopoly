@@ -147,7 +147,9 @@ const view3d=(()=>{
     if(!gltfLoader){ const k=new THREE.KTX2Loader().setTranscoderPath(BASIS).detectSupport(renderer); gltfLoader=new THREE.GLTFLoader().setKTX2Loader(k).setMeshoptDecoder(THREE.MeshoptDecoder); }
     return gltfLoader;
   }
-  function loadChamp(url){ if(!champCache[url]) champCache[url]=new Promise((ok,no)=>champLoader().load(url,ok,undefined,no)).catch(e=>{ delete champCache[url]; throw e; }); return champCache[url]; }
+  // NPC 也用英雄後同時會下載 4 隻：CDN 偶爾回 429，失敗就等一下重試（最多 2 次）
+  function loadChamp(url){ if(!champCache[url]){ const once=()=>new Promise((ok,no)=>champLoader().load(url,ok,undefined,no));
+    champCache[url]=once().catch(()=>new Promise(r=>setTimeout(r,1500+Math.random()*1500)).then(once)).catch(()=>new Promise(r=>setTimeout(r,4000)).then(once)).catch(e=>{ delete champCache[url]; throw e; }); } return champCache[url]; }
   // 動作名稱每隻英雄略有不同，依序比對
   const CLIP={idle:[/^idle1(_base)?(\.|$)/i,/^idle1/i,/^idle(_base)?(\.|$)/i,/^idle/i], run:[/^run(_base)?(\.|$)/i,/^run(?!_in)/i,/^run/i],
     laugh:[/^laugh(\.|$)/i,/^laugh/i,/^joke/i,/^taunt/i], dance:[/^dance1?(\.|$)/i,/^dance/i,/^laugh/i], hit:[/^knockup/i,/^taunt/i],
@@ -385,7 +387,7 @@ const view3d=(()=>{
       const countEl=document.createElement('div'); countEl.className='fx-count'; countEl.style.display='none'; labelsEl.appendChild(countEl);
       tokens.push({pi,g,lift,A,body,champ:null,shadow,ring:ringM,crown,arrow,stars,countEl,idx:null,queue:[],hop:null,slot:[0,.12],sc:1,count:0,emo:null,yaw:0,spin:0,
         blinkAt:performance.now()+1000+Math.random()*3000,blinkT:0,phase:Math.random()*6,holdUntil:0,out:false,dieT:0,crownS:0,landSq:0});
-      if(p.skin&&!p.npc&&typeof CHAMP!=='undefined'&&THREE.GLTFLoader){ const tk=tokens[tokens.length-1]; loadChamp(CHAMP.modelUrl(p.skin)).then(gl=>attachChamp(tk,gl)).catch(e=>console.warn('英雄模型載入失敗，改用小動物',p.skin.sid,e)); }
+      if(p.skin&&typeof CHAMP!=='undefined'&&THREE.GLTFLoader){ const tk=tokens[tokens.length-1]; loadChamp(CHAMP.modelUrl(p.skin)).then(gl=>attachChamp(tk,gl)).catch(e=>console.warn('英雄模型載入失敗，改用小動物',p.skin.sid,e)); }
     });
     // 鏡頭：從高處斜掃進場
     const fov=camera.fov*Math.PI/180, span=Math.max(rows+1.6,(cols+1.6)*1.25);
