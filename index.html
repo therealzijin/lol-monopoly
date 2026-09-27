@@ -55,7 +55,8 @@ h1{font-size:34px;line-height:1.1;font-weight:800;letter-spacing:-.01em;margin:8
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;font-size:13px;color:#BFD3CF}
 .topbar>span{white-space:nowrap}
 .topbar>#g-mode{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}   /* 窄螢幕（iPhone 直向、日文）不換行，模式名稱太長就省略 */
-.players{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.players{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-bottom:10px}   /* minmax(0,…)：名字長也不會把欄位撐出畫面 */
+.pl{min-width:0}
 .pl{background:var(--felt-dark);border-radius:12px;padding:8px 10px;border:2px solid transparent;display:flex;align-items:center;gap:8px}
 .pl.out{opacity:.45}
 .pl .cnt{margin-left:auto;flex:none;text-align:center;background:rgba(255,255,255,.08);border-radius:8px;padding:4px 7px;min-width:36px}
@@ -271,12 +272,12 @@ h1{font-size:34px;line-height:1.1;font-weight:800;letter-spacing:-.01em;margin:8
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module">
 // 先載入 Three.js（模組版），掛到 window.THREE 後再依序載入遊戲腳本；載入失敗就只用 2D
-const SCRIPTS=["game.js?v=202609270952","champs.js?v=202609270952","view2d.js?v=202609270952","view3d.js?v=202609270952"];
+const SCRIPTS=["game.js?v=202609271033","champs.js?v=202609271033","view2d.js?v=202609271033","view3d.js?v=202609271033"];
 const load=src=>new Promise((ok,no)=>{ const e=document.createElement('script'); e.src=src; e.onload=ok; e.onerror=no; document.body.appendChild(e); });
 try{
   const T=await import('three');
-  const [a,b,c,d,e]=await Promise.all(['controls/OrbitControls.js','loaders/GLTFLoader.js','loaders/KTX2Loader.js','libs/meshopt_decoder.module.js','utils/SkeletonUtils.js'].map(x=>import('three/addons/'+x)));
-  window.THREE=Object.assign({},T,{OrbitControls:a.OrbitControls,GLTFLoader:b.GLTFLoader,KTX2Loader:c.KTX2Loader,MeshoptDecoder:d.MeshoptDecoder,SkeletonUtils:e});
+  const [a,b,c,d,e,f]=await Promise.all(['controls/OrbitControls.js','loaders/GLTFLoader.js','loaders/KTX2Loader.js','libs/meshopt_decoder.module.js','utils/SkeletonUtils.js','environments/RoomEnvironment.js'].map(x=>import('three/addons/'+x)));
+  window.THREE=Object.assign({},T,{OrbitControls:a.OrbitControls,GLTFLoader:b.GLTFLoader,KTX2Loader:c.KTX2Loader,MeshoptDecoder:d.MeshoptDecoder,SkeletonUtils:e,RoomEnvironment:f.RoomEnvironment});
   T.ColorManagement.enabled=false;   // 沿用原本的色彩處理（材質顏色自行轉線性）
 }catch(err){ console.warn('3D 載入失敗，改用 2D',err); }
 for(const x of SCRIPTS) await load(x);

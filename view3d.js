@@ -51,7 +51,11 @@ const view3d=(()=>{
   const elastic=u=>u<=0?0:u>=1?1:Math.pow(2,-10*u)*Math.sin((u*10-.75)*(2*Math.PI)/3)+1;
 
   /* ---------- 材質・幾何快取 ---------- */
-  let GRAD=null, OUTLINE=null, SHADOW_TEX=null;
+  let GRAD=null, OUTLINE=null, SHADOW_TEX=null, SUN=null, shadowT=0;
+  // 桌遊質感的照片材質（Poly Haven CC0，見 tex/CREDITS.txt）
+  const TEXC={}; function photo(name,rx,ry){ const k=name+rx+'x'+ry; if(!TEXC[k]){ const t=new THREE.TextureLoader().load('tex/'+name,()=>{ shadowT=0; }); t.wrapS=t.wrapT=THREE.RepeatWrapping; t.repeat.set(rx,ry); t.anisotropy=8; t.colorSpace=THREE.SRGBColorSpace; TEXC[k]=t; } return TEXC[k]; }
+  // 會動、會長出來的東西（角色、房子、旗子、骰子、道具）都投影；格子、桌面、絨布接收影子。新東西出現時補設定
+  function shadowFlags(){ root.traverse(o=>{ if(!o.isMesh||o.userData.noShadow) return; const m=o.material; if(m&&(m.isMeshBasicMaterial||m.transparent&&!o.isSkinnedMesh)) return; o.castShadow=true; }); }
   const TOON={}, BASIC={}, SPH={};
   const lin=c=>new THREE.Color(c).convertSRGBToLinear();
   function toonMat(c){ return TOON[c]||(TOON[c]=new THREE.MeshToonMaterial({color:lin(c),gradientMap:GRAD})); }
@@ -160,6 +164,7 @@ const view3d=(()=>{
   function attachChamp(tk,gltf){
     if(!tokens.includes(tk)||tk.champ) return;
     const model=THREE.SkeletonUtils.clone(gltf.scene), mixer=new THREE.AnimationMixer(model), clips={};
+    model.traverse(o=>{ if(o.isMesh&&o.material&&'envMapIntensity' in o.material){ o.material=o.material.clone(); o.material.envMapIntensity=.45; } });
     Object.keys(CLIP).forEach(k=>{ const c=findClip(gltf.animations,k); if(c) clips[k]=c; });
     if(clips.idle){ mixer.clipAction(clips.idle).play(); mixer.update(0); }
     model.updateMatrixWorld(true);
@@ -431,8 +436,13 @@ const view3d=(()=>{
     scene=new THREE.Scene();
     camera=new THREE.PerspectiveCamera(38,1,.1,100);
     // r155+ 採物理光強度：乘上 π 才等於舊版的亮度
-    scene.add(new THREE.HemisphereLight(0xffffff,0x2a4a47,.85*Math.PI));
-    const sun=new THREE.DirectionalLight(0xfff4de,.85*Math.PI); sun.position.set(3,9,5); scene.add(sun);
+    scene.add(new THREE.HemisphereLight(0xffffff,0x2a4a47,.62*Math.PI));
+    const sun=SUN=new THREE.DirectionalLight(0xfff4de,1.15*Math.PI); sun.position.set(3,9,5); scene.add(sun);
+    // 即時陰影：只在畫面有動的時候重算（shadowMap.autoUpdate=false），靜止時不增加耗電
+    renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap; renderer.shadowMap.autoUpdate=false;
+    sun.castShadow=true; sun.shadow.mapSize.set(1024,1024); sun.shadow.bias=-.0008; sun.shadow.normalBias=.02; sun.shadow.radius=3;
+    // 環境反射：英雄模型、骰子更有立體感（只算一次）
+    { const pm=new THREE.PMREMGenerator(renderer); scene.environment=pm.fromScene(new THREE.RoomEnvironment(),.04).texture; pm.dispose(); }
     root=new THREE.Group(); scene.add(root); fxRoot=new THREE.Group(); scene.add(fxRoot);
     controls=new THREE.OrbitControls(camera,renderer.domElement);
     controls.enablePan=false; controls.enableDamping=true; controls.dampingFactor=.12; controls.rotateSpeed=.55;
@@ -458,16 +468,20 @@ const view3d=(()=>{
     clear(root); clear(fxRoot); tilesM=[]; labels=[]; tokens=[]; props=[]; parts=[]; tileFx=[];
     floats.forEach(f=>f.el.remove()); floats=[]; labelsEl.innerHTML='';
     const {cols,rows}=ring(), TT=tiles();
-    const table=new THREE.Mesh(roundedBox(cols+1.1,.16,rows+1.1,.07,2),new THREE.MeshStandardMaterial({color:lin(0x1B3B39),roughness:.95}));
-    table.position.y=-.09; root.add(table);
-    const inner=new THREE.Mesh(new THREE.BoxGeometry(cols-1.85,.02,rows-1.85),new THREE.MeshStandardMaterial({color:lin(0x2F5F5B),roughness:.95}));
-    root.add(inner);
+    // 棋盤：木頭外框＋中間綠色絨布，放在一張大木桌上
+    const table=new THREE.Mesh(roundedBox(cols+1.1,.16,rows+1.1,.07,2),new THREE.MeshStandardMaterial({color:lin(0xC89A78),map:photo('frame.jpg',2,2),roughness:.55,metalness:0}));
+    table.position.y=-.09; table.receiveShadow=true; table.userData.noShadow=true; root.add(table);
+    const inner=new THREE.Mesh(new THREE.BoxGeometry(cols-1.85,.02,rows-1.85),new THREE.MeshStandardMaterial({color:lin(0x8FE0CC),map:photo('felt.jpg',3,3),roughness:1}));
+    inner.receiveShadow=true; inner.userData.noShadow=true; root.add(inner);
+    const desk=new THREE.Mesh(new THREE.PlaneGeometry(60,60),new THREE.MeshStandardMaterial({color:lin(0xF2DCC0),map:photo('table.jpg',9,9),roughness:.7}));
+    desk.rotation.x=-Math.PI/2; desk.position.y=-.172; desk.receiveShadow=true; desk.userData.noShadow=true; root.add(desk);
+    { const R=Math.max(cols,rows)/2+1.6, c=SUN.shadow.camera; c.left=c.bottom=-R; c.right=c.top=R; c.near=1; c.far=30; c.updateProjectionMatrix(); }
     const es=Math.min(cols-2,rows-2)*.92, em=new THREE.Mesh(new THREE.PlaneGeometry(es,es),new THREE.MeshBasicMaterial({map:emblemTex(),transparent:true,depthWrite:false}));
     em.rotation.x=-Math.PI/2; em.position.set(0,.012,0); root.add(em);
     const TILE_GEO=roundedBox(.92,.14,.92,.045,3);
     TT.forEach((t,i)=>{
       const {x,z}=posOf(i), o=outer(i), g=new THREE.Group(); g.position.set(x,0,z);
-      const base=new THREE.Mesh(TILE_GEO,new THREE.MeshToonMaterial({color:lin(t.t==='prop'?PAPER:PAPER_DIM),gradientMap:GRAD})); base.position.y=.07; g.add(base);
+      const base=new THREE.Mesh(TILE_GEO,new THREE.MeshToonMaterial({color:lin(t.t==='prop'?PAPER:PAPER_DIM),gradientMap:GRAD})); base.position.y=.07; base.receiveShadow=true; base.userData.noShadow=true; g.add(base);
       let band=null;
       if(t.t==='prop'){
         const horiz=o.z!==0; band=new THREE.Mesh(roundedBox(horiz?.86:.16,.035,horiz?.16:.86,.012,1),toonMat(GCOL[t.g]));
@@ -902,6 +916,7 @@ const view3d=(()=>{
       ||(celebrate&&now-celebrate.t0<8000)||tokens.some(tk=>tk.hop||tk.queue.length||(tk.emo&&tk.emo.type!=='win')||(tk.out&&now-tk.dieT<2200)||tk.count>0);
     if(now-lastRender<(active?1000/61:80)) return;                // 動的時候最多每秒 60 張，靜止時約 12 張
     lastRender=now;
+    if(active||now-shadowT>2000){ if(now-shadowT>600){ shadowFlags(); shadowT=now; } renderer.shadowMap.needsUpdate=true; }   // 影子只在有動靜時更新
     renderer.render(scene,camera);
     // 地名標籤只在鏡頭真的動了才重新定位（每幀改 32 個 DOM 位置很耗電）
     const e=camera.matrixWorld.elements, sig=e.map(v=>Math.round(v*1000)).join(',')+':'+W+'x'+H;
