@@ -41,7 +41,7 @@ const CARDS=[
   C('忘了紀念日，退 3 格反省','記念日を忘れた。3マス戻って反省',{move:-3}),
   C('抱抱卡：兩人都加 50','ハグカード：ふたりとも +50',{both:50}),
   C('幫對方按摩 30 秒，酬勞入帳','相手を30秒マッサージして報酬ゲット',{money:100}),
-  C('吵架了，罰站一回合','ケンカした。1回休み',{jail:true}),
+  C('吵架了，冷戰一回合（暫停）','ケンカした。冷戦で1回休み',{jail:true}),
   // 天馬行空
   C('被外星人抓走做實驗，醒來不知道在哪','エイリアンに拉致されて実験台に。目覚めたらどこ？',{teleport:true}),
   C('踩到提莫的蘑菇，中毒 -100 還退 2 格','ティーモのキノコを踏んだ。毒で -100、2マス戻る',{money:-100,move:-2}),
@@ -49,29 +49,38 @@ const CARDS=[
   C('吃到會飛的餅乾，飄了 5 格','空飛ぶクッキーを食べて 5マス飛んだ',{move:5}),
   C('被一群鴿子追，逃到對方旁邊','ハトの群れに追われて、相手のところまで逃げた',{gotoOpp:true}),
   C('被神明附身，和對方交換位置','神様が降りてきて、相手と位置が入れ替わった',{swap:true}),
-  C('對方被外星人抓走，罰站一回合','相手がエイリアンに拉致された。相手は1回休み',{jailOther:true}),
+  C('對方被外星人抓走，暫停一回合','相手がエイリアンに拉致された。相手は1回休み',{jailOther:true}),
   C('中了外星彩券','宇宙宝くじに当選',{money:300}),
   C('路邊撿到一隻貓，養貓費','道でネコを拾った。ネコ代',{money:-80}),
   C('手滑把錢轉給對方','手が滑って相手に送金してしまった',{lose:100}),
-  C('迷路了，繞回起點（沒有獎金）','道に迷ってスタートに戻った（ボーナスなし）',{gotoNoPay:0}),
+  C('迷路了，繞回泉水（沒有獎金）','道に迷って泉に戻った（ボーナスなし）',{gotoNoPay:0}),
   C('撿到對方的錢包，誠實歸還獲得獎勵','相手の財布を拾って返した。お礼をもらう',{give:100}),
   C('手遊輸了摔手機','ゲームで負けてスマホを投げた',{money:-150}),
   C('銀行算錯帳，多給你錢','銀行の計算ミスで臨時収入',{money:200}),
   C('中了發票！','レシート宝くじ当選！',{money:250}),
   C('被邀請上綜藝節目，講一個冷笑話拿通告費','バラエティ番組に出演。寒いギャグを言って出演料ゲット',{money:120}),
   // 召喚峽谷
-  C('辛吉德跑過去撒了一路毒，你被毒暈，罰站一回合','シンジドが毒をまきながら走り抜けた。毒で気絶、1回休み',{jail:true}),
+  C('辛吉德跑過去撒了一路毒，你被毒到陣亡，暫停一回合','シンジドが毒をまきながら走り抜けた。毒で気絶、1回休み',{jail:true}),
   C('被塞恩開大撞飛，直接飛出去 6 格','サイオンのウルトに吹き飛ばされて 6マス飛んだ',{move:6}),
   C('希維爾開大！下一次擲骰移動距離加倍','シヴィアのウルト発動！次のサイコロは移動距離2倍',{boost:true}),
   C('被布里茨的機械飛爪勾走，拉到對方旁邊','ブリッツクランクのロケットグラブに引き寄せられて相手の隣へ',{gotoOpp:true}),
   C('巴德開了傳送門，你好奇走進去，不知道通到哪','バードのポータルに興味本位で入ってみた。どこに出る？',{teleport:true}),
-  C('被塔姆一口吞掉，在起點被吐出來（沒有獎金）','タム・ケンチに丸呑みされて、スタートで吐き出された（ボーナスなし）',{gotoNoPay:0}),
+  C('被塔姆一口吞掉，在泉水被吐出來（沒有獎金）','タム・ケンチに丸呑みされて、泉で吐き出された（ボーナスなし）',{gotoNoPay:0}),
   C('踩到薩科的小丑盒，嚇到往後跳 3 格','シャコのジャック・イン・ザ・ボックスにビビって 3マス後退',{move:-3}),
   C('學德萊文接斧頭，接了十次，觀眾打賞','ドレイヴンの斧キャッチを10回成功。観客からチップ',{money:200}),
   C('走進漢默丁格的砲台範圍，被打了一輪','ハイマーディンガーのタレットの射程に入って撃たれた',{money:-100}),
   C('阿姆姆過來求抱抱，兩人心軟了，各加 50','アムムがハグを求めてきた。ふたりとも心が緩んで +50',{both:50}),
   C('被露璐變成松鼠，只能小碎步退 2 格','ルルにリスにされて、ちょこちょこ 2マス後退',{move:-2}),
   C('吉茵珂絲亂丟火箭炸到你','ジンクスのロケットが流れ弾で命中',{money:-120}),
+  // 峽谷事件（LoL 主題的新卡）
+  C('拿下巴龍！你的地接下來兩輪租金 +50%','バロン獲得！あなたの物件は2ラウンドの間 家賃 +50%',{baron:true}),
+  C('擊殺賞金！資產最高的人被你擊殺，付你 $150','キル賞金！資産トップを倒して $150 もらう',{bounty:150}),
+  C('被打野 Gank！損失 $80，退 2 格','ジャングラーにガンクされた！-$80、2マス後退',{money:-80,move:-2}),
+  C('打到河道蟹，拿到視野，前進到下一塊空地','スカトルクラブを倒して視界ゲット。次の空き地へ進む',{nextFree:true}),
+  C('插了真眼、清了對面的視野，獎勵 $80','コントロールワードで視界を取った。報酬 $80',{money:80}),
+  C('預示者撞塔！推塔獎金 $120','リフトヘラルドがタワーを破壊！タワー報酬 $120',{money:120}),
+  C('回城被打斷，只好走回去 3 格','リコールを止められて、歩いて3マス戻る',{move:-3}),
+  C('全隊團戰大勝，兩人各加 $80','集団戦で大勝利、ふたりとも +$80',{both:80}),
   // 翻盤機制
   C('劫富濟貧！資產最高的人付給其他每人 $120','義賊登場！資産トップが他の全員に $120 ずつ支払う',{robinhood:120}),
   C('趁亂佈告：把資產最高的人一塊未升級的地過戶給你','どさくさに紛れて、資産トップの未改築の土地を1つもらった',{steal:true}),
@@ -80,7 +89,8 @@ const CARDS=[
   C('巴德開了捷徑：直接走到下一塊還沒人買的地','バードの近道！次の空き地まで一気に進む',{nextFree:true}),
   C('拉姆斯說 OK，滾到下一塊空地看看','ラムスが「OK」と転がって次の空き地へ',{nextFree:true}),
 ];
-const WHEEL=[C('大獎','大当たり',{money:300}),C('小獎','当たり',{money:150}),C('安慰獎','残念賞',{money:50}),C('銘謝惠顧','ハズレ',{money:0}),C('轉到破洞','穴に落ちた',{money:-100}),C('對方賠你','相手が払う',{give:100})];
+// 巨龍祭壇：轉出哪一條龍（轉盤）
+const WHEEL=[C('炎龍之魂！+$300','インファーナルドラゴン！+$300',{money:300}),C('海洋巨龍 +$150','オーシャンドラゴン +$150',{money:150}),C('山脈巨龍 +$50','マウンテンドラゴン +$50',{money:50}),C('龍被對面搶走了…','ドラゴンをスティールされた…',{money:0}),C('被巴龍團滅 -$100','バロンに全滅させられた -$100',{money:-100}),C('搶到遠古巨龍！對方付你 $100','エルダードラゴン獲得！相手から $100',{give:100})];
 const LVMULT=[1,2,3.5,5];
 const RULE={freeProps:5, upkeepPct:.05, propTaxFree:3, propTax:50, underdogRent:.5, npcCap:6, starterMax:160, finalRounds:3, homestretch:200, awards:{rent:300,chance:200,laps:200}};
 
@@ -97,15 +107,15 @@ zh:{
  note:'兩支手機模式：把連結傳給對方，房主選模式開房，對方輸入房號加入。兩支手機最好連同一個 Wi-Fi。語言可以各自選。',
  e_storage:'這個環境沒有連線功能，請改用「同一支手機」模式。',e_disc:'連線中斷了。兩支手機請連同一個 Wi-Fi，然後重新開房。',connecting:'連線中…',e_name:'先填你的名字。',e_create:'建立房間失敗，請再試一次。',e_code:'房號是 4 位數字。',e_notfound:'找不到這個房號，確認一下對方有沒有開房。',e_started:'這間房已經開始了。',
  lobby_title:'房間已開',lobby_sub:'把這個房號告訴對方，讓對方在首頁輸入加入。',waiting:'等待對方加入…',joined:'{n} 已加入，可以開始。',guestWait:'已加入 {n} 的房間，等房主按開始…',start:'開始遊戲',leave:'回首頁',
- m_quick:'快速模式',m_classic:'經典模式',room:'房號',onePhone:'同一支手機',round:'第 {r} / {m} 回合',you:'（你）',worth:'總資產',skipping:'罰站中',boosted:'加速中',
+ m_quick:'快速模式',m_classic:'經典模式',room:'房號',onePhone:'同一支手機',round:'第 {r} / {m} 回合',you:'（你）',worth:'總資產',skipping:'陣亡中',boosted:'加速中',
  over:'遊戲結束',turnOf:'<b>{n}</b> 的回合',waitFor:'等 <b>{n}</b> 走完',moving:'走路中…',yourTurn:'<b>{n}</b>，換你了。',passPhone:'把手機交給 <b>{n}</b>，換你了。',roll:'擲骰子',
  buyQ:'「<b>{t}</b>」沒人買，要用 ${p} 買下嗎？',buy:'買下',noBuy:'不買',upQ:'「<b>{t}</b>」可以升級（${c}），租金會從 ${a} 漲到 ${b}。',up:'升級',noUp:'先不要',end:'結束回合',waitTurn:'輪到 <b>{n}</b>，稍等一下。',
  draw:'平手！',wins:'{n} 贏了！',drawSub:'兩人資產一樣多，改天再分勝負。',winSub:'輸的人負責今晚的家事（規則自訂）。',rankSub:'名次：{r}',awardsTitle:'終局獎項',aw_rent:'苦主獎',aw_chance:'冒險獎',aw_laps:'旅行獎',npcWin:'被電腦贏走了！兩個人一起負責家事。',again:'再來一局',hostAgain:'等房主開下一局…',home:'回首頁',
- tile:{go:'起點',chance:'機會',tax:'稅務局',rest:'咖啡休息',jail:'罰站區',wheel:'幸運轉盤',twitch:'圖奇偷家'},
- log:{start:'遊戲開始！後手多拿 $100 補償。',again:'新的一局開始！後手多拿 $100 補償。',roll:'{n} 擲出 {s}',boost:'{n} 希維爾加速中！移動距離加倍，走 {s} 格',passGo:'{n} 經過起點，領 ${a}',npcBuy:'{n} 買下了「{t}」',npcPass:'{n} 看了看「{t}」，決定不買',robin:'{n} 是首富，付給其他每人 ${a}',steal:'{n} 拿走了 {o} 的「{t}」',crash:'房市崩跌！下一輪所有租金減半',lastAid:'{n} 排名最後，領補助 ${a}',out:'{n} 出局了',newRound:'第 {r} 回合開始，這回合由 {n} 先手',auctionStart:'{n} 拍賣「{t}」，底價 ${m}',auctionWin:'{b} 以 ${p} 標下 {n} 的「{t}」',auctionNone:'「{t}」沒人出價，流標',bankSell:'{n} 把「{t}」賣給銀行，拿回 ${v}',dealt:'{n} 起手抽到「{t}」，付 ${p}',final:'最後 {k} 回合！排名最後的 {n} 領衝刺補助 ${a}',award_rent:'苦主獎：{n} 這局共付租金 ${v}，獲得 ${a}',award_chance:'冒險獎：{n} 抽了 {v} 張機會卡，獲得 ${a}',award_laps:'旅行獎：{n} 經過起點 {v} 次，獲得 ${a}',upkeep:'{n} 持有 {c} 塊地，超額部分繳維護費 ${a}',taxProp:'{n} 被稅務局收走 ${a}（含地產稅 ${b}）',rentHalf:'{n} 排名最後，踩到 {o} 的「{t}」租金減半，付 ${r}',twitch:'{n} 被圖奇偷家！「{t}」被偷走，重新變成空地',twitchCash:'{n} 被圖奇偷家！沒有地可偷，現金被摸走 ${a}',twitchNone:'{n} 被圖奇偷家，但家裡空空的，什麼都沒被偷',taxPct:'{n} 被稅務局收走 ${a}（依現金 8%）',
+ tile:{go:'泉水',chance:'峽谷事件',tax:'商店',rest:'回城',jail:'陣亡',wheel:'巨龍祭壇',twitch:'圖奇偷家'},
+ log:{start:'遊戲開始！後手多拿 $100 補償。',again:'新的一局開始！後手多拿 $100 補償。',roll:'{n} 擲出 {s}',boost:'{n} 希維爾加速中！移動距離加倍，走 {s} 格',passGo:'{n} 經過泉水，領 ${a}',baron:'{n} 拿下巴龍！接下來兩輪租金 +50%',bounty:'{n} 擊殺了 {o}，拿到賞金 ${a}',npcBuy:'{n} 買下了「{t}」',npcPass:'{n} 看了看「{t}」，決定不買',robin:'{n} 是首富，付給其他每人 ${a}',steal:'{n} 拿走了 {o} 的「{t}」',crash:'房市崩跌！下一輪所有租金減半',lastAid:'{n} 排名最後，領補助 ${a}',out:'{n} 出局了',newRound:'第 {r} 回合開始，這回合由 {n} 先手',auctionStart:'{n} 拍賣「{t}」，底價 ${m}',auctionWin:'{b} 以 ${p} 標下 {n} 的「{t}」',auctionNone:'「{t}」沒人出價，流標',bankSell:'{n} 把「{t}」賣給銀行，拿回 ${v}',dealt:'{n} 起手抽到「{t}」，付 ${p}',final:'最後 {k} 回合！排名最後的 {n} 領衝刺補助 ${a}',award_rent:'苦主獎：{n} 這局共付租金 ${v}，獲得 ${a}',award_chance:'冒險獎：{n} 遇到 {v} 次峽谷事件，獲得 ${a}',award_laps:'旅行獎：{n} 經過泉水 {v} 次，獲得 ${a}',upkeep:'{n} 持有 {c} 塊地，超額部分繳維護費 ${a}',taxProp:'{n} 在商店被迫買裝備，花掉 ${a}（含地產稅 ${b}）',rentHalf:'{n} 排名最後，踩到 {o} 的「{t}」租金減半，付 ${r}',twitch:'{n} 被圖奇偷家！「{t}」被偷走，重新變成空地',twitchCash:'{n} 被圖奇偷家！沒有地可偷，現金被摸走 ${a}',twitchNone:'{n} 被圖奇偷家，但家裡空空的，什麼都沒被偷',taxPct:'{n} 在商店被迫買裝備，花掉 ${a}（依現金 8%）',
   canBuy:'{n} 來到「{t}」，可以用 ${p} 買下',poor:'{n} 來到「{t}」，但錢不夠買',rent:'{n} 踩到 {o} 的「{t}」，付租金 ${r}',canUp:'{n} 回到自己的「{t}」，可以花 ${c} 升級',back:'{n} 回到自己的「{t}」',
-  chance:'{n} 抽到機會：{c}',tax:'{n} 被稅務局收走 ${a}',jail:'{n} 被罰站，下一回合暫停',wheel:'{n} 轉到「{w}」',rest:'{n} 在咖啡店休息一下',go:'{n} 停在起點',
-  sell:'{n} 錢不夠，賣掉「{t}」換回 ${v}',bankrupt:'{n} 破產了！',skip:'{n} 這回合罰站，跳過',bought:'{n} 買下了「{t}」',upgraded:'{n} 把「{t}」升到 {l} 級',settle:'{m} 回合結束！結算資產：{r}'}
+  chance:'{n} 遇到峽谷事件：{c}',tax:'{n} 在商店被迫買裝備，花掉 ${a}',jail:'{n} 陣亡了，在泉水等復活（下一回合暫停）',wheel:'{n} 在巨龍祭壇：「{w}」',rest:'{n} 回城補血，休息一下',go:'{n} 回到泉水',
+  sell:'{n} 錢不夠，賣掉「{t}」換回 ${v}',bankrupt:'{n} 破產了！',skip:'{n} 還在等復活，跳過這回合',bought:'{n} 買下了「{t}」',upgraded:'{n} 把「{t}」升到 {l} 級',settle:'{m} 回合結束！結算資產：{r}'}
 },
 ja:{
  fs:'⛶ 全画面',a2hsT:'ホーム画面に追加すると全画面に',a2hsB:'iPhone の Safari はページから全画面にできません。ホーム画面に追加してアイコンから開くと、アドレスバーが消えて画面が広くなります：',a2hs1:'Safari の「共有」ボタンをタップ',a2hs2:'「ホーム画面に追加」を選ぶ',a2hs3:'ホーム画面の「大富翁」アイコンから開く',ok:'OK',
@@ -121,11 +131,11 @@ ja:{
  over:'ゲーム終了',turnOf:'<b>{n}</b> のターン',waitFor:'<b>{n}</b> の番です',moving:'移動中…',yourTurn:'<b>{n}</b>、あなたの番です。',passPhone:'スマホを <b>{n}</b> に渡してください。',roll:'サイコロを振る',
  buyQ:'「<b>{t}</b>」は空き地。${p} で買いますか？',buy:'買う',noBuy:'買わない',upQ:'「<b>{t}</b>」を ${c} でアップグレードできます。家賃が ${a} → ${b} に。',up:'アップグレード',noUp:'やめておく',end:'ターン終了',waitTurn:'<b>{n}</b> の番です。少しお待ちください。',
  draw:'引き分け！',wins:'{n} の勝ち！',drawSub:'資産が同じ。勝負はまた今度。',winSub:'負けた人が今夜の家事担当（ルールはご自由に）。',rankSub:'順位：{r}',awardsTitle:'ボーナス賞',aw_rent:'苦労賞',aw_chance:'冒険賞',aw_laps:'旅行賞',npcWin:'コンピュータの勝ち！ふたりで家事担当。',again:'もう一局',hostAgain:'ホストが次のゲームを始めるのを待っています…',home:'トップへ戻る',
- tile:{go:'スタート',chance:'チャンス',tax:'税務署',rest:'カフェ休憩',jail:'おしおき',wheel:'ルーレット',twitch:'トゥイッチ襲来'},
- log:{start:'ゲーム開始！後手は補償として $100 多くもらえます。',again:'次のゲーム開始！後手は補償として $100 多くもらえます。',roll:'{n} が {s} を出した',boost:'{n} はシヴィアの加速中！移動距離2倍で {s} マス進む',passGo:'{n} がスタートを通過、${a} 受け取り',npcBuy:'{n} が「{t}」を購入',npcPass:'{n} は「{t}」を見て買わなかった',robin:'{n} は資産トップ。他の全員に ${a} 支払い',steal:'{n} が {o} の「{t}」を奪った',crash:'バブル崩壊！次のラウンドは全員の家賃が半額',lastAid:'{n} は最下位。補助 ${a} 受け取り',out:'{n} が脱落',newRound:'ラウンド {r} 開始。このラウンドは {n} から',auctionStart:'{n} が「{t}」を競売に。最低 ${m}',auctionWin:'{b} が {n} の「{t}」を ${p} で落札',auctionNone:'「{t}」は入札なしで不成立',bankSell:'{n} が「{t}」を銀行に売って ${v} 受け取り',dealt:'{n} の初期物件は「{t}」、${p} 支払い',final:'ラスト {k} ラウンド！最下位の {n} に追い上げボーナス ${a}',award_rent:'苦労賞：{n} は家賃を合計 ${v} 支払った。${a} 獲得',award_chance:'冒険賞：{n} はチャンスカードを {v} 枚引いた。${a} 獲得',award_laps:'旅行賞：{n} はスタートを {v} 回通過。${a} 獲得',upkeep:'{n} は物件 {c} 件。超過分の維持費 ${a} を支払い',taxProp:'{n} が税務署に ${a} 取られた（物件税 ${b} 込み）',rentHalf:'{n} は最下位。{o} の「{t}」の家賃は半額、${r} 支払い',twitch:'{n} の家にトゥイッチが侵入！「{t}」が奪われて空き地に戻った',twitchCash:'{n} の家にトゥイッチが侵入！土地がないので現金 ${a} を盗まれた',twitchNone:'{n} の家にトゥイッチが侵入したが、何もなくて手ぶらで帰った',taxPct:'{n} が税務署に ${a} 取られた（所持金の8%）',
+ tile:{go:'泉',chance:'リフトイベント',tax:'ショップ',rest:'リコール',jail:'デス',wheel:'ドラゴン祭壇',twitch:'トゥイッチ襲来'},
+ log:{start:'ゲーム開始！後手は補償として $100 多くもらえます。',again:'次のゲーム開始！後手は補償として $100 多くもらえます。',roll:'{n} が {s} を出した',boost:'{n} はシヴィアの加速中！移動距離2倍で {s} マス進む',passGo:'{n} が泉を通過、${a} 受け取り',baron:'{n} がバロン獲得！2ラウンドの間 家賃 +50%',bounty:'{n} が {o} を倒してキル賞金 ${a}',npcBuy:'{n} が「{t}」を購入',npcPass:'{n} は「{t}」を見て買わなかった',robin:'{n} は資産トップ。他の全員に ${a} 支払い',steal:'{n} が {o} の「{t}」を奪った',crash:'バブル崩壊！次のラウンドは全員の家賃が半額',lastAid:'{n} は最下位。補助 ${a} 受け取り',out:'{n} が脱落',newRound:'ラウンド {r} 開始。このラウンドは {n} から',auctionStart:'{n} が「{t}」を競売に。最低 ${m}',auctionWin:'{b} が {n} の「{t}」を ${p} で落札',auctionNone:'「{t}」は入札なしで不成立',bankSell:'{n} が「{t}」を銀行に売って ${v} 受け取り',dealt:'{n} の初期物件は「{t}」、${p} 支払い',final:'ラスト {k} ラウンド！最下位の {n} に追い上げボーナス ${a}',award_rent:'苦労賞：{n} は家賃を合計 ${v} 支払った。${a} 獲得',award_chance:'冒険賞：{n} はリフトイベントに {v} 回遭遇。${a} 獲得',award_laps:'旅行賞：{n} は泉を {v} 回通過。${a} 獲得',upkeep:'{n} は物件 {c} 件。超過分の維持費 ${a} を支払い',taxProp:'{n} はショップで装備を買わされて ${a}（物件税 ${b} 込み）',rentHalf:'{n} は最下位。{o} の「{t}」の家賃は半額、${r} 支払い',twitch:'{n} の家にトゥイッチが侵入！「{t}」が奪われて空き地に戻った',twitchCash:'{n} の家にトゥイッチが侵入！土地がないので現金 ${a} を盗まれた',twitchNone:'{n} の家にトゥイッチが侵入したが、何もなくて手ぶらで帰った',taxPct:'{n} はショップで装備を買わされて ${a}（所持金の8%）',
   canBuy:'{n} が「{t}」に到着。${p} で買える',poor:'{n} が「{t}」に到着したが、お金が足りない',rent:'{n} が {o} の「{t}」に止まり、家賃 ${r} を支払い',canUp:'{n} が自分の「{t}」に戻った。${c} でアップグレード可能',back:'{n} が自分の「{t}」に戻った',
-  chance:'{n} がチャンスカード：{c}',tax:'{n} が税務署に ${a} 取られた',jail:'{n} がおしおき。次のターンは休み',wheel:'{n} のルーレット：「{w}」',rest:'{n} はカフェでひと休み',go:'{n} がスタートに止まった',
-  sell:'{n} はお金が足りず、「{t}」を売って ${v} 回収',bankrupt:'{n} が破産！',skip:'{n} はおしおき中、このターンは休み',bought:'{n} が「{t}」を購入',upgraded:'{n} が「{t}」をレベル {l} に',settle:'{m} ラウンド終了！資産結果：{r}'}
+  chance:'{n} のリフトイベント：{c}',tax:'{n} はショップで装備を買わされて ${a}',jail:'{n} がデス。泉で復活待ち（次のターンは休み）',wheel:'{n} のドラゴン祭壇：「{w}」',rest:'{n} はリコールしてひと休み',go:'{n} は泉に戻った',
+  sell:'{n} はお金が足りず、「{t}」を売って ${v} 回収',bankrupt:'{n} が破産！',skip:'{n} は復活待ち、このターンは休み',bought:'{n} が「{t}」を購入',upgraded:'{n} が「{t}」をレベル {l} に',settle:'{m} ラウンド終了！資産結果：{r}'}
 }};
 let lang=(navigator.language||'').toLowerCase().startsWith('ja')?'ja':'zh';
 let layout='ring';
@@ -142,14 +152,14 @@ function rulesHTML(){
   if(ja) return sec('勝ち方',[`ゲーム終了時に<b>総資産</b>（所持金＋物件価格＋改築費）がいちばん多い人の勝ち。`,`ほかの全員が破産した場合も、その時点で勝ち。`])
    +sec('モード',[`クイック：${tw}マス・サイコロ${q.dice}個・${q.maxRounds}ラウンド・初期資金 $${q.start}`,`クラシック：${cw}マス・サイコロ${c.dice}個・${c.maxRounds}ラウンド・初期資金 $${c.start}`,`後手は $100 多くもらえる。先手はラウンドごとに1人ずつずれる。`,`開始時、全員に $${R.starterMax} 以下の物件が1つランダムに配られる（代金は支払う）。`])
    +sec('物件と家賃',[`空き地に止まったら価格どおりに買える。買わなければそのまま。`,`他人の物件に止まると家賃を払う（物件価格の${pct(.5)}）。同じ色をすべて持っていると家賃2倍。`,`色をそろえた物件に戻ると改築できる（費用は物件価格の半分）。レベル1〜3で家賃 ${lv}。`,`お金が足りないと物件を半額で自動売却。売り切っても足りなければ脱落。`])
-   +sec('特別なマス',[`スタート：通過で $200。順位が1つ下がるごとに +$50。`,`チャンス：カードを1枚引く。ルーレット：お金が増えたり減ったり。`,`税務署：決まった額か所持金の8%の高いほう。さらに物件${R.propTaxFree}件を超える分は1件 $${R.propTax}。`,`おしおき：次のターンは休み。カフェ休憩：何も起きない。`,`トゥイッチ襲来：物件を1つ盗まれて空き地に戻る。物件がなければ現金 $100。`])
-   +sec('逆転のしくみ',[`毎ラウンド開始時、物件が${R.freeProps}件を超える分は1件につき価格の${pct(R.upkeepPct)}の維持費。`,`最下位の人は家賃が半額。`,`ラスト${R.finalRounds}ラウンドに入ると最下位に $${R.homestretch}。`,`終了時のボーナス賞：苦労賞（家賃を一番払った）+$${R.awards.rent}、冒険賞（チャンス最多）+$${R.awards.chance}、旅行賞（スタート通過最多）+$${R.awards.laps}。`])
+   +sec('特別なマス',[`泉（スタート）：通過で $200。順位が1つ下がるごとに +$50。`,`リフトイベント：イベントカードを1枚引く（バロンバフ、キル賞金、ジャングラーのガンクなど）。ドラゴン祭壇：ドラゴンの報酬か、バロンに全滅させられるか。`,`ショップ：装備を買わされる。決まった額か所持金の8%の高いほう。さらに物件${R.propTaxFree}件を超える分は1件 $${R.propTax}。`,`デス：泉で復活待ち、次のターンは休み。リコール：何も起きない。`,`トゥイッチ襲来：物件を1つ盗まれて空き地に戻る。物件がなければ現金 $100。`])
+   +sec('逆転のしくみ',[`毎ラウンド開始時、物件が${R.freeProps}件を超える分は1件につき価格の${pct(R.upkeepPct)}の維持費。`,`最下位の人は家賃が半額。`,`ラスト${R.finalRounds}ラウンドに入ると最下位に $${R.homestretch}。`,`終了時のボーナス賞：苦労賞（家賃を一番払った）+$${R.awards.rent}、冒険賞（リフトイベント最多）+$${R.awards.chance}、旅行賞（泉の通過最多）+$${R.awards.laps}。`])
    +sec('そのほか',[`コンピュータ（キツネ・クマ）は自動で動く。`,`マスをタップすると持ち主・家賃が見られる。`]);
   return sec('怎麼贏',[`遊戲結束時<b>總資產</b>（現金＋地價＋升級投入）最高的人獲勝。`,`其他人全部破產時，剩下的人直接獲勝。`])
    +sec('模式',[`快速：${tw} 格・${q.dice} 顆骰子・${q.maxRounds} 回合・起始資金 $${q.start}`,`經典：${cw} 格・${c.dice} 顆骰子・${c.maxRounds} 回合・起始資金 $${c.start}`,`後手多拿 $100。每回合先手輪換一位。`,`開局每人隨機分到一塊 $${R.starterMax} 以下的地（要付錢）。`])
    +sec('地產與租金',[`停在空地可以照地價買下，不買就留著。`,`停在別人的地要付租金（地價的 ${pct(.5)}）。同色整組都是同一人的，租金加倍。`,`整組到手後回到自己的地可以升級（費用為地價一半），1～3 級租金 ${lv}。`,`錢不夠時自動半價賣地，賣光還不夠就出局。`])
-   +sec('特殊格',[`起點：經過領 $200，排名每落後一名多 $50。`,`機會：抽一張卡。幸運轉盤：可能拿錢也可能扣錢。`,`稅務局：固定稅額或現金 8% 取高，另外持有超過 ${R.propTaxFree} 塊地的部分每塊加收 $${R.propTax}。`,`罰站區：下回合暫停。咖啡休息：什麼都不會發生。`,`圖奇偷家：被偷走一塊地變回空地；沒有地就被摸走 $100。`])
-   +sec('翻盤機制',[`每回合開始，持有超過 ${R.freeProps} 塊地的部分，每塊繳地價 ${pct(R.upkeepPct)} 維護費。`,`排名最後的人付租金半價。`,`進入最後 ${R.finalRounds} 回合時，排名最後的人領 $${R.homestretch}。`,`終局獎項：苦主獎（付最多租金）+$${R.awards.rent}、冒險獎（抽最多機會卡）+$${R.awards.chance}、旅行獎（最多次經過起點）+$${R.awards.laps}。`])
+   +sec('特殊格',[`泉水（起點）：經過領 $200，排名每落後一名多 $50。`,`峽谷事件：抽一張事件卡（巴龍 Buff、擊殺賞金、打野 Gank…）。巨龍祭壇：可能拿到巨龍獎勵，也可能被巴龍團滅。`,`商店：被迫買裝備，固定金額或現金 8% 取高，另外持有超過 ${R.propTaxFree} 塊地的部分每塊加收 $${R.propTax}。`,`陣亡：在泉水等復活，下回合暫停。回城：什麼都不會發生。`,`圖奇偷家：被偷走一塊地變回空地；沒有地就被摸走 $100。`])
+   +sec('翻盤機制',[`每回合開始，持有超過 ${R.freeProps} 塊地的部分，每塊繳地價 ${pct(R.upkeepPct)} 維護費。`,`排名最後的人付租金半價。`,`進入最後 ${R.finalRounds} 回合時，排名最後的人領 $${R.homestretch}。`,`終局獎項：苦主獎（付最多租金）+$${R.awards.rent}、冒險獎（最多峽谷事件）+$${R.awards.chance}、旅行獎（最多次經過泉水）+$${R.awards.laps}。`])
    +sec('其他',[`電腦玩家（狐狸、熊熊）會自動行動。`,`點棋盤上的格子可以看持有者和租金。`]);
 }
 function openRules(){ $('m-rules-t').textContent=T('rules_title'); $('m-rules-b').innerHTML=rulesHTML()+`<p class="riot">${T('riot')}</p>`; $('m-rules-x').textContent=T('close'); $('m-rules').classList.add('on'); }
@@ -272,6 +282,7 @@ const VO_PAY={jail:1,twitch:1,twitchCash:1,taxPct:1,taxProp:1,bankrupt:1,out:1};
 function voiceOnLog(k,p){ if(!st||st.phase!=='play'||!p) return;
   if(k==='rent'||k==='rentHalf'){ say(byName(p.n),'pay'); say(byName(p.o),'laugh',1300); return; }
   if(k==='steal'){ say(byName(p.o),'pay'); say(byName(p.n),'laugh',1300); return; }
+  if(k==='bounty'){ say(byName(p.o),'pay'); say(byName(p.n),'laugh',1300); return; }
   if(VO_PAY[k]) say(byName(p.n),'pay'); }
 // 開局時先把場上英雄會用到的台詞下載好（笑聲＋哀號，每位約 5 句）
 let voicePre='';
@@ -341,7 +352,7 @@ function chargeUpkeep(){
   alive().forEach(pi=>{ const a=upkeepOf(pi); if(a>0){ log('upkeep',{n:st.players[pi].name,c:propCount(pi),a}); pay(pi,a,null); } });
 }
 function rentAt(i,owner,level){const t=tiles()[i];let base=Math.round(t.p*0.5/10)*10;if(ownsGroup(owner,t.g))base*=2;return Math.round(base*LVMULT[level]/10)*10}
-function rentOf(i){const o=st.owners[i];let r=rentAt(i,o.owner,o.level);if(st.crash>0)r=Math.round(r/2/10)*10;return r}
+function rentOf(i){const o=st.owners[i];let r=rentAt(i,o.owner,o.level);if(st.crash>0)r=Math.round(r/2/10)*10;if(st.baron&&st.baron.left>0&&st.baron.pi===o.owner)r=Math.round(r*1.5/10)*10;return r}   // 巴龍 Buff：租金 +50%
 function upCost(i){return tiles()[i].p/2}
 function worth(pi){if(st.players[pi].out)return 0;let w=st.players[pi].money;for(const i in st.owners){const o=st.owners[i];if(o.owner===pi)w+=tiles()[i].p+o.level*upCost(i)}return w}
 function other(pi){const c=alive().filter(i=>i!==pi);return c.length?c[rnd(c.length)]:pi}
@@ -368,6 +379,8 @@ function applyFx(pi,fx){
   if(fx.robinhood){ const r=richest(); const others=alive().filter(i=>i!==r); log('robin',{n:st.players[r].name,a:fx.robinhood}); others.forEach(i=>pay(r,fx.robinhood,i)); }
   if(fx.steal){ const r=richest(); if(r!==pi){ const c=Object.keys(st.owners).filter(i=>st.owners[i].owner===r&&st.owners[i].level===0); if(c.length){ const i=c[rnd(c.length)]; st.owners[i].owner=pi; log('steal',{n:p.name,o:st.players[r].name,ti:i}); } } }
   if(fx.crash){ st.crash=2; log('crash'); }
+  if(fx.baron){ st.baron={pi,left:2}; log('baron',{n:p.name}); }
+  if(fx.bounty){ const r=richest(); if(r!==pi){ pay(r,fx.bounty,pi); log('bounty',{n:p.name,o:st.players[r].name,a:fx.bounty}); } }
   if(fx.lastAid){ const rk=ranking(), l=rk[rk.length-1]; st.players[l].money+=fx.lastAid; log('lastAid',{n:st.players[l].name,a:fx.lastAid}); }
   if(fx.gotoNoPay!=null){ p.pos=fx.gotoNoPay; }
   if(fx.teleport){ p.pos=rnd(N); re=true; }
@@ -410,7 +423,7 @@ function endTurn(){
   const n=st.players.length; if(st.first==null) st.first=0;
   do{
     const nxt=(st.turn+1)%n;
-    if(nxt===st.first){ st.round++; if(st.crash>0) st.crash--; st.first=(st.first+1)%n; st.turn=st.first; if(!(cfg().maxRounds&&st.round>cfg().maxRounds)){ log('newRound',{r:st.round,n:st.players[st.turn].name}); chargeUpkeep(); if(st.phase==='over') return; if(cfg().maxRounds&&st.round===cfg().maxRounds-RULE.finalRounds+1){ const rk=ranking(), l=rk[rk.length-1]; if(rk.length>1){ st.players[l].money+=RULE.homestretch; log('final',{k:RULE.finalRounds,n:st.players[l].name,a:RULE.homestretch}); } } } }
+    if(nxt===st.first){ st.round++; if(st.crash>0) st.crash--; if(st.baron&&st.baron.left>0) st.baron.left--; st.first=(st.first+1)%n; st.turn=st.first; if(!(cfg().maxRounds&&st.round>cfg().maxRounds)){ log('newRound',{r:st.round,n:st.players[st.turn].name}); chargeUpkeep(); if(st.phase==='over') return; if(cfg().maxRounds&&st.round===cfg().maxRounds-RULE.finalRounds+1){ const rk=ranking(), l=rk[rk.length-1]; if(rk.length>1){ st.players[l].money+=RULE.homestretch; log('final',{k:RULE.finalRounds,n:st.players[l].name,a:RULE.homestretch}); } } } }
     else st.turn=nxt;
     if(cfg().maxRounds&&st.round>cfg().maxRounds){ st.phase='over'; giveAwards(); const rk=ranking(); st.winner=rk.length>1&&worth(rk[0])===worth(rk[1])?null:rk[0]; log('settle',{m:cfg().maxRounds,r:rk.map(i=>st.players[i].name+' $'+worth(i)).join('、')}); return; }
     const p=st.players[st.turn];

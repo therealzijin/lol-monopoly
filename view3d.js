@@ -377,28 +377,24 @@ const view3d=(()=>{
       const tex=canvasTex(128,128,(c)=>{ c.fillStyle='#F2C14E'; c.fillRect(0,0,128,128); c.strokeStyle='#C8962A'; c.lineWidth=10; c.strokeRect(5,5,118,118); c.font='900 92px -apple-system,sans-serif'; c.textAlign='center'; c.textBaseline='middle'; c.lineWidth=12; c.strokeStyle='#8A5A12'; c.strokeText('?',64,70); c.fillStyle='#FFFFFF'; c.fillText('?',64,70); });
       const b=new THREE.Mesh(roundedBox(.2,.2,.2,.035,3),new THREE.MeshToonMaterial({map:tex,gradientMap:GRAD})); const o=new THREE.Mesh(b.geometry,OUTLINE); o.scale.setScalar(1.07); b.add(o);
       b.position.y=.3; g.add(b); info.spin=b;
-    } else if(t.t==='wheel'){
-      const tex=canvasTex(128,128,(c)=>{ const cols=['#FF6B57','#F2C14E','#7ED3A3','#4D9DE0','#C39BF2','#FFA25B']; for(let k=0;k<6;k++){ c.fillStyle=cols[k]; c.beginPath(); c.moveTo(64,64); c.arc(64,64,64,k/6*Math.PI*2,(k+1)/6*Math.PI*2); c.fill(); } c.fillStyle='#FFF4DE'; c.beginPath(); c.arc(64,64,12,0,7); c.fill(); });
-      part(g,new THREE.CylinderGeometry(.012,.012,.2,6),0x6B5F58,[0,.1,0],null,{ol:.4});
-      const w=new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,.03,28),[toonMat(0xFFF4DE),new THREE.MeshBasicMaterial({map:tex}),new THREE.MeshBasicMaterial({map:tex})]);
-      const wg=new THREE.Group(); wg.position.set(0,.26,0); wg.rotation.x=Math.PI/2; wg.add(w); g.add(wg); const o=new THREE.Mesh(w.geometry,OUTLINE); o.scale.setScalar(1.06); w.add(o);
-      part(g,new THREE.ConeGeometry(.025,.05,4),0xE0364C,[0,.415,.02],null,{rot:[Math.PI,0,0],ol:.2}); info.spin=w;
+    } else if(t.t==='wheel'){   // 巨龍祭壇：石台上旋轉的龍魂水晶
+      part(g,new THREE.CylinderGeometry(.1,.13,.08,10),0x8E8A82,[0,.04,0],null,{ol:.1});
+      const cr=new THREE.Mesh(new THREE.IcosahedronGeometry(.075,0),new THREE.MeshLambertMaterial({color:lin(0xFF8A3D),emissive:lin(0xFF5A1A),emissiveIntensity:.7,flatShading:true}));
+      cr.position.y=.2; g.add(cr); const o=new THREE.Mesh(cr.geometry,OUTLINE); o.scale.setScalar(1.12); cr.add(o); info.spin=cr;
     } else if(t.t==='go'){
       const sh=new THREE.Shape(); for(let k=0;k<10;k++){ const a=k/10*Math.PI*2-Math.PI/2, r=k%2?.055:.13; k?sh.lineTo(Math.cos(a)*r,-Math.sin(a)*r):sh.moveTo(Math.cos(a)*r,-Math.sin(a)*r); }
       const geo=new THREE.ExtrudeGeometry(sh,{depth:.04,bevelEnabled:true,bevelSize:.012,bevelThickness:.012,bevelSegments:2}); geo.center();
       const s=part(g,geo,GOLD,[0,.26,0],null,{ol:.08}); info.spin=s;
-    } else if(t.t==='jail'){
-      const c=new THREE.Group(); c.position.y=0; g.add(c);
-      for(let k=0;k<8;k++){ const a=k/8*Math.PI*2; part(c,new THREE.CylinderGeometry(.008,.008,.24,5),0x4A4F57,[Math.sin(a)*.11,.12,Math.cos(a)*.11],null,{ol:false}); }
-      part(c,new THREE.TorusGeometry(.11,.012,5,20),0x4A4F57,[0,.24,0],null,{rot:[Math.PI/2,0,0],ol:false});
-      part(c,new THREE.ConeGeometry(.13,.08,16),0x6B7078,[0,.285,0],null,{ol:.1});
-
-    } else if(t.t==='rest'){
+    } else if(t.t==='jail'){   // 陣亡：墓碑
+      const c=new THREE.Group(); g.add(c);
+      part(c,roundedBox(.16,.2,.05,.03,2),0x9A968E,[0,.1,0],null,{ol:.08});
+      part(c,new THREE.BoxGeometry(.018,.08,.01),0x5B5750,[0,.13,.028],null,{ol:false});
+      part(c,new THREE.BoxGeometry(.06,.016,.01),0x5B5750,[0,.145,.028],null,{ol:false});
+      part(c,new THREE.BoxGeometry(.22,.02,.1),0x6B8A4A,[0,.01,0],null,{ol:false});
+    } else if(t.t==='rest'){   // 回城：藍色光圈＋光柱
       const c=new THREE.Group(); c.position.set(0,TOP,0); g.add(c);
-      part(c,new THREE.CylinderGeometry(.07,.055,.11,16),0xFFFFFF,[0,.055,0],null,{ol:.08});
-      part(c,new THREE.CylinderGeometry(.062,.062,.01,16),0x6B3E26,[0,.107,0],null,{ol:false});
-      part(c,new THREE.TorusGeometry(.032,.011,6,12),0xFFFFFF,[.075,.06,0],null,{rot:[0,0,0],ol:.2});
-      info.steam=[0,1,2].map(k=>{ const s=new THREE.Mesh(sph(.025,8,6),basicMat(0xFFFFFF,.8)); c.add(s); return s; }); info.steamBase=c;
+      const ring=new THREE.Mesh(new THREE.TorusGeometry(.1,.014,6,24),new THREE.MeshBasicMaterial({color:lin(0x5FB8FF)})); ring.rotation.x=Math.PI/2; ring.position.y=.02; c.add(ring);
+      const beam=new THREE.Mesh(new THREE.CylinderGeometry(.08,.1,.3,16,1,true),new THREE.MeshBasicMaterial({color:lin(0x9FD8FF),transparent:true,opacity:.35,side:THREE.DoubleSide,depthWrite:false})); beam.position.y=.16; c.add(beam); info.spin=ring;
     } else if(t.t==='tax'){
       const c=new THREE.Group(); c.position.set(0,TOP,0); g.add(c); info.bob=c;
       for(let k=0;k<3;k++) part(c,new THREE.CylinderGeometry(.06,.06,.022,16),GOLD,[k*.008,.012+k*.026,0],null,{ol:.12});
@@ -931,9 +927,9 @@ const view3d=(()=>{
     const t=now/1000;
     props.forEach(P=>{
       if(P.type==='chance'){ P.spin.rotation.y=t*1.2+P.phase; P.spin.position.y=.3+.035*Math.sin(t*2.2+P.phase); }
-      else if(P.type==='wheel'){ P.spin.rotation.y=t*.9; }
+      else if(P.type==='wheel'){ P.spin.rotation.y=t*.9; P.spin.rotation.x=t*.6; P.spin.position.y=.2+.02*Math.sin(t*2+P.phase); }
       else if(P.type==='go'){ P.spin.rotation.y=t*1.1; P.spin.position.y=.26+.03*Math.sin(t*2); }
-      else if(P.type==='rest'){ P.steam.forEach((s,k)=>{ const q=((t*.5+k/3)%1); s.position.set(Math.sin(q*6+k)*.02,.13+q*.22,0); s.scale.setScalar(.5+q*.8); s.visible=q<.92; }); }
+      else if(P.type==='rest'){ const u=.9+.12*Math.sin(t*3+P.phase); P.spin.scale.set(u,u,1); }   // 回城光圈一縮一放
       else if(P.type==='tax'){ P.bob.rotation.y=Math.sin(t*1.5+P.phase)*.4; }
       else if(P.type==='twitch'){ P.bob.position.y=-.02+Math.max(0,Math.sin(t*1.4+P.phase))*.05; P.bob.rotation.y=Math.sin(t*.8)*.5; }
     });
