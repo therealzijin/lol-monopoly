@@ -277,17 +277,24 @@ function say(p,cat,delay){ const cid=p&&p.skin&&p.skin.cid; if(!cid) return; con
   let r=Math.floor(Math.random()*12); if(r===voiceLast[key]) r=(r+1)%12; voiceLast[key]=r;
   const go=()=>sfx(`v:${cid}:${cat}:${r}`); if(delay) setTimeout(()=>{ go(); push(); },delay); else go(); }
 const byName=n=>st&&st.players.find(q=>q.name===n);
-// 遊戲事件（log）→ 台詞：只在「收錢大笑、扣錢哀號」時說話（全部都說太吵）
+// 遊戲事件（log）→ 台詞
+// ・一定說：收租大笑、扣錢哀號
+// ・偶爾說（sayMaybe）：擲骰、買地、升級、經過泉水、峽谷事件、巨龍祭壇、同格相遇。全場共用 25 秒冷卻，不會太吵
+let voOpt=0;
+function sayMaybe(p,cat,chance,delay){ const now=Date.now(); if(now-voOpt<25000||Math.random()>chance) return; voOpt=now; say(p,cat,delay); }
+function sayMust(p,cat,delay){ voOpt=Date.now(); say(p,cat,delay); }
 const VO_PAY={jail:1,twitch:1,twitchCash:1,taxPct:1,taxProp:1,bankrupt:1,out:1};
+const VO_MAYBE={bought:['buy',.5],npcBuy:['buy',.5],upgraded:['ult',.6],passGo:['go',.4],chance:['joke',.35],wheel:['laugh',.35]};
 function voiceOnLog(k,p){ if(!st||st.phase!=='play'||!p) return;
-  if(k==='rent'||k==='rentHalf'){ say(byName(p.n),'pay'); say(byName(p.o),'laugh',1300); return; }
-  if(k==='steal'){ say(byName(p.o),'pay'); say(byName(p.n),'laugh',1300); return; }
-  if(k==='bounty'){ say(byName(p.o),'pay'); say(byName(p.n),'laugh',1300); return; }
-  if(VO_PAY[k]) say(byName(p.n),'pay'); }
-// 開局時先把場上英雄會用到的台詞下載好（笑聲＋哀號，每位約 5 句）
+  if(k==='rent'||k==='rentHalf'){ sayMust(byName(p.n),'pay'); sayMust(byName(p.o),'laugh',1300); return; }
+  if(k==='steal'){ sayMust(byName(p.o),'pay'); sayMust(byName(p.n),'laugh',1300); return; }
+  if(k==='bounty'){ sayMust(byName(p.o),'pay'); sayMust(byName(p.n),'laugh',1300); return; }
+  if(VO_PAY[k]){ sayMust(byName(p.n),'pay'); return; }
+  const m=VO_MAYBE[k]; if(m) sayMaybe(byName(p.n),m[0],m[1]); }
+// 開局時先把場上英雄會用到的台詞下載好（每位約 25 句、每句約 8 KB）
 let voicePre='';
 async function prefetchVoices(){ if(!st||!st.players) return; const ids=st.players.map(p=>p.skin&&p.skin.cid).filter(Boolean), L=vlang(), sig=L+ids.join(); if(sig===voicePre) return; voicePre=sig;
-  const idx=await voiceIndex(); ids.forEach(c=>{ const e=idx[c]||{}; [voiceCat(e,'laugh'),voiceCat(e,'pay')].filter(Boolean).forEach(cat=>{ for(let i=0;i<e[cat];i++) fetchVoice(`${L}/${c}/${cat}${i}`); }); }); }
+  const idx=await voiceIndex(); ids.forEach(c=>{ const e=idx[c]||{}; const cats=new Set(['laugh','pay','move','buy','ult','go','joke','meet'].map(k=>voiceCat(e,k)).filter(Boolean)); ids.forEach(o=>{ if(e['meet_'+o]) cats.add('meet_'+o); }); cats.forEach(cat=>{ for(let i=0;i<e[cat];i++) fetchVoice(`${L}/${c}/${cat}${i}`); }); }); }
 function hearRemote(){
   if(!st) return; if(heardSq>(st.sq||0)) heardSq=0;  // 新的一局重新計數
   if(!st.sfx) return; const q=st.sfx.filter(e=>e[0]>heardSq);
@@ -627,7 +634,7 @@ function resolveAuction(){
   let best=-1, bv=0; a.bidders.forEach(j=>{ const v=a.bids[j]||0; if(v>bv||(v===bv&&v>0&&Math.random()<.5)){ bv=v; best=j; } });
   const s=st.players[a.seller];
   if(best>=0&&bv>=a.min&&st.owners[a.tile]&&st.owners[a.tile].owner===a.seller){ st.owners[a.tile].owner=best; pay(best,bv,a.seller); log('auctionWin',{b:st.players[best].name,p:bv,n:s.name,ti:a.tile}); sfx('gavel'); }
-  else log('auctionNone',{ti:a.tile});
+  else { log('auctionNone',{ti:a.tile}); if(st.players[a.seller]&&st.players[a.seller].npc) (st.noBid=st.noBid||{})[a.tile]=1; }   // 電腦的拍賣流標：下次直接賣回銀行
   st.auction=null; render(); push();
 }
 // 房主：時間到自動結算（每 0.5 秒檢查一次）
@@ -679,11 +686,19 @@ setInterval(()=>{ const e=$('au-left'); if(e&&st&&st.auction) e.textContent=T('s
 
 /* ---------- NPC ---------- */
 let npcTimer=null;
+// 電腦什麼時候賣地：地太多（要繳維護費）而且領先、地多到 7 塊以上、或現金快見底。帶一點隨機，不會每次都賣
+function npcShouldSell(pi){
+  const p=st.players[pi], n=propCount(pi), extra=n-RULE.freeProps;
+  if(p.money<100) return n>0;
+  if(extra>=2) return Math.random()<.75;
+  if(extra>=1&&rankOf(pi)===0) return Math.random()<.6;
+  return false;
+}
 function npcDecideBuy(pi,i){
   const p=st.players[pi], t=tiles()[i];
   const mine=groupTiles(t.g).filter(j=>st.owners[j]&&st.owners[j].owner===pi).length;
   const left=p.money-t.p, reserve=st.mode==='classic'?250:150;
-  if(mine>0) return left>=0;                 // 湊套組一定買
+  if(mine>0) return left>=0&&propCount(pi)<RULE.npcCap+1;   // 湊套組照買，但最多到 7 塊
   if((rankOf(pi)===0&&propCount(pi)>=3)||propCount(pi)>=RULE.npcCap) return false;   // 領先且地已不少、或達上限：只湊套組，不再擴張
   if(propCount(pi)<=1) return left>=reserve*.5;
   return left>=reserve && Math.random()<.75;
@@ -698,7 +713,10 @@ async function npcAct(){
   npcTimer=null;
   if(!st||st.phase!=='play'||busy) return;
   const pi=st.turn, p=st.players[pi]; if(!p.npc) return;
-  if(st.step==='roll'&&st.npcSold!==st.round+':'+pi&&(propCount(pi)>RULE.freeProps+1||p.money<100)){ st.npcSold=st.round+':'+pi; const cheap=myProps(pi).find(i=>!ownsGroup(pi,tiles()[i].g)); if(cheap!=null&&startAuction(pi,cheap)) return; }
+  if(st.step==='roll'&&st.npcSold!==st.round+':'+pi&&npcShouldSell(pi)){ st.npcSold=st.round+':'+pi;
+    // 賣最便宜、沒湊成套組、沒升級的地；上次拍賣沒人買的就直接賣回銀行（半價）
+    const mine=myProps(pi), cheap=mine.find(i=>!ownsGroup(pi,tiles()[i].g)&&!st.owners[i].level)??mine.find(i=>!st.owners[i].level);
+    if(cheap!=null){ if(st.noBid&&st.noBid[cheap]){ delete st.noBid[cheap]; bankSell(pi,cheap); scheduleNpc(); return; } if(startAuction(pi,cheap)) return; } }
   if(st.step==='roll'){ await roll(); return; }               // roll 結束會 render → 再排下一步
   if(st.step==='decide'&&st.pending){
     const i=st.pending.tile, t=tiles()[i];
@@ -731,11 +749,13 @@ async function roll(){
   }
   let steps=d.reduce((a,b)=>a+b,0);
   if(p.boost){ p.boost=0; steps*=2; log('boost',{n:p.name,s:steps}); } else log('roll',{n:p.name,s:steps});
+  sayMaybe(p,'move',.3);                               // 偶爾說一句移動台詞
   if(!reduce&&v.walkPlan) v.walkPlan(st.turn,steps);
   for(let k=0;k<steps;k++){ p.pos=(p.pos+1)%TT.length; if(p.pos===0){ const a=goBonus(st.turn); p.money+=a; p.laps=(p.laps||0)+1; log('passGo',{n:p.name,a}); sfx('coin'); } else sfx('step'); push(); if(!reduce){ renderBoard(); await sleep(v.stepMs||140); } }   // 每走一格同步一次
   if(!reduce&&v.settle) await v.settle();          // 3D：等棋子真的走到再結算
   busy=false;
   land(st.turn,0);
+  { const mates=st.players.filter((q,j)=>j!==st.turn&&!q.out&&q.pos===p.pos&&q.skin); if(mates.length&&st.phase==='play'){ const q=mates[Math.floor(Math.random()*mates.length)]; sayMaybe(p,'meet_'+q.skin.cid,.5,900); } }   // 停在別人那格：打招呼（有專屬台詞就用）
   if(st.phase==='over'){ render(); push(); return; }
   st.step=st.pending?'decide':'end';
   render(); push();
