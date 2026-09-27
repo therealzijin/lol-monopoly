@@ -55,6 +55,10 @@ h1{font-size:34px;line-height:1.1;font-weight:800;letter-spacing:-.01em;margin:8
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;font-size:13px;color:#BFD3CF}
 .topbar>span{white-space:nowrap}
 .topbar>#g-mode{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}   /* 窄螢幕（iPhone 直向、日文）不換行，模式名稱太長就省略 */
+.lplayers{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:10px 0}
+.lp{background:var(--felt-dark);border-radius:12px;padding:8px 10px;display:flex;align-items:center;gap:8px;min-width:0}
+.lp b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lp small{font-size:11px;opacity:.7;flex:none}
 .players{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-bottom:10px}   /* minmax(0,…)：名字長也不會把欄位撐出畫面 */
 .pl{min-width:0}
 .pl{background:var(--felt-dark);border-radius:12px;padding:8px 10px;border:2px solid transparent;display:flex;align-items:center;gap:8px}
@@ -199,8 +203,15 @@ h1{font-size:34px;line-height:1.1;font-weight:800;letter-spacing:-.01em;margin:8
 
   <div class="field"><label for="myname" data-i="myname"></label><input id="myname" maxlength="8" data-ph="myname_ph" autocomplete="off"></div>
   <div class="field"><label data-i="char0"></label><button class="charpick" id="pick0"></button></div>
+  <div class="field" id="f-humans" style="display:none"><label data-i="humans"></label>
+    <div class="seg" id="seg-humans"><button data-v="2" class="sel"><span>2</span></button><button data-v="3"><span>3</span></button><button data-v="4"><span>4</span></button></div>
+  </div>
   <div class="field" id="f-name2" style="display:none"><label for="name2" data-i="name2"></label><input id="name2" maxlength="8" data-ph="name2_ph" autocomplete="off"></div>
   <div class="field" id="f-pick1" style="display:none"><label data-i="char1"></label><button class="charpick" id="pick1"></button></div>
+  <div class="field" id="f-name3" style="display:none"><label for="name3" data-i="name3"></label><input id="name3" maxlength="8" autocomplete="off"></div>
+  <div class="field" id="f-pick2" style="display:none"><label data-i="char2"></label><button class="charpick" id="pick2"></button></div>
+  <div class="field" id="f-name4" style="display:none"><label for="name4" data-i="name4"></label><input id="name4" maxlength="8" autocomplete="off"></div>
+  <div class="field" id="f-pick3" style="display:none"><label data-i="char3"></label><button class="charpick" id="pick3"></button></div>
 
   <div class="field"><label data-i="how"></label>
     <div class="seg" id="seg-conn">
@@ -244,6 +255,7 @@ h1{font-size:34px;line-height:1.1;font-weight:800;letter-spacing:-.01em;margin:8
   <h1 data-i="lobby_title"></h1>
   <p class="sub" data-i="lobby_sub"></p>
   <div class="code" id="lobby-code">0000</div>
+  <div class="lplayers" id="lobby-players"></div>
   <p class="center sub" id="lobby-status"></p>
   <div class="stack">
     <button class="primary" id="b-start" disabled data-i="start"></button>
@@ -272,7 +284,7 @@ h1{font-size:34px;line-height:1.1;font-weight:800;letter-spacing:-.01em;margin:8
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module">
 // 先載入 Three.js（模組版），掛到 window.THREE 後再依序載入遊戲腳本；載入失敗就只用 2D
-const SCRIPTS=["game.js?v=202609271102","champs.js?v=202609271102","view2d.js?v=202609271102","view3d.js?v=202609271102"];
+const SCRIPTS=["game.js?v=20260927112857","champs.js?v=20260927112857","view2d.js?v=20260927112857","view3d.js?v=20260927112857"];
 const load=src=>new Promise((ok,no)=>{ const e=document.createElement('script'); e.src=src; e.onload=ok; e.onerror=no; document.body.appendChild(e); });
 try{
   const T=await import('three');

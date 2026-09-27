@@ -100,19 +100,19 @@ const STR={
 zh:{
  title:'兩人大富翁',sub:'給你們兩個玩的小桌遊。各拿一支手機，開一間房就能開始。',
  fs:'⛶ 全螢幕',a2hsT:'加入主畫面就能全螢幕',a2hsB:'iPhone 的 Safari 不允許網頁自己切成全螢幕。把遊戲加到主畫面後，從圖示打開就沒有網址列，畫面更大：',a2hs1:'點 Safari 的「分享」按鈕',a2hs2:'往下找「加入主畫面」',a2hs3:'之後從主畫面的「大富翁」圖示打開',ok:'知道了',
- myname:'你的名字',myname_ph:'例如：周',name2:'對方的名字',name2_ph:'例如：小美',
+ myname:'你的名字',myname_ph:'例如：周',name2:'玩家 2 的名字',name2_ph:'例如：小美',name3:'玩家 3 的名字',name4:'玩家 4 的名字',humans:'玩家人數（同一支手機）',hostTag:'房主',joinedN:'目前 {k} 人（最多 {m} 人），房主可以開始。',e_full:'這個房間已經滿了（最多 4 人）。',
  how:'怎麼玩',online:'兩支手機',online_s:'各看自己的畫面',local:'同一支手機',local_s:'輪流傳給對方',
- npc:'電腦玩家',npc0:'不要',npc1:'1 位',npc2:'2 位',props:'地產',bonus:'落後補助',char0:'你的角色',char1:'對方的角色',sellBtn:'拍賣／出售地產',sellTitle:'出售地產',sellHint:'拍賣：其他人各出一次價（互相看不到），價高者得，底價是地價的一半。賣給銀行：立刻拿回一半的錢。',auction:'拍賣',bankBtn:'賣銀行 ${v}',auctionOn:'<b>{s}</b> 拍賣「<b>{t}</b>」，價值 ${v}，底價 ${m}',yourBid:'你的出價',bid:'出價',passBid:'不要',bidDone:'已出價',thinking:'考慮中',bidFor:'把手機交給 <b>{n}</b> 出價',secLeft:'剩 {s} 秒',noProps:'你目前沒有地產。',closeBtn:'關閉',rules:'玩法說明',rules_title:'玩法說明',close:'知道了',riot:'本遊戲為依據 Riot Games「Legal Jibber Jabber」政策製作的非商業粉絲作品，使用了 Riot Games 擁有的素材。Riot Games 並未背書或贊助本作。英雄 3D 模型來自 modelviewer.lol，英雄資料來自 Riot Data Dragon。',i_owner:'持有者',i_none:'無人',i_price:'價格',i_rent:'租金',i_lv:'等級',i_next:'升級後租金',i_tax:'稅金（或現金 8%）',i_full:'（整組加倍）',layout:'棋盤排列',ring:'環形',ring_s:'繞一圈，方向清楚',snake:'蛇形',snake_s:'格子最大，來回走',mode:'模式',quick:'快速',quick_s:'20 格・15 回合・約 10 分',classic:'經典',classic_s:'32 格・最多 40 回合',
+ npc:'電腦玩家',npc0:'不要',npc1:'1 位',npc2:'2 位',props:'地產',bonus:'落後補助',char0:'你的角色',char1:'玩家 2 的角色',char2:'玩家 3 的角色',char3:'玩家 4 的角色',sellBtn:'拍賣／出售地產',sellTitle:'出售地產',sellHint:'拍賣：其他人各出一次價（互相看不到），價高者得，底價是地價的一半。賣給銀行：立刻拿回一半的錢。',auction:'拍賣',bankBtn:'賣銀行 ${v}',auctionOn:'<b>{s}</b> 拍賣「<b>{t}</b>」，價值 ${v}，底價 ${m}',yourBid:'你的出價',bid:'出價',passBid:'不要',bidDone:'已出價',thinking:'考慮中',bidFor:'把手機交給 <b>{n}</b> 出價',secLeft:'剩 {s} 秒',noProps:'你目前沒有地產。',closeBtn:'關閉',rules:'玩法說明',rules_title:'玩法說明',close:'知道了',riot:'本遊戲為依據 Riot Games「Legal Jibber Jabber」政策製作的非商業粉絲作品，使用了 Riot Games 擁有的素材。Riot Games 並未背書或贊助本作。英雄 3D 模型來自 modelviewer.lol，英雄資料來自 Riot Data Dragon。',i_owner:'持有者',i_none:'無人',i_price:'價格',i_rent:'租金',i_lv:'等級',i_next:'升級後租金',i_tax:'稅金（或現金 8%）',i_full:'（整組加倍）',layout:'棋盤排列',ring:'環形',ring_s:'繞一圈，方向清楚',snake:'蛇形',snake_s:'格子最大，來回走',mode:'模式',quick:'快速',quick_s:'20 格・15 回合・約 10 分',classic:'經典',classic_s:'32 格・最多 40 回合',
  create:'開新房間',startLocal:'開始遊戲',code_ph:'輸入 4 位房號',join:'加入',
  note:'兩支手機模式：把連結傳給對方，房主選模式開房，對方輸入房號加入。兩支手機最好連同一個 Wi-Fi。語言可以各自選。',
  e_storage:'這個環境沒有連線功能，請改用「同一支手機」模式。',e_disc:'連線中斷了。兩支手機請連同一個 Wi-Fi，然後重新開房。',connecting:'連線中…',e_name:'先填你的名字。',e_create:'建立房間失敗，請再試一次。',e_code:'房號是 4 位數字。',e_notfound:'找不到這個房號，確認一下對方有沒有開房。',e_started:'這間房已經開始了。',
- lobby_title:'房間已開',lobby_sub:'把這個房號告訴對方，讓對方在首頁輸入加入。',waiting:'等待對方加入…',joined:'{n} 已加入，可以開始。',guestWait:'已加入 {n} 的房間，等房主按開始…',start:'開始遊戲',leave:'回首頁',
+ lobby_title:'房間已開',lobby_sub:'把這個房號告訴朋友，在首頁輸入就能加入（最多 4 人）。',waiting:'等待其他人加入…',joined:'{n} 已加入，可以開始。',guestWait:'已加入 {n} 的房間，等房主按開始…',start:'開始遊戲',leave:'回首頁',
  m_quick:'快速模式',m_classic:'經典模式',room:'房號',onePhone:'同一支手機',round:'第 {r} / {m} 回合',you:'（你）',worth:'總資產',skipping:'陣亡中',boosted:'加速中',
  over:'遊戲結束',turnOf:'<b>{n}</b> 的回合',waitFor:'等 <b>{n}</b> 走完',moving:'走路中…',yourTurn:'<b>{n}</b>，換你了。',passPhone:'把手機交給 <b>{n}</b>，換你了。',roll:'擲骰子',
  buyQ:'「<b>{t}</b>」沒人買，要用 ${p} 買下嗎？',buy:'買下',noBuy:'不買',upQ:'「<b>{t}</b>」可以升級（${c}），租金會從 ${a} 漲到 ${b}。',up:'升級',noUp:'先不要',end:'結束回合',waitTurn:'輪到 <b>{n}</b>，稍等一下。',
  draw:'平手！',wins:'{n} 贏了！',drawSub:'兩人資產一樣多，改天再分勝負。',winSub:'輸的人負責今晚的家事（規則自訂）。',rankSub:'名次：{r}',awardsTitle:'終局獎項',aw_rent:'苦主獎',aw_chance:'冒險獎',aw_laps:'旅行獎',npcWin:'被電腦贏走了！兩個人一起負責家事。',again:'再來一局',hostAgain:'等房主開下一局…',home:'回首頁',
  tile:{go:'泉水',chance:'峽谷事件',tax:'商店',rest:'回城',jail:'陣亡',wheel:'巨龍祭壇',twitch:'圖奇偷家'},
- log:{start:'遊戲開始！後手多拿 $100 補償。',again:'新的一局開始！後手多拿 $100 補償。',roll:'{n} 擲出 {s}',boost:'{n} 希維爾加速中！移動距離加倍，走 {s} 格',passGo:'{n} 經過泉水，領 ${a}',baron:'{n} 拿下巴龍！接下來兩輪租金 +50%',bounty:'{n} 擊殺了 {o}，拿到賞金 ${a}',npcBuy:'{n} 買下了「{t}」',npcPass:'{n} 看了看「{t}」，決定不買',robin:'{n} 是首富，付給其他每人 ${a}',steal:'{n} 拿走了 {o} 的「{t}」',crash:'房市崩跌！下一輪所有租金減半',lastAid:'{n} 排名最後，領補助 ${a}',out:'{n} 出局了',newRound:'第 {r} 回合開始，這回合由 {n} 先手',auctionStart:'{n} 拍賣「{t}」，底價 ${m}',auctionWin:'{b} 以 ${p} 標下 {n} 的「{t}」',auctionNone:'「{t}」沒人出價，流標',bankSell:'{n} 把「{t}」賣給銀行，拿回 ${v}',dealt:'{n} 起手抽到「{t}」，付 ${p}',final:'最後 {k} 回合！排名最後的 {n} 領衝刺補助 ${a}',award_rent:'苦主獎：{n} 這局共付租金 ${v}，獲得 ${a}',award_chance:'冒險獎：{n} 遇到 {v} 次峽谷事件，獲得 ${a}',award_laps:'旅行獎：{n} 經過泉水 {v} 次，獲得 ${a}',upkeep:'{n} 持有 {c} 塊地，超額部分繳維護費 ${a}',taxProp:'{n} 在商店被迫買裝備，花掉 ${a}（含地產稅 ${b}）',rentHalf:'{n} 排名最後，踩到 {o} 的「{t}」租金減半，付 ${r}',twitch:'{n} 被圖奇偷家！「{t}」被偷走，重新變成空地',twitchCash:'{n} 被圖奇偷家！沒有地可偷，現金被摸走 ${a}',twitchNone:'{n} 被圖奇偷家，但家裡空空的，什麼都沒被偷',taxPct:'{n} 在商店被迫買裝備，花掉 ${a}（依現金 8%）',
+ log:{start:'遊戲開始！後手多拿 $100 補償。',again:'新的一局開始！後手多拿 $100 補償。',roll:'{n} 擲出 {s}',boost:'{n} 希維爾加速中！移動距離加倍，走 {s} 格',passGo:'{n} 經過泉水，領 ${a}',left:'{n} 離線了，先由電腦代打（用同一個名字重新加入就能接回）',rejoin:'{n} 回來了！',baron:'{n} 拿下巴龍！接下來兩輪租金 +50%',bounty:'{n} 擊殺了 {o}，拿到賞金 ${a}',npcBuy:'{n} 買下了「{t}」',npcPass:'{n} 看了看「{t}」，決定不買',robin:'{n} 是首富，付給其他每人 ${a}',steal:'{n} 拿走了 {o} 的「{t}」',crash:'房市崩跌！下一輪所有租金減半',lastAid:'{n} 排名最後，領補助 ${a}',out:'{n} 出局了',newRound:'第 {r} 回合開始，這回合由 {n} 先手',auctionStart:'{n} 拍賣「{t}」，底價 ${m}',auctionWin:'{b} 以 ${p} 標下 {n} 的「{t}」',auctionNone:'「{t}」沒人出價，流標',bankSell:'{n} 把「{t}」賣給銀行，拿回 ${v}',dealt:'{n} 起手抽到「{t}」，付 ${p}',final:'最後 {k} 回合！排名最後的 {n} 領衝刺補助 ${a}',award_rent:'苦主獎：{n} 這局共付租金 ${v}，獲得 ${a}',award_chance:'冒險獎：{n} 遇到 {v} 次峽谷事件，獲得 ${a}',award_laps:'旅行獎：{n} 經過泉水 {v} 次，獲得 ${a}',upkeep:'{n} 持有 {c} 塊地，超額部分繳維護費 ${a}',taxProp:'{n} 在商店被迫買裝備，花掉 ${a}（含地產稅 ${b}）',rentHalf:'{n} 排名最後，踩到 {o} 的「{t}」租金減半，付 ${r}',twitch:'{n} 被圖奇偷家！「{t}」被偷走，重新變成空地',twitchCash:'{n} 被圖奇偷家！沒有地可偷，現金被摸走 ${a}',twitchNone:'{n} 被圖奇偷家，但家裡空空的，什麼都沒被偷',taxPct:'{n} 在商店被迫買裝備，花掉 ${a}（依現金 8%）',
   canBuy:'{n} 來到「{t}」，可以用 ${p} 買下',poor:'{n} 來到「{t}」，但錢不夠買',rent:'{n} 踩到 {o} 的「{t}」，付租金 ${r}',canUp:'{n} 回到自己的「{t}」，可以花 ${c} 升級',back:'{n} 回到自己的「{t}」',
   chance:'{n} 遇到峽谷事件：{c}',tax:'{n} 在商店被迫買裝備，花掉 ${a}',jail:'{n} 陣亡了，在泉水等復活（下一回合暫停）',wheel:'{n} 在巨龍祭壇：「{w}」',rest:'{n} 回城補血，休息一下',go:'{n} 回到泉水',
   sell:'{n} 錢不夠，賣掉「{t}」換回 ${v}',bankrupt:'{n} 破產了！',skip:'{n} 還在等復活，跳過這回合',bought:'{n} 買下了「{t}」',upgraded:'{n} 把「{t}」升到 {l} 級',settle:'{m} 回合結束！結算資產：{r}'}
@@ -120,19 +120,19 @@ zh:{
 ja:{
  fs:'⛶ 全画面',a2hsT:'ホーム画面に追加すると全画面に',a2hsB:'iPhone の Safari はページから全画面にできません。ホーム画面に追加してアイコンから開くと、アドレスバーが消えて画面が広くなります：',a2hs1:'Safari の「共有」ボタンをタップ',a2hs2:'「ホーム画面に追加」を選ぶ',a2hs3:'ホーム画面の「大富翁」アイコンから開く',ok:'OK',
  title:'ふたりの大富豪すごろく',sub:'ふたり専用のミニボードゲーム。それぞれスマホを持って、部屋を作ればすぐ始められます。',
- myname:'あなたの名前',myname_ph:'例：なつ',name2:'相手の名前',name2_ph:'例：しゅう',
+ myname:'あなたの名前',myname_ph:'例：なつ',name2:'プレイヤー2の名前',name2_ph:'例：しゅう',name3:'プレイヤー3の名前',name4:'プレイヤー4の名前',humans:'人数（スマホ1台）',hostTag:'ホスト',joinedN:'現在 {k} 人（最大 {m} 人）。ホストがスタートできます。',e_full:'この部屋は満員です（最大4人）。',
  how:'遊び方',online:'スマホ2台',online_s:'それぞれの画面で',local:'スマホ1台',local_s:'交代で回す',
- npc:'コンピュータ',npc0:'なし',npc1:'1人',npc2:'2人',props:'物件',bonus:'補助',char0:'あなたのキャラ',char1:'相手のキャラ',sellBtn:'物件を競売／売却',sellTitle:'物件を手放す',sellHint:'競売：ほかの人が1回ずつ入札（お互い見えない）。最高額の人が落札。最低価格は物件価格の半分。銀行に売る：すぐに半額を受け取る。',auction:'競売',bankBtn:'銀行に売る ${v}',auctionOn:'<b>{s}</b> が「<b>{t}</b>」を競売中。価値 ${v}、最低 ${m}',yourBid:'あなたの入札',bid:'入札',passBid:'見送る',bidDone:'入札済み',thinking:'検討中',bidFor:'スマホを <b>{n}</b> に渡して入札',secLeft:'残り {s} 秒',noProps:'まだ物件を持っていません。',closeBtn:'閉じる',rules:'遊び方',rules_title:'遊び方',close:'わかった',riot:'本作は Riot Games の「Legal Jibber Jabber」ポリシーに基づき、Riot Games 所有の素材を使用して作られた非営利のファン作品です。Riot Games は本作を推奨・後援していません。チャンピオンの 3D モデルは modelviewer.lol、データは Riot Data Dragon を利用しています。',i_owner:'所有者',i_none:'なし',i_price:'価格',i_rent:'家賃',i_lv:'レベル',i_next:'改築後の家賃',i_tax:'税金（または所持金の8%）',i_full:'（そろって2倍）',layout:'盤面の並び',ring:'ぐるり一周',ring_s:'方向がわかりやすい',snake:'ジグザグ',snake_s:'マスが一番大きい',mode:'モード',quick:'クイック',quick_s:'20マス・15ラウンド・約10分',classic:'クラシック',classic_s:'32マス・最大40ラウンド',
+ npc:'コンピュータ',npc0:'なし',npc1:'1人',npc2:'2人',props:'物件',bonus:'補助',char0:'あなたのキャラ',char1:'プレイヤー2のキャラ',char2:'プレイヤー3のキャラ',char3:'プレイヤー4のキャラ',sellBtn:'物件を競売／売却',sellTitle:'物件を手放す',sellHint:'競売：ほかの人が1回ずつ入札（お互い見えない）。最高額の人が落札。最低価格は物件価格の半分。銀行に売る：すぐに半額を受け取る。',auction:'競売',bankBtn:'銀行に売る ${v}',auctionOn:'<b>{s}</b> が「<b>{t}</b>」を競売中。価値 ${v}、最低 ${m}',yourBid:'あなたの入札',bid:'入札',passBid:'見送る',bidDone:'入札済み',thinking:'検討中',bidFor:'スマホを <b>{n}</b> に渡して入札',secLeft:'残り {s} 秒',noProps:'まだ物件を持っていません。',closeBtn:'閉じる',rules:'遊び方',rules_title:'遊び方',close:'わかった',riot:'本作は Riot Games の「Legal Jibber Jabber」ポリシーに基づき、Riot Games 所有の素材を使用して作られた非営利のファン作品です。Riot Games は本作を推奨・後援していません。チャンピオンの 3D モデルは modelviewer.lol、データは Riot Data Dragon を利用しています。',i_owner:'所有者',i_none:'なし',i_price:'価格',i_rent:'家賃',i_lv:'レベル',i_next:'改築後の家賃',i_tax:'税金（または所持金の8%）',i_full:'（そろって2倍）',layout:'盤面の並び',ring:'ぐるり一周',ring_s:'方向がわかりやすい',snake:'ジグザグ',snake_s:'マスが一番大きい',mode:'モード',quick:'クイック',quick_s:'20マス・15ラウンド・約10分',classic:'クラシック',classic_s:'32マス・最大40ラウンド',
  create:'部屋を作る',startLocal:'ゲーム開始',code_ph:'4桁の部屋番号',join:'参加',
  note:'スマホ2台モード：リンクを相手に送り、ホストがモードを選んで部屋を作り、相手は部屋番号を入力して参加します。ふたりとも同じWi-Fiにつなぐのがおすすめ。言語はそれぞれ選べます。',
  e_storage:'この環境ではオンライン接続が使えません。「スマホ1台」モードをお使いください。',e_disc:'接続が切れました。ふたりとも同じWi-Fiにつないで、部屋を作り直してください。',connecting:'接続中…',e_name:'先に名前を入力してください。',e_create:'部屋を作れませんでした。もう一度お試しください。',e_code:'部屋番号は4桁の数字です。',e_notfound:'その部屋番号が見つかりません。相手が部屋を作ったか確認してください。',e_started:'この部屋はすでに始まっています。',
- lobby_title:'部屋ができました',lobby_sub:'この番号を相手に伝えて、トップ画面で入力してもらってください。',waiting:'相手の参加を待っています…',joined:'{n} が参加しました。開始できます。',guestWait:'{n} の部屋に参加しました。ホストの開始を待っています…',start:'ゲーム開始',leave:'トップへ戻る',
+ lobby_title:'部屋ができました',lobby_sub:'この番号を友だちに伝えて、トップ画面で入力してもらってください（最大4人）。',waiting:'ほかの人の参加を待っています…',joined:'{n} が参加しました。開始できます。',guestWait:'{n} の部屋に参加しました。ホストの開始を待っています…',start:'ゲーム開始',leave:'トップへ戻る',
  m_quick:'クイック',m_classic:'クラシック',room:'部屋',onePhone:'スマホ1台',round:'ラウンド {r} / {m}',you:'（あなた）',worth:'総資産',skipping:'1回休み中',boosted:'加速中',
  over:'ゲーム終了',turnOf:'<b>{n}</b> のターン',waitFor:'<b>{n}</b> の番です',moving:'移動中…',yourTurn:'<b>{n}</b>、あなたの番です。',passPhone:'スマホを <b>{n}</b> に渡してください。',roll:'サイコロを振る',
  buyQ:'「<b>{t}</b>」は空き地。${p} で買いますか？',buy:'買う',noBuy:'買わない',upQ:'「<b>{t}</b>」を ${c} でアップグレードできます。家賃が ${a} → ${b} に。',up:'アップグレード',noUp:'やめておく',end:'ターン終了',waitTurn:'<b>{n}</b> の番です。少しお待ちください。',
  draw:'引き分け！',wins:'{n} の勝ち！',drawSub:'資産が同じ。勝負はまた今度。',winSub:'負けた人が今夜の家事担当（ルールはご自由に）。',rankSub:'順位：{r}',awardsTitle:'ボーナス賞',aw_rent:'苦労賞',aw_chance:'冒険賞',aw_laps:'旅行賞',npcWin:'コンピュータの勝ち！ふたりで家事担当。',again:'もう一局',hostAgain:'ホストが次のゲームを始めるのを待っています…',home:'トップへ戻る',
  tile:{go:'泉',chance:'リフトイベント',tax:'ショップ',rest:'リコール',jail:'デス',wheel:'ドラゴン祭壇',twitch:'トゥイッチ襲来'},
- log:{start:'ゲーム開始！後手は補償として $100 多くもらえます。',again:'次のゲーム開始！後手は補償として $100 多くもらえます。',roll:'{n} が {s} を出した',boost:'{n} はシヴィアの加速中！移動距離2倍で {s} マス進む',passGo:'{n} が泉を通過、${a} 受け取り',baron:'{n} がバロン獲得！2ラウンドの間 家賃 +50%',bounty:'{n} が {o} を倒してキル賞金 ${a}',npcBuy:'{n} が「{t}」を購入',npcPass:'{n} は「{t}」を見て買わなかった',robin:'{n} は資産トップ。他の全員に ${a} 支払い',steal:'{n} が {o} の「{t}」を奪った',crash:'バブル崩壊！次のラウンドは全員の家賃が半額',lastAid:'{n} は最下位。補助 ${a} 受け取り',out:'{n} が脱落',newRound:'ラウンド {r} 開始。このラウンドは {n} から',auctionStart:'{n} が「{t}」を競売に。最低 ${m}',auctionWin:'{b} が {n} の「{t}」を ${p} で落札',auctionNone:'「{t}」は入札なしで不成立',bankSell:'{n} が「{t}」を銀行に売って ${v} 受け取り',dealt:'{n} の初期物件は「{t}」、${p} 支払い',final:'ラスト {k} ラウンド！最下位の {n} に追い上げボーナス ${a}',award_rent:'苦労賞：{n} は家賃を合計 ${v} 支払った。${a} 獲得',award_chance:'冒険賞：{n} はリフトイベントに {v} 回遭遇。${a} 獲得',award_laps:'旅行賞：{n} は泉を {v} 回通過。${a} 獲得',upkeep:'{n} は物件 {c} 件。超過分の維持費 ${a} を支払い',taxProp:'{n} はショップで装備を買わされて ${a}（物件税 ${b} 込み）',rentHalf:'{n} は最下位。{o} の「{t}」の家賃は半額、${r} 支払い',twitch:'{n} の家にトゥイッチが侵入！「{t}」が奪われて空き地に戻った',twitchCash:'{n} の家にトゥイッチが侵入！土地がないので現金 ${a} を盗まれた',twitchNone:'{n} の家にトゥイッチが侵入したが、何もなくて手ぶらで帰った',taxPct:'{n} はショップで装備を買わされて ${a}（所持金の8%）',
+ log:{start:'ゲーム開始！後手は補償として $100 多くもらえます。',again:'次のゲーム開始！後手は補償として $100 多くもらえます。',roll:'{n} が {s} を出した',boost:'{n} はシヴィアの加速中！移動距離2倍で {s} マス進む',passGo:'{n} が泉を通過、${a} 受け取り',left:'{n} の接続が切れたので、コンピュータが代わりにプレイします（同じ名前で再参加すると戻れます）',rejoin:'{n} が戻ってきた！',baron:'{n} がバロン獲得！2ラウンドの間 家賃 +50%',bounty:'{n} が {o} を倒してキル賞金 ${a}',npcBuy:'{n} が「{t}」を購入',npcPass:'{n} は「{t}」を見て買わなかった',robin:'{n} は資産トップ。他の全員に ${a} 支払い',steal:'{n} が {o} の「{t}」を奪った',crash:'バブル崩壊！次のラウンドは全員の家賃が半額',lastAid:'{n} は最下位。補助 ${a} 受け取り',out:'{n} が脱落',newRound:'ラウンド {r} 開始。このラウンドは {n} から',auctionStart:'{n} が「{t}」を競売に。最低 ${m}',auctionWin:'{b} が {n} の「{t}」を ${p} で落札',auctionNone:'「{t}」は入札なしで不成立',bankSell:'{n} が「{t}」を銀行に売って ${v} 受け取り',dealt:'{n} の初期物件は「{t}」、${p} 支払い',final:'ラスト {k} ラウンド！最下位の {n} に追い上げボーナス ${a}',award_rent:'苦労賞：{n} は家賃を合計 ${v} 支払った。${a} 獲得',award_chance:'冒険賞：{n} はリフトイベントに {v} 回遭遇。${a} 獲得',award_laps:'旅行賞：{n} は泉を {v} 回通過。${a} 獲得',upkeep:'{n} は物件 {c} 件。超過分の維持費 ${a} を支払い',taxProp:'{n} はショップで装備を買わされて ${a}（物件税 ${b} 込み）',rentHalf:'{n} は最下位。{o} の「{t}」の家賃は半額、${r} 支払い',twitch:'{n} の家にトゥイッチが侵入！「{t}」が奪われて空き地に戻った',twitchCash:'{n} の家にトゥイッチが侵入！土地がないので現金 ${a} を盗まれた',twitchNone:'{n} の家にトゥイッチが侵入したが、何もなくて手ぶらで帰った',taxPct:'{n} はショップで装備を買わされて ${a}（所持金の8%）',
   canBuy:'{n} が「{t}」に到着。${p} で買える',poor:'{n} が「{t}」に到着したが、お金が足りない',rent:'{n} が {o} の「{t}」に止まり、家賃 ${r} を支払い',canUp:'{n} が自分の「{t}」に戻った。${c} でアップグレード可能',back:'{n} が自分の「{t}」に戻った',
   chance:'{n} のリフトイベント：{c}',tax:'{n} はショップで装備を買わされて ${a}',jail:'{n} がデス。泉で復活待ち（次のターンは休み）',wheel:'{n} のドラゴン祭壇：「{w}」',rest:'{n} はリコールしてひと休み',go:'{n} は泉に戻った',
   sell:'{n} はお金が足りず、「{t}」を売って ${v} 回収',bankrupt:'{n} が破産！',skip:'{n} は復活待ち、このターンは休み',bought:'{n} が「{t}」を購入',upgraded:'{n} が「{t}」をレベル {l} に',settle:'{m} ラウンド終了！資産結果：{r}'}
@@ -308,13 +308,16 @@ const rnd=n=>Math.floor(Math.random()*n);
 const hasStorage=()=>typeof window.storage!=='undefined' && window.storage && window.storage.get;
 const key=()=> 'room:'+net.code;
 
-function newState(mode,names,skins){
-  skins=skins||[];
-  const c=CFG[mode], npcs=npcChamps(npcCount,skins);
+// humans：[{name,skin,pid}]（真人，最多 4 位）；npcN：電腦人數（總數最多 4）。第 2 位（後手）多拿 $100 補償
+const MAXP=4;
+function newState(mode,humans,npcN){
+  const c=CFG[mode], hs=humans.slice(0,MAXP), n=Math.max(0,Math.min(npcN==null?npcCount:npcN,MAXP-hs.length)), npcs=npcChamps(n,hs.map(h=>h.skin));
+  const P=(o,i)=>Object.assign({money:c.start+(i===1?100:0),pos:0,skip:0,rentPaid:0,chances:0,laps:0},o);
+  const players=hs.map((h,i)=>P({name:h.name||(lang==='ja'?'プレイヤー'+(i+1):'玩家'+(i+1)),skin:h.skin||null,pid:h.pid||null},i));
+  for(let k=0;k<n;k++){ const sk=npcs[k]; players.push(P({name:sk?sk.n[lang]||sk.n.zh:NPC_NAMES[k%NPC_NAMES.length][lang],npc:true,skin:sk||null},players.length)); }
   return {
-    mode, phase:'lobby', seq:1, code:net.code, guestJoined:false,
-    players:[{name:names[0]||'玩家一',money:c.start,pos:0,skip:0,rentPaid:0,chances:0,laps:0,skin:skins[0]||null},{name:names[1]||'玩家二',money:c.start+100,pos:0,skip:0,rentPaid:0,chances:0,laps:0,skin:skins[1]||null}]
-      .concat(Array.from({length:npcCount},(_,k)=>({name:npcs[k]?npcs[k].n[lang]||npcs[k].n.zh:NPC_NAMES[k][lang],money:c.start,pos:0,skip:0,npc:true,rentPaid:0,chances:0,laps:0,skin:npcs[k]||null}))),
+    mode, phase:'lobby', seq:1, code:net.code, guestJoined:hs.length>1,
+    players,
     awards:[],
     owners:{}, turn:0, first:0, round:1, step:'roll', pending:null, dice:[], winner:null, log:[], crash:0
   };
@@ -435,25 +438,60 @@ function endTurn(){
 
 /* ---------- 網路同步（Claude 內用 storage，外部網頁用 WebRTC/PeerJS） ---------- */
 const PFX='cmp-2p-';
-let peer=null, conn=null;
+let peer=null, conn=null, conns=[];   // conns：房主這邊所有來賓的連線（最多 3 條）
 const usePeer=()=>!hasStorage()&&typeof Peer!=='undefined';
 const netOK=()=>hasStorage()||usePeer();
 async function push(){
   if(!net.online) return; st.seq++;
-  if(hasStorage()){ try{ await window.storage.set(key(),JSON.stringify(st),true); }catch(e){ console.error(e); } }
-  else if(conn&&conn.open){ try{ conn.send(JSON.stringify(st)); }catch(e){ console.error(e); } }
+  if(hasStorage()){ try{ await window.storage.set(key(),JSON.stringify(st),true); }catch(e){ console.error(e); } return; }
+  const j=JSON.stringify(st);
+  if(net.me===0) conns.forEach(c=>{ if(c.open){ try{ c.send(j); }catch(e){} } });    // 房主：推給所有來賓
+  else if(conn&&conn.open){ try{ conn.send(j); }catch(e){ console.error(e); } }
 }
+// 房主：把某位來賓傳來的最新狀態轉給其他來賓
+function relay(j,from){ conns.forEach(c=>{ if(c!==from&&c.open){ try{ c.send(j); }catch(e){} } }); }
+function sendTo(c,m){ try{ c.open&&c.send(JSON.stringify(m)); }catch(e){} }
+// 房主：告訴每位來賓他現在是第幾號玩家（有人離開、再來一局時順序可能改變）
+function helloAll(){ conns.forEach(c=>{ const i=st.players.findIndex(p=>p.pid===c.peer); if(i>0) sendTo(c,{type:'hello',me:i}); }); }
 async function pull(){
   if(!net.online||busy||!hasStorage()) return;
   try{ const r=await window.storage.get(key(),true); if(!r) return; const s=JSON.parse(r.value); if(s.seq>st.seq){ st=s; hearRemote(); render(); } }catch(e){}
 }
 function startPolling(){ if(timer) clearInterval(timer); timer=null; if(hasStorage()) timer=setInterval(pull,2000); }
-function stopPolling(){ if(timer) clearInterval(timer); timer=null; if(conn){ try{conn.close()}catch(e){} conn=null; } if(peer){ try{peer.destroy()}catch(e){} peer=null; } }
-function onData(d){
+function stopPolling(){ clearInterval(beatTimer); if(timer) clearInterval(timer); timer=null; conns.forEach(c=>{ try{c.close()}catch(e){} }); conns=[]; if(conn){ try{conn.close()}catch(e){} conn=null; } if(peer){ try{peer.destroy()}catch(e){} peer=null; } }
+function onData(d,from){
   let m; try{ m=typeof d==='string'?JSON.parse(d):d; }catch(e){ return; }
-  if(m.type==='act'){ if(net.online&&net.me===0&&st) doAct(Object.assign({},m,{pi:1})); return; }
-  if(m.type==='join'){ if(!st||st.phase!=='lobby') return; st.players[1].name=m.name; st.players[1].skin=m.skin||null; st.guestJoined=true; rerollNpcs(); render(); push(); return; }
-  if(m.seq!=null && (!st||m.seq>st.seq)){ st=m; hearRemote(); if(busy) return; render(); }
+  if(from) from._last=Date.now(); else lastHost=Date.now();
+  if(m.type==='ping'||m.type==='pong') return;
+  if(m.type==='act'){ if(net.online&&net.me===0&&st&&from){ const pi=st.players.findIndex(p=>p.pid===from.peer); if(pi>0) doAct(Object.assign({},m,{pi})); } return; }
+  if(m.type==='join'){ if(!st||!from) return;
+    if(st.phase!=='lobby'){   // 遊戲中：同名字、之前離線的人可以接回自己的座位
+      const i=st.players.findIndex(p=>p.left&&p.name===m.name);
+      if(i<0){ sendTo(from,{type:'reject',why:'started'}); return; }
+      const p=st.players[i]; p.npc=false; p.left=false; p.pid=from.peer; log('rejoin',{n:p.name}); helloAll(); render(); push(); return; }
+    if(st.players.length>=MAXP){ sendTo(from,{type:'reject',why:'full'}); return; }
+    if(!st.players.some(p=>p.pid===from.peer)) st.players.push({name:m.name,skin:m.skin||null,pid:from.peer,money:0,pos:0});
+    st.guestJoined=st.players.length>1; helloAll(); render(); push(); return; }
+  if(m.type==='hello'){ net.me=m.me; if(st) render(); return; }
+  if(m.type==='reject'){ joinReject=m.why; return; }
+  if(m.seq!=null && (!st||m.seq>st.seq)){ st=m; hearRemote(); if(net.me===0&&from) relay(typeof d==='string'?d:JSON.stringify(m),from); if(busy) return; render(); }
+}
+let joinReject=null, lastHost=0, beatTimer=null, beatTick=0;
+// 心跳（雙向，每 3 秒）：分頁被直接關掉時 WebRTC 可能很久才發現斷線。
+// 房主 20 秒沒收到某來賓的消息 → 當作離線（改由電腦代打，他用同名字重新加入可以接回座位）；來賓 30 秒沒收到房主 → 斷線。
+// 自己的畫面剛被暫停（切到別的 App）時先重算，不會誤判別人斷線
+function startBeat(){ clearInterval(beatTimer); lastHost=Date.now(); beatTick=Date.now();
+  beatTimer=setInterval(()=>{ if(!net.online||hasStorage()){ clearInterval(beatTimer); return; } const now=Date.now(), gap=now-beatTick; beatTick=now;
+    if(gap>8000){ lastHost=now; conns.forEach(c=>c._last=now); return; }
+    if(net.me===0){ conns.forEach(c=>{ if(c._last==null) c._last=now; if(now-c._last>20000){ try{ c.close(); }catch(e){} onGuestLeft(c); } else sendTo(c,{type:'ping'}); }); }
+    else { if(conn) sendTo(conn,{type:'ping'}); if(now-lastHost>30000){ clearInterval(beatTimer); onDisconnect(); } } },3000); }
+// 房主：來賓斷線。大廳裡就把他移除；遊戲中改由電腦代打，遊戲繼續
+function onGuestLeft(c){
+  if(!conns.includes(c)) return; conns=conns.filter(x=>x!==c); if(!st||!net.online) return;
+  const i=st.players.findIndex(p=>p.pid===c.peer); if(i<0) return;
+  if(st.phase==='lobby'){ st.players.splice(i,1); st.guestJoined=st.players.length>1; helloAll(); }
+  else { const p=st.players[i]; p.npc=true; p.left=true; p.pid=null; log('left',{n:p.name}); }
+  render(); push();
 }
 function onDisconnect(){ if(!net.online) return; $('home-err').textContent=T('e_disc'); goHome(); }
 function hostPeer(){
@@ -464,7 +502,7 @@ function hostPeer(){
       peer=new Peer(PFX+net.code);
       peer.on('open',()=>ok());
       peer.on('error',e=>{ if(e.type==='unavailable-id'&&tries++<3){ peer.destroy(); make(); } else fail(e); });
-      peer.on('connection',c=>{ conn=c; c.on('data',onData); c.on('close',onDisconnect); c.on('error',onDisconnect); });
+      peer.on('connection',c=>{ conns.push(c); c.on('data',d=>onData(d,c)); c.on('close',()=>onGuestLeft(c)); c.on('error',()=>onGuestLeft(c)); });
     };
     make();
   });
@@ -478,7 +516,7 @@ function joinPeer(code,name){
     peer.on('open',()=>{
       conn=peer.connect(PFX+code,{reliable:true});
       conn.on('open',()=>{ conn.send(JSON.stringify({type:'join',name,skin:pickOf(0)})); });
-      conn.on('data',d=>{ onData(d); if(!done&&st&&st.seq){ done=true; clearTimeout(t); ok(); } });
+      conn.on('data',d=>{ onData(d,null); if(!done&&joinReject){ done=true; clearTimeout(t); fail(new Error(joinReject)); return; } if(!done&&st&&st.seq&&net.me>0){ done=true; clearTimeout(t); ok(); } });
       conn.on('close',onDisconnect); conn.on('error',e=>{ if(!done){ done=true; clearTimeout(t); fail(e); } else onDisconnect(); });
     });
   });
@@ -705,8 +743,14 @@ async function roll(){
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
 /* ---------- 大廳 / 流程 ---------- */
-let homeConn='online', homeMode='quick', npcCount=2;
-document.querySelectorAll('#seg-conn button').forEach(b=>b.onclick=()=>{ homeConn=b.dataset.v; document.querySelectorAll('#seg-conn button').forEach(x=>x.classList.toggle('sel',x===b)); $('joincode').parentElement.style.display=homeConn==='online'?'':'none'; $('home-note').style.display=homeConn==='online'?'':'none'; $('f-name2').style.display=homeConn==='online'?'none':''; $('f-pick1').style.display=homeConn==='online'?'none':''; $('b-create').textContent=homeConn==='online'?T('create'):T('startLocal'); });
+let homeConn='online', homeMode='quick', npcCount=2, homeHumans=2;   // homeHumans：同一支手機輪流時的真人數（2～4）
+// 同一支手機：依人數顯示玩家 2～4 的名字與角色欄
+function localFields(){ const loc=homeConn==='local'; $('f-humans').style.display=loc?'':'none';
+  for(let k=2;k<=MAXP;k++){ const on=loc&&k<=homeHumans; $('f-name'+k).style.display=on?'':'none'; $('f-pick'+(k-1)).style.display=on?'':'none'; }
+  // 電腦人數最多補到 4 人
+  const room=loc?MAXP-homeHumans:MAXP-1; document.querySelectorAll('#seg-npc button').forEach(b=>{ b.disabled=+b.dataset.v>room; }); if(npcCount>room){ npcCount=room; document.querySelectorAll('#seg-npc button').forEach(x=>x.classList.toggle('sel',+x.dataset.v===npcCount)); } }
+document.querySelectorAll('#seg-humans button').forEach(b=>b.onclick=()=>{ homeHumans=+b.dataset.v; document.querySelectorAll('#seg-humans button').forEach(x=>x.classList.toggle('sel',x===b)); localFields(); });
+document.querySelectorAll('#seg-conn button').forEach(b=>b.onclick=()=>{ homeConn=b.dataset.v; document.querySelectorAll('#seg-conn button').forEach(x=>x.classList.toggle('sel',x===b)); $('joincode').parentElement.style.display=homeConn==='online'?'':'none'; $('home-note').style.display=homeConn==='online'?'':'none'; localFields(); $('b-create').textContent=homeConn==='online'?T('create'):T('startLocal'); });
 document.querySelectorAll('#seg-lang button').forEach(b=>b.onclick=()=>{ lang=b.dataset.v; applyLang(); });
 $('b-lang').onclick=()=>{ lang=lang==='ja'?'zh':'ja'; applyLang(); };
 document.querySelectorAll('.b-mute').forEach(b=>b.onclick=()=>setMuted(!muted)); setMuted(muted);
@@ -720,27 +764,27 @@ $('b-create').onclick=async()=>{
   const name=$('myname').value.trim(); $('home-err').textContent='';
   if(homeConn==='local'){
     net={online:false,code:'',me:0};
-    const n2=$('name2').value.trim()||(lang==='ja'?'プレイヤー2':'玩家二');
-    st=newState(homeMode,[name||(lang==='ja'?'プレイヤー1':'玩家一'),n2],[pickOf(0),pickOf(1)]); startGame('start'); render(); return;
+    const hs=[{name,skin:pickOf(0)}]; for(let k=1;k<homeHumans;k++) hs.push({name:$('name'+(k+1)).value.trim(),skin:pickOf(k)});
+    st=newState(homeMode,hs,npcCount); startGame('start'); render(); return;
   }
   if(!netOK()){ $('home-err').textContent=T('e_storage'); return; }
   if(!name){ $('home-err').textContent=T('e_name'); return; }
   net={online:true,code:String(1000+rnd(9000)),me:0};
-  st=newState(homeMode,[name,''],[pickOf(0)]);
+  st=newState(homeMode,[{name,skin:pickOf(0),pid:'host'}],0); st.npcWant=npcCount;
   $('b-create').disabled=true; $('home-err').textContent=T('connecting');
   try{
     if(hasStorage()) await window.storage.set(key(),JSON.stringify(st),true);
     else await hostPeer();
   }catch(e){ $('home-err').textContent=T('e_create'); $('b-create').disabled=false; stopPolling(); return; }
   $('b-create').disabled=false; $('home-err').textContent='';
-  render(); startPolling();
+  render(); startPolling(); startBeat();
 };
 $('b-join').onclick=async()=>{
   const name=$('myname').value.trim(), code=$('joincode').value.trim(); $('home-err').textContent='';
   if(!netOK()){ $('home-err').textContent=T('e_storage'); return; }
   if(!name){ $('home-err').textContent=T('e_name'); return; }
   if(!/^\d{4}$/.test(code)){ $('home-err').textContent=T('e_code'); return; }
-  net={online:true,code,me:1};
+  net={online:true,code,me:-1}; joinReject=null;
   $('b-join').disabled=true; $('home-err').textContent=T('connecting');
   if(hasStorage()){
     let s=null;
@@ -748,33 +792,41 @@ $('b-join').onclick=async()=>{
     $('b-join').disabled=false;
     if(!s){ $('home-err').textContent=T('e_notfound'); return; }
     if(s.guestJoined&&s.phase!=='lobby'){ $('home-err').textContent=T('e_started'); return; }
-    s.players[1].name=name; s.players[1].skin=pickOf(0); s.guestJoined=true; st=s; await push();
+    if(s.players.length>=MAXP){ $('home-err').textContent=T('e_full'); return; }
+    s.players.push({name,skin:pickOf(0),money:0,pos:0}); net.me=s.players.length-1; s.guestJoined=true; st=s; await push();
   } else {
     st=null;
     try{ await joinPeer(code,name); }
-    catch(e){ $('b-join').disabled=false; stopPolling(); net.online=false; $('home-err').textContent=T('e_notfound'); return; }
+    catch(e){ $('b-join').disabled=false; stopPolling(); net.online=false; $('home-err').textContent=T(e&&e.message==='full'?'e_full':e&&e.message==='started'?'e_started':'e_notfound'); return; }
     $('b-join').disabled=false;
-    if(st.phase!=='lobby'){ $('home-err').textContent=T('e_started'); stopPolling(); net.online=false; return; }
+    // 遊戲已開始：房主只會讓「之前離線、同名字」的人接回座位，其他人會被拒絕（joinPeer 已經處理）
   }
   $('home-err').textContent='';
-  render(); startPolling();
+  render(); startPolling(); startBeat();
 };
-$('b-start').onclick=async()=>{ startGame('start'); render(); await push(); };
+$('b-start').onclick=async()=>{
+  // 開始時才補電腦玩家（真人先坐，剩下的位子給電腦）
+  const hs=st.players.map(p=>({name:p.name,skin:p.skin,pid:p.pid})), seq=st.seq, code=st.code;
+  st=newState(st.mode,hs,st.npcWant==null?npcCount:st.npcWant); st.seq=seq; st.code=code; startGame('start'); helloAll(); render(); await push(); };
 $('b-leave').onclick=goHome;
 $('m-sell-x').onclick=()=>$('m-sell').classList.remove('on'); $('m-sell').onclick=e=>{ if(e.target===$('m-sell')) $('m-sell').classList.remove('on'); };
 $('b-rules').onclick=openRules; $('m-rules-x').onclick=()=>$('m-rules').classList.remove('on'); $('m-rules').onclick=e=>{ if(e.target===$('m-rules')) $('m-rules').classList.remove('on'); };
 
 function renderLobby(){
   show('s-lobby'); $('lobby-code').textContent=net.code;
+  // 已加入的玩家（最多 4 人）
+  $('lobby-players').innerHTML=st.players.map((p,i)=>`<div class="lp"><span class="dot p${i}">${avatarHTML(i)}</span><b>${esc(p.name)}</b>${i===0?`<small>${T('hostTag')}</small>`:''}${i===net.me?`<small>${T('you')}</small>`:''}</div>`).join('');
+  const n=st.players.length;
   if(net.me===0){
-    $('lobby-status').textContent=st.guestJoined?T('joined',{n:st.players[1].name}):T('waiting');
-    $('b-start').style.display=''; $('b-start').disabled=!st.guestJoined;
+    $('lobby-status').textContent=n>1?T('joinedN',{k:n,m:MAXP}):T('waiting');
+    $('b-start').style.display=''; $('b-start').disabled=n<2;
   } else { $('lobby-status').textContent=T('guestWait',{n:st.players[0].name}); $('b-start').style.display='none'; }
 }
 function again(){
-  const names=st.players.map(p=>p.name), skins=st.players.map(p=>p.skin), seq=st.seq;
-  st=newState(st.mode,names,skins); st.seq=seq; st.guestJoined=true; startGame('again');
-  render(); push();
+  // 真人照原本順序坐好（中途離線的人已改成電腦，這局就由電腦補位），電腦重新抽英雄
+  const hs=st.players.filter(p=>!p.npc).map(p=>({name:p.name,skin:p.skin,pid:p.pid})), npcN=st.players.length-hs.length, seq=st.seq, code=st.code;
+  st=newState(st.mode,hs,npcN); st.seq=seq; st.code=code; startGame('again');
+  if(net.online&&net.me===0) helloAll(); render(); push();
 }
 function goHome(){ stopPolling(); if(typeof view3d!=='undefined') view3d.stop(); if(npcTimer){ clearTimeout(npcTimer); npcTimer=null; } st=null; net={online:false,code:'',me:0}; show('s-home'); applyLang(); }
 

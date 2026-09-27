@@ -28,7 +28,7 @@ const CHAMP=(()=>{
   const skinName=s=>pickL(s.n)||s.cid;
 
   function refresh(){
-    [0,1].forEach(i=>{
+    [0,1,2,3].forEach(i=>{
       const b=$('pick'+i); if(!b) return; const s=get(i);
       b.innerHTML=s
         ?`${avatarImg(s)}<span><b>${esc(skinName(s))}</b><small>${esc(pickL(s.cn))}</small></span><span class="chg">${X().chg}</span>`
@@ -79,7 +79,7 @@ const CHAMP=(()=>{
   }
 
   function init(){
-    [0,1].forEach(i=>{ const b=$('pick'+i); if(b) b.onclick=()=>open(i); });
+    [0,1,2,3].forEach(i=>{ const b=$('pick'+i); if(b) b.onclick=()=>open(i); });
     $('pick-x').onclick=close;
     $('pick-back').onclick=()=>{ if(view==='skins') renderChamps(); else close(); };
     $('pick-q').oninput=()=>{ if(view==='champs') renderChamps(); };
