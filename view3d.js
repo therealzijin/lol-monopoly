@@ -164,11 +164,12 @@ const view3d=(()=>{
     if(clips.idle){ mixer.clipAction(clips.idle).play(); mixer.update(0); }
     model.updateMatrixWorld(true);
     const measure=()=>{ const box=new THREE.Box3(); model.updateMatrixWorld(true);
-      model.traverse(o=>{ if(!o.isMesh) return; o.frustumCulled=false; let bb;
+      model.traverse(o=>{ if(!o.isMesh) return; o.frustumCulled=false; if(!o.visible) return; let bb;
         if(o.isSkinnedMesh){ o.computeBoundingBox(); bb=o.boundingBox.clone(); } else { if(!o.geometry.boundingBox) o.geometry.computeBoundingBox(); bb=o.geometry.boundingBox.clone(); }
         box.union(bb.applyMatrix4(o.matrixWorld)); }); return box; };
     // Q 版化（參考 SD／Q 版比例：2.5～3 頭身、軀幹約一個頭、腿短、手到大腿上半、手腳小而圓、脖子幾乎不見）
     // 每個部位沿骨頭方向縮短、另外控制粗細（改綁定矩陣，不影響子骨頭，關節彎曲不會歪）
+    hideProps(model);
     const Q=chibify(model,tk.cid);
     const box=measure();
     const face=Q.face*Q.hk;
@@ -187,6 +188,26 @@ const view3d=(()=>{
   // 骨骼命名有兩套：新版（Pelvis/Spine1/L_Hip/L_Shoulder=上臂）與舊版（hip/spine/L_Thigh/L_UpArm，L_Shoulder=鎖骨）
   // 約德爾人本來就是 Q 版體型：只微調（波比的綁定比例量起來像真人，要特別處理）
   const YORDLE=new Set(['Corki','Gnar','Heimerdinger','Kennen','Kled','Lulu','Poppy','Rumble','Teemo','Tristana','Veigar','Vex','Yuumi','Ziggs','Fizz','Smolder']);
+  // 有些造型把「回城／表情動作的道具」（狗屋、椰子樹、海浪、拉霸機…）放在模型裡，待機也看得到，還會把外框撐大 → 角色變很小。
+  // 綁在這類骨頭上、或遠離身體又不是武器／坐騎／翅膀的網格一律藏起來（跟賽車共用同一套規則）
+  const PROP_RX=/recall|emote|dance|joke|taunt|laugh|homeguard/i, KEEP_RX=/mount|weapon|bow|gun|blade|arrow|wing|tail|coat|cape|hair|shield|launcher|dragon|pet|companion|sword|staff|axe|hammer/i;
+  function hideProps(model){
+    let pelvis=null, head=null; model.traverse(o=>{ if(o.isBone){ if(!pelvis&&/^(c_)?(pelvis|hip)$/i.test(o.name)) pelvis=o; if(!head&&/^(c_)?head$/i.test(o.name)) head=o; } });
+    const body=new Set(); [pelvis,head].forEach(b=>b&&b.traverse(o=>{ if(o.isBone) body.add(o); }));
+    const info=[]; model.updateMatrixWorld(true);
+    model.traverse(o=>{ if(!o.isMesh) return; let bb, frac=0, names='';
+      if(o.isSkinnedMesh){ o.computeBoundingBox(); bb=o.boundingBox.clone().applyMatrix4(o.matrixWorld);
+        const SI=o.geometry.attributes.skinIndex, SW=o.geometry.attributes.skinWeight, bones=o.skeleton.bones, cnt=new Map(); let inB=0;
+        for(let i=0;i<SI.count;i++){ let bi=0,bw=-1; for(let k=0;k<4;k++){ const w=SW.getComponent(i,k); if(w>bw){ bw=w; bi=SI.getComponent(i,k); } } const b=bones[bi]; if(body.has(b)) inB++; else if(b) cnt.set(b,(cnt.get(b)||0)+1); }
+        frac=inB/Math.max(1,SI.count);
+        [...cnt.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).forEach(([b])=>{ for(let p=b,d=0;p&&p.isBone&&d<4;p=p.parent,d++) names+=' '+p.name; });
+      } else { if(!o.geometry.boundingBox) o.geometry.computeBoundingBox(); bb=o.geometry.boundingBox.clone().applyMatrix4(o.matrixWorld); }
+      info.push({o,bb,frac,names}); });
+    const core=info.filter(m=>m.frac>=.3); if(!core.length) return;
+    const box=new THREE.Box3(); core.forEach(m=>box.union(m.bb)); const H=Math.max(1e-6,box.max.y-box.min.y), c=box.getCenter(new THREE.Vector3());
+    info.forEach(m=>{ if(m.frac>=.05) return; const sz=m.bb.getSize(new THREE.Vector3()), mc=m.bb.getCenter(new THREE.Vector3()), off=Math.hypot(mc.x-c.x,mc.z-c.z)/H, big=Math.max(sz.x,sz.y,sz.z)/H;
+      if(PROP_RX.test(m.names)||(!KEEP_RX.test(m.names)&&(off>.8||big>1.6))) m.o.visible=false; });
+  }
   function chibify(model,cid){
     const bones=[]; model.traverse(o=>{ if(o.isBone) bones.push(o); });
     const find=re=>bones.filter(b=>re.test(b.name));
@@ -298,7 +319,7 @@ const view3d=(()=>{
           if(d>c0) v.y+=(d-(c0+(d-c0)*kk))*Math.min(1,w*1.4); v.applyMatrix4(inv); o.geometry.attributes.position.setXYZ(i,v.x,v.y,v.z); touched=true; }
         if(touched) o.geometry.attributes.position.needsUpdate=true; }); }
     function bindRatio(){ if(!head||!invOf.get(head)) return 0; let top=-1e9, minY=1e9; const v=new THREE.Vector3();
-      model.traverse(o=>{ if(o.isSkinnedMesh){ const Pp=o.geometry.attributes.position; for(let i=0;i<Pp.count;i++) minY=Math.min(minY,bindV(o,i,v).y); } });
+      model.traverse(o=>{ if(o.isSkinnedMesh&&o.visible){ const Pp=o.geometry.attributes.position; for(let i=0;i<Pp.count;i++) minY=Math.min(minY,bindV(o,i,v).y); } });
       headVerts((o,i)=>{ top=Math.max(top,bindV(o,i,v).y); }); if(top<-1e8) return 0;
       const hy=new THREE.Vector3().setFromMatrixPosition(invOf.get(head).clone().invert()).y; return (top-hy)/Math.max(1e-6,top-minY); }
     function headTop(){ if(!head) return 0; model.updateMatrixWorld(true); let top=-1e9; const v=new THREE.Vector3();
@@ -311,7 +332,7 @@ const view3d=(()=>{
         for(let i=0;i<Pp.count;i++){ let w=0; for(let c=0;c<4;c++) if(SI.getComponent(i,c)===hi) w+=SW.getComponent(i,c); if(w<.5) continue;
           v.fromBufferAttribute(Pp,i); o.applyBoneTransform(i,v); v.applyMatrix4(o.matrixWorld); fb.expandByPoint(v); n++; } });
       if(n<20) return 0; const d=fb.getSize(new THREE.Vector3()); return Math.max(d.x,d.y,d.z); }
-    function height(){ const box=new THREE.Box3(); model.updateMatrixWorld(true); model.traverse(o=>{ if(o.isSkinnedMesh){ o.computeBoundingBox(); box.union(o.boundingBox.clone().applyMatrix4(o.matrixWorld)); } }); return Math.max(1e-6,box.max.y-box.min.y); }
+    function height(){ const box=new THREE.Box3(); model.updateMatrixWorld(true); model.traverse(o=>{ if(o.isSkinnedMesh&&o.visible){ o.computeBoundingBox(); box.union(o.boundingBox.clone().applyMatrix4(o.matrixWorld)); } }); return Math.max(1e-6,box.max.y-box.min.y); }
   }
   function champPlay(C,key){
     if(C.cur===key) return;

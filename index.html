@@ -192,7 +192,7 @@ h1{font-size:34px;line-height:1.1;font-weight:800;letter-spacing:-.01em;margin:8
 <section id="s-home" class="screen on">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div class="seg" id="seg-lang" style="max-width:220px;margin:0;flex:1">
     <button data-v="zh">中文</button><button data-v="ja">日本語</button>
-  </div><button class="ghost b-mute" style="padding:8px 12px;border-radius:10px;flex:none"></button></div>
+  </div><button class="ghost" id="b-fs" data-i="fs" style="padding:8px 12px;border-radius:10px;flex:none"></button><button class="ghost b-mute" style="padding:8px 12px;border-radius:10px;flex:none"></button></div>
   <h1 data-i="title"></h1>
   <p class="sub" data-i="sub"></p>
 
@@ -263,13 +263,15 @@ h1{font-size:34px;line-height:1.1;font-weight:800;letter-spacing:-.01em;margin:8
   <div class="log" id="log"></div>
 </section>
 
+<!-- iPhone Safari 不能用網頁切全螢幕：教使用者「加入主畫面」 -->
+<div class="modal" id="m-a2hs"><div class="sheet"><h2 data-i="a2hsT"></h2><div class="sheet-b"><p data-i="a2hsB"></p><ol style="padding-left:20px;line-height:1.8"><li data-i="a2hs1"></li><li data-i="a2hs2"></li><li data-i="a2hs3"></li></ol></div><button class="primary wide" id="m-a2hs-x" data-i="ok"></button></div></div>
 <div class="modal" id="m-rules"><div class="sheet"><h2 id="m-rules-t"></h2><div class="sheet-b" id="m-rules-b"></div><button class="primary wide" id="m-rules-x"></button></div></div>
 <div class="modal" id="m-sell"><div class="sheet"><h2 id="m-sell-t"></h2><div class="sheet-b" id="m-sell-b"></div><button class="primary wide" id="m-sell-x"></button></div></div>
 <div class="modal" id="m-pick"><div class="sheet"><div class="pick-h"><button class="ghost" id="pick-back">‹</button><h2 id="pick-t"></h2><button class="ghost" id="pick-x">✕</button></div><input id="pick-q" autocomplete="off"><div class="pick-note" id="pick-note"></div><div class="sheet-b pick-grid" id="pick-g"></div></div></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module">
 // 先載入 Three.js（模組版），掛到 window.THREE 後再依序載入遊戲腳本；載入失敗就只用 2D
-const SCRIPTS=["game.js?v=202609270927","champs.js?v=202609270927","view2d.js?v=202609270927","view3d.js?v=202609270927"];
+const SCRIPTS=["game.js?v=202609270952","champs.js?v=202609270952","view2d.js?v=202609270952","view3d.js?v=202609270952"];
 const load=src=>new Promise((ok,no)=>{ const e=document.createElement('script'); e.src=src; e.onload=ok; e.onerror=no; document.body.appendChild(e); });
 try{
   const T=await import('three');

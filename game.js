@@ -89,6 +89,7 @@ const RULE={freeProps:5, upkeepPct:.05, propTaxFree:3, propTax:50, underdogRent:
 const STR={
 zh:{
  title:'兩人大富翁',sub:'給你們兩個玩的小桌遊。各拿一支手機，開一間房就能開始。',
+ fs:'⛶ 全螢幕',a2hsT:'加入主畫面就能全螢幕',a2hsB:'iPhone 的 Safari 不允許網頁自己切成全螢幕。把遊戲加到主畫面後，從圖示打開就沒有網址列，畫面更大：',a2hs1:'點 Safari 的「分享」按鈕',a2hs2:'往下找「加入主畫面」',a2hs3:'之後從主畫面的「大富翁」圖示打開',ok:'知道了',
  myname:'你的名字',myname_ph:'例如：周',name2:'對方的名字',name2_ph:'例如：小美',
  how:'怎麼玩',online:'兩支手機',online_s:'各看自己的畫面',local:'同一支手機',local_s:'輪流傳給對方',
  npc:'電腦玩家',npc0:'不要',npc1:'1 位',npc2:'2 位',props:'地產',bonus:'落後補助',char0:'你的角色',char1:'對方的角色',sellBtn:'拍賣／出售地產',sellTitle:'出售地產',sellHint:'拍賣：其他人各出一次價（互相看不到），價高者得，底價是地價的一半。賣給銀行：立刻拿回一半的錢。',auction:'拍賣',bankBtn:'賣銀行 ${v}',auctionOn:'<b>{s}</b> 拍賣「<b>{t}</b>」，價值 ${v}，底價 ${m}',yourBid:'你的出價',bid:'出價',passBid:'不要',bidDone:'已出價',thinking:'考慮中',bidFor:'把手機交給 <b>{n}</b> 出價',secLeft:'剩 {s} 秒',noProps:'你目前沒有地產。',closeBtn:'關閉',rules:'玩法說明',rules_title:'玩法說明',close:'知道了',riot:'本遊戲為依據 Riot Games「Legal Jibber Jabber」政策製作的非商業粉絲作品，使用了 Riot Games 擁有的素材。Riot Games 並未背書或贊助本作。英雄 3D 模型來自 modelviewer.lol，英雄資料來自 Riot Data Dragon。',i_owner:'持有者',i_none:'無人',i_price:'價格',i_rent:'租金',i_lv:'等級',i_next:'升級後租金',i_tax:'稅金（或現金 8%）',i_full:'（整組加倍）',layout:'棋盤排列',ring:'環形',ring_s:'繞一圈，方向清楚',snake:'蛇形',snake_s:'格子最大，來回走',mode:'模式',quick:'快速',quick_s:'20 格・15 回合・約 10 分',classic:'經典',classic_s:'32 格・最多 40 回合',
@@ -107,6 +108,7 @@ zh:{
   sell:'{n} 錢不夠，賣掉「{t}」換回 ${v}',bankrupt:'{n} 破產了！',skip:'{n} 這回合罰站，跳過',bought:'{n} 買下了「{t}」',upgraded:'{n} 把「{t}」升到 {l} 級',settle:'{m} 回合結束！結算資產：{r}'}
 },
 ja:{
+ fs:'⛶ 全画面',a2hsT:'ホーム画面に追加すると全画面に',a2hsB:'iPhone の Safari はページから全画面にできません。ホーム画面に追加してアイコンから開くと、アドレスバーが消えて画面が広くなります：',a2hs1:'Safari の「共有」ボタンをタップ',a2hs2:'「ホーム画面に追加」を選ぶ',a2hs3:'ホーム画面の「大富翁」アイコンから開く',ok:'OK',
  title:'ふたりの大富豪すごろく',sub:'ふたり専用のミニボードゲーム。それぞれスマホを持って、部屋を作ればすぐ始められます。',
  myname:'あなたの名前',myname_ph:'例：なつ',name2:'相手の名前',name2_ph:'例：しゅう',
  how:'遊び方',online:'スマホ2台',online_s:'それぞれの画面で',local:'スマホ1台',local_s:'交代で回す',
@@ -762,3 +764,13 @@ function again(){
   render(); push();
 }
 function goHome(){ stopPolling(); if(typeof view3d!=='undefined') view3d.stop(); if(npcTimer){ clearTimeout(npcTimer); npcTimer=null; } st=null; net={online:false,code:'',me:0}; show('s-home'); applyLang(); }
+
+/* ---------- 全螢幕：能用 Fullscreen API 就直接切；iPhone 不支援 → 教「加入主畫面」；已是主畫面 App 模式就隱藏按鈕 ---------- */
+(()=>{ const b=document.getElementById('b-fs'), m=document.getElementById('m-a2hs'); if(!b||!m) return;
+  if(matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches||navigator.standalone){ b.style.display='none'; return; }
+  b.onclick=()=>{ const el=document.documentElement; if(document.fullscreenElement){ document.exitFullscreen?.(); return; }
+    if(document.fullscreenEnabled&&el.requestFullscreen) el.requestFullscreen().catch(()=>m.classList.add('on')); else m.classList.add('on'); };
+  document.getElementById('m-a2hs-x').onclick=()=>m.classList.remove('on');
+  m.onclick=e=>{ if(e.target===m) m.classList.remove('on'); };
+})();
+
