@@ -464,20 +464,78 @@ const view3d=(()=>{
 
   function clear(g){ while(g.children.length){ const c=g.children[0]; g.remove(c); } }
 
+  /* ---------- 召喚峽谷地圖 ---------- */
+  // 藍方主堡在起點（左上角格子）旁、紅方在對角；格子一圈就是兩條外路，中路從主堡斜向對面，河道和中路垂直
+  let riftTick=null;
+  function buildRift(cols,rows){
+    const hx=(cols-1)/2, hz=(rows-1)/2; let seed=20260927; const R=()=>(seed=(seed*1664525+1013904223)>>>0)/4294967296;
+    const lamT=(c,o)=>new THREE.MeshLambertMaterial(Object.assign({color:lin(c)},o||{}));
+    const add=(m,rs=true)=>{ m.receiveShadow=rs; m.userData.noShadow=true; root.add(m); return m; };
+    const flat=(geo,mat,y)=>{ const m=new THREE.Mesh(geo,mat); m.rotation.x=-Math.PI/2; m.position.y=y; return m; };
+    // 草地（大範圍）＋野區（圈內，顏色深一點）
+    add(flat(new THREE.PlaneGeometry(44,44),lamT(0xA6D873,{map:photo('grass.jpg',30,30)}),-.03));
+    add(flat(new THREE.PlaneGeometry(cols-1.05,rows-1.05),lamT(0x7DB463,{map:photo('grass.jpg',3,5)}),-.025));
+    // 河道：從右上角流向左下角，穿過兩個轉角（格子像橋一樣架在上面）
+    const u=new THREE.Vector2(-cols,rows).normalize(), ang=Math.atan2(u.x,u.y);
+    const wt=canvasTex(128,128,(g2,w,h)=>{ g2.fillStyle='#4FB4D6'; g2.fillRect(0,0,w,h); g2.strokeStyle='rgba(225,250,255,.55)'; g2.lineWidth=3; for(let k=0;k<10;k++){ const y=R()*h, x=R()*w; g2.beginPath(); g2.moveTo(x,y); g2.bezierCurveTo(x+14,y-6,x+28,y+6,x+44,y); g2.stroke(); } });
+    wt.wrapS=wt.wrapT=THREE.RepeatWrapping; wt.repeat.set(1.2,30);
+    const water=add(flat(new THREE.PlaneGeometry(1.05,44),new THREE.MeshLambertMaterial({map:wt,transparent:true,opacity:.92}),-.018)); water.rotation.z=ang;
+    [-1,1].forEach(sd=>{ const bank=add(flat(new THREE.PlaneGeometry(.16,44),lamT(0x6B5A3E),-.021)); bank.rotation.z=ang; bank.position.x=Math.cos(ang)*.6*sd; bank.position.z=-Math.sin(ang)*.6*sd; });
+    // 外路（格子底下的石板路）
+    { const rr=(a,b,r)=>{ const sh=new THREE.Shape(); sh.moveTo(-a+r,-b); sh.lineTo(a-r,-b); sh.quadraticCurveTo(a,-b,a,-b+r); sh.lineTo(a,b-r); sh.quadraticCurveTo(a,b,a-r,b); sh.lineTo(-a+r,b); sh.quadraticCurveTo(-a,b,-a,b-r); sh.lineTo(-a,-b+r); sh.quadraticCurveTo(-a,-b,-a+r,-b); return sh; };
+      const outerS=rr(hx+.66,hz+.66,.35), hole=rr(hx-.66,hz-.66,.2); outerS.holes.push(hole);
+      const g2=new THREE.ShapeGeometry(outerS,6); add(flat(g2,lamT(0xE2D2B6,{map:photo('stone.jpg',.55,.55)}),-.008)); }
+    // 中路：從藍方主堡（左上）斜向紅方（右下）
+    { const L=Math.hypot(2*hx,2*hz)-1.1, m=add(flat(new THREE.PlaneGeometry(.52,L),lamT(0xCDB48C,{map:photo('stone.jpg',.4,L*.5)}),-.012)); m.rotation.z=Math.atan2(hx,hz); }
+    // 主堡：藍方在起點外側、紅方在對角外側
+    const TEAM=[0x3C8CE7,0xE5484D], spin=[];
+    const base=(x,z,team)=>{ const g2=new THREE.Group(); g2.position.set(x,0,z);
+      const plat=new THREE.Mesh(new THREE.CylinderGeometry(.95,1.05,.1,20),lamT(0xB9B2A6,{map:photo('stone.jpg',1,1)})); plat.position.y=.03; plat.receiveShadow=true; g2.add(plat);
+      const ped=new THREE.Mesh(new THREE.CylinderGeometry(.28,.36,.22,8),lamT(0x6E6A64)); ped.position.y=.19; g2.add(ped);
+      const cr=new THREE.Mesh(new THREE.OctahedronGeometry(.26),new THREE.MeshLambertMaterial({color:lin(TEAM[team]),emissive:lin(TEAM[team]),emissiveIntensity:.8})); cr.scale.y=1.6; cr.position.y=.62; g2.add(cr); spin.push(cr);
+      root.add(g2); };
+    base(-hx-1.35,-hz-1.35,0); base(hx+1.55,hz+.35,1);
+    // 防禦塔：兩條外路、靠近各自主堡的地方
+    const tower=(x,z,team)=>{ const g2=new THREE.Group(); g2.position.set(x,0,z); g2.scale.setScalar(.12);
+      const b2=new THREE.Mesh(new THREE.CylinderGeometry(1.8,2.2,1.2,10),lamT(0x6E6A64)); b2.position.y=.6; g2.add(b2);
+      const c2=new THREE.Mesh(new THREE.CylinderGeometry(1,1.4,5,10),lamT(0x8E8A82)); c2.position.y=3.7; g2.add(c2);
+      const t2=new THREE.Mesh(new THREE.CylinderGeometry(1.8,1.1,1,10),lamT(0x5B5750)); t2.position.y=6.6; g2.add(t2);
+      const cr=new THREE.Mesh(new THREE.OctahedronGeometry(.9),new THREE.MeshLambertMaterial({color:lin(TEAM[team]),emissive:lin(TEAM[team]),emissiveIntensity:.8})); cr.position.y=8; g2.add(cr); spin.push(cr); root.add(g2); };
+    tower(-hx+1.6,-hz-.95,0); tower(-hx-.95,-hz+1.6,0); tower(hx+.95,hz-1.6,1); tower(hx+.95,hz-3.2,1);   // 紅方的塔放右側（放鏡頭前面會擋住格子）
+    // 巴龍、小龍巢穴：河道兩側、圈外
+    const v=new THREE.Vector2(u.y,-u.x);   // 河道的垂直方向
+    const pit=(cx,cz,col,glow)=>{ const g2=new THREE.Group(); g2.position.set(cx,0,cz);
+      const rim=new THREE.Mesh(new THREE.TorusGeometry(.62,.1,8,24),lamT(0x5A5560)); rim.rotation.x=Math.PI/2; rim.position.y=.03; g2.add(rim);
+      const fl=new THREE.Mesh(new THREE.CircleGeometry(.6,24),lamT(col)); fl.rotation.x=-Math.PI/2; fl.position.y=.005; fl.receiveShadow=true; g2.add(fl);
+      const core=new THREE.Mesh(new THREE.IcosahedronGeometry(.2,0),new THREE.MeshLambertMaterial({color:lin(glow),emissive:lin(glow),emissiveIntensity:.7})); core.position.y=.42; g2.add(core); spin.push(core); root.add(g2); return g2; };
+    const pits=[pit(hx+u.x*-1.25+v.x*.95,-hz+u.y*-1.25+v.y*.95,0x3B2A55,0xA66BFF), pit(-hx+u.x*1.25-v.x*.95,hz+u.y*1.25-v.y*.95,0x5A3322,0xFF8A3D)];
+    // 樹與草叢：避開路、河道、主堡、巢穴
+    const ringD=(x,z)=>{ const ax=Math.abs(x), az=Math.abs(z); if(ax>hx+.7||az>hz+.7) return Math.max(ax-(hx+.7),az-(hz+.7)); if(ax<hx-.7&&az<hz-.7) return Math.min(hx-.7-ax,hz-.7-az); return -1; };
+    const riverD=(x,z)=>Math.abs(x*v.x+z*v.y), midD=(x,z)=>{ const d=new THREE.Vector2(2*hx,2*hz).normalize(); return Math.abs(x*d.y-z*d.x); };
+    const busy=(x,z)=>[[-hx-1.35,-hz-1.35,1.4],[hx+1.55,hz+.35,1.4],...pits.map(p=>[p.position.x,p.position.z,.95])].some(([a,b,r])=>Math.hypot(x-a,z-b)<r);
+    const trees=[], bushes=[];
+    for(let k=0;k<4000&&trees.length<260;k++){ const x=(R()-.5)*(2*hx+11), z=(R()-.5)*(2*hz+11), rd=ringD(x,z);
+      if(rd<.12||riverD(x,z)<.72||busy(x,z)) continue; if(ringD(x,z)>=0&&Math.abs(x)<hx&&Math.abs(z)<hz&&midD(x,z)<.5) continue;
+      if(z>hz+.6&&Math.abs(x)<hx+2.2) continue;   // 棋盤前面（靠鏡頭）不種樹，免得擋住格子
+      trees.push([x,z,(ringD(x,z)>0&&Math.abs(x)<hx&&Math.abs(z)<hz?.075:.095)+R()*.05,R()*6]); }
+    for(let k=0;k<900&&bushes.length<70;k++){ const x=(R()-.5)*(2*hx+4), z=(R()-.5)*(2*hz+4), rd=ringD(x,z); if(rd<.05||rd>.5||riverD(x,z)<.7||busy(x,z)) continue; bushes.push([x,z,.18+R()*.1]); }
+    const tint=trees.map(()=>new THREE.Color().setHSL(.27+R()*.08,.45+R()*.2,.26+R()*.1));
+    const inst=(geo,mat,list,fn,col)=>{ const m=new THREE.InstancedMesh(geo,mat,list.length), o=new THREE.Object3D(); list.forEach((t,k)=>{ fn(o,t); o.updateMatrix(); m.setMatrixAt(k,o.matrix); if(col) m.setColorAt(k,col(k)); }); m.castShadow=true; root.add(m); return m; };
+    const leaf=new THREE.MeshLambertMaterial({color:0xffffff,flatShading:true});
+    inst(new THREE.CylinderGeometry(.3,.48,2.4,6),lamT(0x6B4A2E),trees,(o,t)=>{ o.position.set(t[0],1.2*t[2],t[1]); o.scale.setScalar(t[2]); o.rotation.set(0,t[3],0); });
+    inst(new THREE.ConeGeometry(2.8,3.6,8),leaf,trees,(o,t)=>{ o.position.set(t[0],3.9*t[2],t[1]); o.scale.setScalar(t[2]); o.rotation.set(0,t[3],0); },k=>tint[k]);
+    inst(new THREE.ConeGeometry(2.1,3,8),leaf,trees,(o,t)=>{ o.position.set(t[0],5.6*t[2],t[1]); o.scale.setScalar(t[2]); o.rotation.set(0,t[3]+1,0); },k=>tint[k].clone().offsetHSL(0,0,.05));
+    inst(new THREE.SphereGeometry(1,8,6),lamT(0x3E8C63),bushes,(o,t)=>{ o.position.set(t[0],t[2]*.35,t[1]); o.scale.set(t[2]*1.4,t[2]*.8,t[2]*1.4); });
+    riftTick=t=>{ wt.offset.y=-t*.05; spin.forEach((c,k)=>{ c.rotation.y=t*.8+k; }); };
+  }
+
   function build(){
     clear(root); clear(fxRoot); tilesM=[]; labels=[]; tokens=[]; props=[]; parts=[]; tileFx=[];
     floats.forEach(f=>f.el.remove()); floats=[]; labelsEl.innerHTML='';
     const {cols,rows}=ring(), TT=tiles();
-    // 棋盤：木頭外框＋中間綠色絨布，放在一張大木桌上
-    const table=new THREE.Mesh(roundedBox(cols+1.1,.16,rows+1.1,.07,2),new THREE.MeshStandardMaterial({color:lin(0xC89A78),map:photo('frame.jpg',2,2),roughness:.55,metalness:0}));
-    table.position.y=-.09; table.receiveShadow=true; table.userData.noShadow=true; root.add(table);
-    const inner=new THREE.Mesh(new THREE.BoxGeometry(cols-1.85,.02,rows-1.85),new THREE.MeshStandardMaterial({color:lin(0x8FE0CC),map:photo('felt.jpg',3,3),roughness:1}));
-    inner.receiveShadow=true; inner.userData.noShadow=true; root.add(inner);
-    const desk=new THREE.Mesh(new THREE.PlaneGeometry(60,60),new THREE.MeshStandardMaterial({color:lin(0xF2DCC0),map:photo('table.jpg',9,9),roughness:.7}));
-    desk.rotation.x=-Math.PI/2; desk.position.y=-.172; desk.receiveShadow=true; desk.userData.noShadow=true; root.add(desk);
-    { const R=Math.max(cols,rows)/2+1.6, c=SUN.shadow.camera; c.left=c.bottom=-R; c.right=c.top=R; c.near=1; c.far=30; c.updateProjectionMatrix(); }
-    const es=Math.min(cols-2,rows-2)*.92, em=new THREE.Mesh(new THREE.PlaneGeometry(es,es),new THREE.MeshBasicMaterial({map:emblemTex(),transparent:true,depthWrite:false}));
-    em.rotation.x=-Math.PI/2; em.position.set(0,.012,0); root.add(em);
+    // 棋盤＝一張立體的召喚峽谷小地圖（格子一圈＝上路／下路，中路斜穿、河道橫過、兩邊主堡）
+    buildRift(cols,rows);
+    { const R=Math.max(cols,rows)/2+2.6, c=SUN.shadow.camera; c.left=c.bottom=-R; c.right=c.top=R; c.near=1; c.far=40; c.updateProjectionMatrix(); }
     const TILE_GEO=roundedBox(.92,.14,.92,.045,3);
     TT.forEach((t,i)=>{
       const {x,z}=posOf(i), o=outer(i), g=new THREE.Group(); g.position.set(x,0,z);
@@ -916,6 +974,7 @@ const view3d=(()=>{
       ||(celebrate&&now-celebrate.t0<8000)||tokens.some(tk=>tk.hop||tk.queue.length||(tk.emo&&tk.emo.type!=='win')||(tk.out&&now-tk.dieT<2200)||tk.count>0);
     if(now-lastRender<(active?1000/61:80)) return;                // 動的時候最多每秒 60 張，靜止時約 12 張
     lastRender=now;
+    if(riftTick) riftTick(now/1000);
     if(active||now-shadowT>2000){ if(now-shadowT>600){ shadowFlags(); shadowT=now; } renderer.shadowMap.needsUpdate=true; }   // 影子只在有動靜時更新
     renderer.render(scene,camera);
     // 地名標籤只在鏡頭真的動了才重新定位（每幀改 32 個 DOM 位置很耗電）
